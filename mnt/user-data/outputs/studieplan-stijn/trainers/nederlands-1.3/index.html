@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Nederlands 1.3 – Lezen Trainer</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📖</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>*{box-sizing:border-box;margin:0;padding:0}body{background:linear-gradient(160deg,#0a0e1a,#111830 50%,#0c1020);font-family:'Nunito',sans-serif;color:#ddd;min-height:100vh}button{font-family:inherit;cursor:pointer}button:active{transform:scale(0.97)}.fade-in{animation:fadeIn 0.3s ease}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}</style>
+<script src="../../shared/progress.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+</head>
+<body><div id="root"></div>
+<script type="text/babel">
+const{useState,useEffect,useRef}=React;
+
+// Initialize progress tracker
+const progress = new TrainerProgress("nederlands_1.3", "Nederlands par 1.3", {
+  subject: "Nederlands", color: "#E67E22", icon: "📖"
+});
+
+// ===== SECTION DEFINITIONS =====
+const SECTIONS = [
+  { id: "titel_tussenkopje", title: "Titel en tussenkopje", icon: "📰" },
+  { id: "onderwerp_deelonderwerp", title: "Onderwerp en deelonderwerp", icon: "🎯" },
+  { id: "alinea", title: "Alinea", icon: "📝" },
+  { id: "tekst_analyse", title: "Tekstanalyse", icon: "🔍" },
+];
+
+// ===== THEORY CONTENT =====
+const THEORY = {
+  titel_tussenkopje: [
+    { type: "explain", title: "Wat is een titel?", text: "Bijna elke tekst heeft een **titel**. De titel vertelt meestal wat het **onderwerp** is van de tekst. Een titel kan ook een vraag zijn, een woordgrap, of iets prikkelends om je nieuwsgierig te maken." },
+    { type: "explain", title: "Kop of krantenkop", text: "Een titel in een krant of tijdschrift noem je ook wel een **kop** of **krantenkop**." },
+    { type: "example", title: "Voorbeeld", text: "Titel: *'Talent of ploeteren'* → Het onderwerp is: het verschil tussen talent hebben en hard werken.\n\nTitel: *'Junior van een eigen bedrijf'* → Het onderwerp is: jonge ondernemers." },
+    { type: "check", question: "Wat vertelt de titel van een tekst meestal?", options: ["Hoeveel alinea's de tekst heeft", "Wat het onderwerp is", "Wie de schrijver is", "Wanneer het geschreven is"], correct: 1 },
+    { type: "explain", title: "Wat is een tussenkopje?", text: "Een **tussenkopje** (of deeltitel) vind je in de tekst boven een tekstgedeelte. Tussenkopjes vertellen steeds waar het volgende **deelonderwerp** over gaat. Zo kun je snel de deelonderwerpen vinden." },
+    { type: "example", title: "Voorbeeld tussenkopjes", text: "In de tekst 'Junior van een eigen bedrijf' staan deze tussenkopjes:\n\n• *Webwinkels en handelsplatformen*\n• *Inspiratie van ouders en op school*\n• *Producent van regenhoezen*\n• *Presentator en youtuber*\n\nElk tussenkopje gaat over een ander deelonderwerp." },
+    { type: "check", question: "Waar vind je een tussenkopje in een tekst?", options: ["Helemaal onderaan", "Boven een tekstgedeelte", "Alleen in de eerste zin", "In de voetnoten"], correct: 1 },
+  ],
+  onderwerp_deelonderwerp: [
+    { type: "explain", title: "Het onderwerp", text: "Het **onderwerp** van een tekst is waar de hele tekst over gaat. Je kunt het onderwerp vaak afleiden uit de titel.\n\nVraag jezelf af: *'Waar gaat deze tekst over?'* → dat is het onderwerp." },
+    { type: "explain", title: "Het deelonderwerp", text: "Een **deelonderwerp** is een onderdeel van het hoofdonderwerp. Elk tekstgedeelte (vaak een alinea) behandelt een ander deelonderwerp.\n\nBijvoorbeeld: als het onderwerp 'dierentuin' is, dan kun je deelonderwerpen hebben zoals: 'de leeuwen', 'de entreeprijs', 'de openingstijden'." },
+    { type: "check", question: "Een tekst gaat over 'jonge ondernemers'. Welk van deze is een deelonderwerp?", options: ["De hele tekst", "Webwinkels en handelsplatformen", "Alle jonge ondernemers", "Het woord 'ondernemers'"], correct: 1 },
+    { type: "explain", title: "Onderwerp formuleren", text: "Je kunt het onderwerp formuleren door de vraag te beantwoorden:\n**'Wat is het onderwerp van de tekst?'**\n\nGebruik korte, duidelijke woorden. Bijvoorbeeld:\n- ✅ 'jonge ondernemers in Nederland'\n- ❌ 'het gaat over kinderen die dingen verkopen en zo'" },
+    { type: "check", question: "Hoe kun je het deelonderwerp van een alinea het best vinden?", options: ["Door de laatste zin te lezen", "Door te kijken naar het tussenkopje of de eerste zinnen", "Door alle moeilijke woorden op te zoeken", "Door de titel te herhalen"], correct: 1 },
+  ],
+  alinea: [
+    { type: "explain", title: "Wat is een alinea?", text: "Een **alinea** is een stukje tekst dat over één deelonderwerp gaat. In een alinea staan **twee of meer zinnen** die logisch bij elkaar horen." },
+    { type: "explain", title: "Hoe herken je een alinea?", text: "Je herkent een alinea aan drie dingen:\n\n1. **De eerste regel springt in** (inspringen)\n2. **De laatste regel loopt niet door** tot het eind van de regel\n3. Er staat soms een **witregel** tussen twee alinea's" },
+    { type: "check", question: "Waaraan herken je het begin van een nieuwe alinea?", options: ["Een punt aan het eind van een zin", "De eerste regel springt in", "Er staat een nummer voor", "Het lettertype verandert"], correct: 1 },
+    { type: "explain", title: "Een alinea = een deelonderwerp", text: "Elke alinea behandelt meestal **één deelonderwerp**. Als de schrijver over een nieuw deelonderwerp begint, start hij een **nieuwe alinea**.\n\nDaarom kun je door de alinea's te tellen ook zien hoeveel deelonderwerpen er zijn." },
+    { type: "example", title: "Voorbeeld", text: "Een tekst over 'dieren in de stad' met 4 alinea's:\n\n**Alinea 1:** Inleiding → steeds meer dieren in de stad\n**Alinea 2:** Vossen → vossen zoeken voedsel in tuinen\n**Alinea 3:** Gierzwaluwen → gierzwaluwen nestelen onder daken\n**Alinea 4:** Conclusie → dieren passen zich aan\n\nElke alinea heeft een eigen deelonderwerp!" },
+    { type: "check", question: "Hoeveel deelonderwerpen behandelt één alinea meestal?", options: ["Drie", "Alle deelonderwerpen", "Eén", "Nul"], correct: 2 },
+  ],
+  tekst_analyse: [
+    { type: "explain", title: "Leesstrategie: verkennend lezen", text: "Bij **verkennend lezen** lees je eerst de titel, de eerste en de laatste alinea, en bekijk je de tussenkopjes. Zo weet je snel waar de tekst over gaat **voordat** je alles leest." },
+    { type: "explain", title: "Leesstrategie: nauwkeurig lezen", text: "Bij **nauwkeurig lezen** lees je de tekst **grondig**. Je let op details, markeert de drie belangrijkste punten, en zoekt moeilijke woorden op.\n\nDit doe je nadat je verkennend hebt gelezen." },
+    { type: "check", question: "Bij verkennend lezen kijk je NIET naar:", options: ["De titel", "De tussenkopjes", "Elke zin in detail", "De eerste alinea"], correct: 2 },
+    { type: "explain", title: "Woordbetekenis uit context", text: "Als je een moeilijk woord tegenkomt, kun je de **context** gebruiken om de betekenis te raden. Kijk naar de zinnen **rondom** het woord.\n\nAls dat niet lukt, zoek het op in een (online) woordenboek." },
+    { type: "example", title: "Voorbeeld: context gebruiken", text: "Zin: *'Ze kan dat door hard werken tot op zekere hoogte **compenseren**.'*\n\nContext: iemand heeft weinig talent → hard werken → compenseren\n\nBetekenis: **goedmaken**, inhalen wat je mist." },
+    { type: "check", question: "Wat doe je als je een woord niet begrijpt uit de context?", options: ["Het woord overslaan", "De hele tekst opnieuw lezen", "Het opzoeken in een woordenboek", "De docent bellen"], correct: 2 },
+  ],
+};
+
+// ===== PRACTICE QUESTIONS =====
+const PRACTICE = {
+  titel_tussenkopje: [
+    { q: "Een titel in een krant noem je ook wel een...", o: ["Kop", "Alinea", "Tussenkopje", "Inleiding"], c: 0 },
+    { q: "Wat is het verschil tussen een titel en een tussenkopje?", o: ["Een tussenkopje is korter", "De titel gaat over het hele onderwerp, een tussenkopje over een deelonderwerp", "Er is geen verschil", "Een titel staat altijd in hoofdletters"], c: 1 },
+    { q: "De tekst heeft als titel 'Talent of ploeteren'. Wat verwacht je?", o: ["Een tekst over sport", "Een vergelijking tussen talent en hard werken", "Een verhaal over een ploeteraar", "Tips om je talent te ontdekken"], c: 1 },
+    { q: "Tussenkopjes helpen je om...", o: ["De schrijver te vinden", "Snel de deelonderwerpen te vinden", "Het aantal pagina's te tellen", "De moeilijkste woorden te vinden"], c: 1 },
+    { q: "Welk van deze is een goed tussenkopje voor een alinea over jonge webwinkel-eigenaren?", o: ["Kinderen", "Webwinkels en handelsplatformen", "Internet", "Geld verdienen"], c: 1 },
+    { q: "Een tekst zonder tussenkopjes...", o: ["Heeft geen deelonderwerpen", "Is altijd kort", "Heeft wel deelonderwerpen maar die zijn moeilijker te vinden", "Is niet geschreven door een journalist"], c: 2 },
+    { q: "De tekst 'Junior van een eigen bedrijf' gaat over:", o: ["Bedrijven van volwassenen", "Jonge ondernemers", "Een baan zoeken", "School en huiswerk"], c: 1 },
+    { q: "Waarom maken schrijvers tussenkopjes?", o: ["Omdat het er mooi uitziet", "Zodat de lezer snel kan zien waar elk deel over gaat", "Omdat de docent het vraagt", "Om de tekst langer te maken"], c: 1 },
+  ],
+  onderwerp_deelonderwerp: [
+    { q: "Het onderwerp van een tekst is:", o: ["De eerste zin", "Waar de hele tekst over gaat", "De naam van de schrijver", "Het moeilijkste woord"], c: 1 },
+    { q: "Een deelonderwerp is:", o: ["Een ander woord voor onderwerp", "Een onderdeel van het hoofdonderwerp", "Altijd het laatste stuk tekst", "De mening van de schrijver"], c: 1 },
+    { q: "De tekst 'Talent of ploeteren' heeft als onderwerp:", o: ["School", "Het verschil tussen aanleg en doorzettingsvermogen", "Sporten", "Beroemde mensen"], c: 1 },
+    { q: "Hoe kun je het onderwerp van een tekst het snelst vinden?", o: ["De laatste zin lezen", "Kijken naar de titel en eerste alinea", "Alle woorden opzoeken", "De tekst twee keer lezen"], c: 1 },
+    { q: "Een alinea over 'Yfke die regenhoezen maakt' is een voorbeeld van:", o: ["Een onderwerp", "Een deelonderwerp", "Een titel", "Een tussenkopje"], c: 1 },
+    { q: "Als het onderwerp 'jonge ondernemers' is, welk past als deelonderwerp?", o: ["De president van Nederland", "Inspiratie van ouders en school", "Het weer van morgen", "De geschiedenis van brood"], c: 1 },
+    { q: "Hoeveel deelonderwerpen kan een tekst hebben?", o: ["Altijd precies drie", "Eén", "Meerdere", "Geen"], c: 2 },
+  ],
+  alinea: [
+    { q: "Een alinea herken je doordat:", o: ["De eerste regel inspringt", "Er een nummer voor staat", "Het lettertype verandert", "Er een foto bij staat"], c: 0 },
+    { q: "Hoeveel zinnen staan er minimaal in een alinea?", o: ["Eén", "Twee", "Vijf", "Tien"], c: 1 },
+    { q: "Wat staat er soms tussen twee alinea's?", o: ["Een foto", "Een witregel", "Een tussenkopje en een witregel", "Een streep"], c: 1 },
+    { q: "Elke alinea behandelt meestal:", o: ["Het hele onderwerp", "Eén deelonderwerp", "Drie deelonderwerpen", "Alleen feiten"], c: 1 },
+    { q: "Als een schrijver over een nieuw deelonderwerp begint, dan:", o: ["Maakt hij de zin langer", "Begint hij een nieuwe alinea", "Verandert hij het lettertype", "Zet hij een streep"], c: 1 },
+    { q: "De laatste regel van een alinea:", o: ["Is altijd de langste", "Loopt meestal NIET door tot het einde van de regel", "Staat in dikgedrukt", "Heeft altijd een uitroepteken"], c: 1 },
+    { q: "Als een tekst 6 alinea's heeft, hoeveel deelonderwerpen verwacht je dan ongeveer?", o: ["Precies 1", "Ongeveer 6", "Precies 12", "Dat kun je niet zeggen"], c: 1 },
+  ],
+  tekst_analyse: [
+    { q: "Bij verkennend lezen doe je NIET:", o: ["De titel lezen", "De eerste alinea lezen", "Elke zin grondig lezen", "De tussenkopjes bekijken"], c: 2 },
+    { q: "Verkennend lezen doe je:", o: ["Na het nauwkeurig lezen", "Vóór het nauwkeurig lezen", "Alleen bij korte teksten", "Nooit bij proefwerken"], c: 1 },
+    { q: "Bij nauwkeurig lezen:", o: ["Lees je alleen de titel", "Lees je de tekst grondig en let op details", "Sla je moeilijke woorden over", "Lees je alleen de tussenkopjes"], c: 1 },
+    { q: "'Compenseren' betekent in de zin 'ze kan dat door hard werken compenseren':", o: ["Betalen", "Goedmaken / inhalen", "Vergeten", "Uitleggen"], c: 1 },
+    { q: "Het woord 'ploeteren' betekent:", o: ["Lui zijn", "Snel rennen", "Hard zwoegen / doorwerken", "Slapen"], c: 2 },
+    { q: "Wat is de beste manier om een moeilijk woord te begrijpen?", o: ["Raden zonder nadenken", "Eerst context bekijken, dan eventueel opzoeken", "Het woord overslaan", "De docent vragen"], c: 1 },
+    { q: "'Geniaal' (r. 12) betekent:", o: ["Heel dom", "Heel slim / briljant", "Heel snel", "Heel oud"], c: 1 },
+    { q: "De schrijver van 'Talent of ploeteren' vindt dat:", o: ["Alleen talent telt", "Hard werken kan talent compenseren", "Ploeteren is nutteloos", "Iedereen geniaal is"], c: 1 },
+  ],
+};
+
+// ===== APP COMPONENT =====
+function App() {
+  const [mode, setMode] = useState("home"); // home, theory, practice, quiz
+  const [activeSec, setActiveSec] = useState(null);
+  const [step, setStep] = useState(0);
+  const [score, setScore] = useState({ correct: 0, total: 0 });
+  const [answered, setAnswered] = useState(null);
+  const [questions, setQuestions] = useState([]);
+  const [qIdx, setQIdx] = useState(0);
+  const [quizMode, setQuizMode] = useState(null); // 'practice' or 'quiz'
+
+  // Force re-render when progress updates
+  const [, forceUpdate] = useState(0);
+
+  const bdr = "rgba(255,255,255,0.06)", cBg = "rgba(255,255,255,0.04)";
+  const COL = "#E67E22";
+
+  const tag = (c, txt) => React.createElement("span", { style: { display: "inline-block", padding: "2px 8px", borderRadius: "6px", fontSize: "10px", fontWeight: 700, background: c + "20", color: c } }, txt);
+  const pBar = (pct, c, h) => React.createElement("div", { style: { height: h || "6px", borderRadius: "3px", background: "rgba(255,255,255,0.06)", position: "relative", overflow: "hidden" } }, React.createElement("div", { style: { position: "absolute", top: 0, left: 0, height: "100%", width: Math.min(pct, 100) + "%", background: c || COL, borderRadius: "3px", transition: "width 0.6s" } }));
+
+  const startTheory = (secId) => { setActiveSec(secId); setStep(0); setMode("theory"); };
+  const startPractice = (secId) => {
+    setActiveSec(secId);
+    const qs = [...PRACTICE[secId]].sort(() => Math.random() - 0.5).slice(0, 10);
+    setQuestions(qs); setQIdx(0); setScore({ correct: 0, total: 0 }); setAnswered(null);
+    setQuizMode("practice"); setMode("practice");
+  };
+  const startFinalQuiz = () => {
+    const allQs = [];
+    Object.keys(PRACTICE).forEach(secId => {
+      PRACTICE[secId].forEach(q => allQs.push({ ...q, secId }));
+    });
+    const qs = allQs.sort(() => Math.random() - 0.5).slice(0, 15);
+    setQuestions(qs); setQIdx(0); setScore({ correct: 0, total: 0 }); setAnswered(null);
+    setActiveSec(null); setQuizMode("quiz"); setMode("practice");
+  };
+
+  const handleAnswer = (optIdx) => {
+    if (answered !== null) return;
+    const q = questions[qIdx];
+    const correct = optIdx === q.c;
+    setAnswered(optIdx);
+    const secId = q.secId || activeSec;
+    progress.recordAnswer(secId, correct);
+    setScore(s => ({ correct: s.correct + (correct ? 1 : 0), total: s.total + 1 }));
+    forceUpdate(n => n + 1);
+  };
+
+  const nextQuestion = () => {
+    if (qIdx + 1 < questions.length) {
+      setQIdx(qIdx + 1); setAnswered(null);
+    } else {
+      setMode("results");
+    }
+  };
+
+  const handleTheoryCheck = (optIdx, correctIdx, secId) => {
+    progress.recordAnswer(secId, optIdx === correctIdx);
+    forceUpdate(n => n + 1);
+  };
+
+  // Get stats
+  const getSectionStats = (secId) => {
+    const s = progress.getSection(secId);
+    return { ...s, mastered: progress.isMastered(secId), pct: s.total > 0 ? Math.round(s.correct / s.total * 100) : 0 };
+  };
+  const overall = progress.getOverallStats();
+
+  // ===== RENDER HOME =====
+  if (mode === "home") {
+    return React.createElement("div", { style: { minHeight: "100vh" } },
+      // Header
+      React.createElement("div", { style: { background: "rgba(0,0,0,0.3)", backdropFilter: "blur(12px)", borderBottom: "1px solid " + bdr, padding: "14px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", position: "sticky", top: 0, zIndex: 50 } },
+        React.createElement("div", { style: { display: "flex", alignItems: "center", gap: "10px" } },
+          React.createElement("a", { href: "../../index.html", style: { color: "#666", textDecoration: "none", fontSize: "18px" } }, "←"),
+          React.createElement("div", { style: { fontSize: "17px", fontWeight: 900, color: COL } }, "📖 Nederlands 1.3")),
+        React.createElement("div", { style: { fontSize: "12px", color: "#666" } }, "Lezen")),
+
+      React.createElement("div", { style: { maxWidth: "640px", margin: "0 auto", padding: "16px 14px 60px" } },
+        // Overall progress
+        React.createElement("div", { style: { background: cBg, borderRadius: "16px", padding: "18px", border: "1px solid " + bdr, marginBottom: "16px", textAlign: "center" } },
+          React.createElement("div", { style: { fontSize: "15px", fontWeight: 800, marginBottom: "8px" } }, "Voortgang par 1.3 Lezen"),
+          React.createElement("div", { style: { display: "flex", justifyContent: "space-around", marginBottom: "12px" } },
+            React.createElement("div", null, React.createElement("div", { style: { fontSize: "24px", fontWeight: 900, color: COL } }, overall.masteryPct + "%"), React.createElement("div", { style: { fontSize: "10px", color: "#777" } }, "beheerst")),
+            React.createElement("div", null, React.createElement("div", { style: { fontSize: "24px", fontWeight: 900, color: "#fff" } }, overall.mastered + "/" + SECTIONS.length), React.createElement("div", { style: { fontSize: "10px", color: "#777" } }, "secties")),
+            React.createElement("div", null, React.createElement("div", { style: { fontSize: "24px", fontWeight: 900, color: overall.accuracy >= 70 ? "#6bcb77" : "#ffd93d" } }, overall.accuracy + "%"), React.createElement("div", { style: { fontSize: "10px", color: "#777" } }, "correct"))),
+          pBar(overall.masteryPct, COL, "8px")),
+
+        // Sections
+        SECTIONS.map(sec => {
+          const st = getSectionStats(sec.id);
+          const hasTh = THEORY[sec.id];
+          return React.createElement("div", { key: sec.id, style: { background: cBg, borderRadius: "16px", padding: "16px", border: "1px solid " + (st.mastered ? "#6bcb7730" : bdr), marginBottom: "10px" } },
+            React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" } },
+              React.createElement("div", { style: { display: "flex", alignItems: "center", gap: "8px" } },
+                React.createElement("span", { style: { fontSize: "20px" } }, sec.icon),
+                React.createElement("div", null,
+                  React.createElement("div", { style: { fontSize: "14px", fontWeight: 700 } }, sec.title),
+                  React.createElement("div", { style: { fontSize: "11px", color: "#777" } },
+                    st.theoryDone ? "✅ Theorie klaar" : "📖 Theorie niet bekeken",
+                    " · ", st.total, " vragen beantwoord", st.total > 0 ? " (" + st.pct + "%)" : ""))),
+              st.mastered ? tag("#6bcb77", "✓ Beheerst") : st.total >= 5 ? tag("#ff6b6b", st.pct + "% – oefen meer") : tag("#888", "nog niet")),
+            st.total > 0 && pBar(st.pct, st.mastered ? "#6bcb77" : COL, "4px"),
+            React.createElement("div", { style: { display: "flex", gap: "8px", marginTop: "10px" } },
+              hasTh && React.createElement("button", { style: { flex: 1, padding: "10px", borderRadius: "10px", border: "none", background: COL + "20", color: COL, fontSize: "13px", fontWeight: 700 }, onClick: () => startTheory(sec.id) }, st.theoryDone ? "📖 Theorie herlezen" : "📖 Theorie leren"),
+              React.createElement("button", { style: { flex: 1, padding: "10px", borderRadius: "10px", border: "none", background: "rgba(255,255,255,0.08)", color: "#fff", fontSize: "13px", fontWeight: 700 }, onClick: () => startPractice(sec.id) }, "✏️ Oefenen")));
+        }),
+
+        // Final quiz
+        React.createElement("button", { style: { width: "100%", padding: "14px", borderRadius: "14px", border: "2px solid " + COL + "40", background: COL + "10", color: COL, fontSize: "15px", fontWeight: 800, marginTop: "8px", marginBottom: "12px" }, onClick: startFinalQuiz },
+          "🎯 Eindtoets – alle onderwerpen door elkaar"),
+
+        // Back + reset
+        React.createElement("div", { style: { display: "flex", gap: "8px", marginTop: "8px" } },
+          React.createElement("a", { href: "../../index.html", style: { flex: 1, display: "block", padding: "10px", borderRadius: "10px", background: "rgba(255,255,255,0.03)", color: "#666", fontSize: "12px", fontWeight: 600, textDecoration: "none", textAlign: "center" } }, "← Terug naar overzicht"),
+          React.createElement("button", { style: { padding: "10px 16px", borderRadius: "10px", border: "none", background: "rgba(255,255,255,0.03)", color: "#555", fontSize: "12px", fontWeight: 600 }, onClick: () => { if (confirm("Reset alle voortgang voor Nederlands 1.3?")) { progress.reset(); forceUpdate(n => n + 1); } } }, "🔄"))
+      ));
+  }
+
+  // ===== RENDER THEORY =====
+  if (mode === "theory") {
+    const steps = THEORY[activeSec];
+    const sec = SECTIONS.find(s => s.id === activeSec);
+    const currentStep = steps[step];
+    const isLast = step === steps.length - 1;
+
+    return React.createElement("div", { style: { minHeight: "100vh" } },
+      React.createElement("div", { style: { background: "rgba(0,0,0,0.3)", backdropFilter: "blur(12px)", borderBottom: "1px solid " + bdr, padding: "14px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", position: "sticky", top: 0, zIndex: 50 } },
+        React.createElement("button", { style: { background: "none", border: "none", color: "#666", fontSize: "16px" }, onClick: () => setMode("home") }, "✕"),
+        React.createElement("div", { style: { fontSize: "14px", fontWeight: 700, color: COL } }, sec.icon + " " + sec.title),
+        React.createElement("div", { style: { fontSize: "12px", color: "#666" } }, (step + 1) + "/" + steps.length)),
+
+      React.createElement("div", { style: { maxWidth: "640px", margin: "0 auto", padding: "20px 14px 60px" } },
+        // Progress bar
+        pBar(((step + 1) / steps.length) * 100, COL, "4px"),
+
+        React.createElement("div", { key: step, className: "fade-in", style: { marginTop: "20px" } },
+          currentStep.type === "explain" && React.createElement("div", { style: { background: cBg, borderRadius: "16px", padding: "20px", border: "1px solid " + bdr } },
+            React.createElement("div", { style: { fontSize: "12px", color: COL, fontWeight: 700, marginBottom: "6px" } }, "📖 THEORIE"),
+            React.createElement("div", { style: { fontSize: "18px", fontWeight: 800, marginBottom: "12px" } }, currentStep.title),
+            React.createElement("div", { style: { fontSize: "14px", lineHeight: 1.8, color: "#ccc" } },
+              currentStep.text.split("\n").map((line, i) => {
+                const parts = line.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g);
+                return React.createElement("div", { key: i, style: { marginBottom: line === "" ? "8px" : "4px" } },
+                  parts.map((part, j) => {
+                    if (part.startsWith("**") && part.endsWith("**")) return React.createElement("strong", { key: j, style: { color: "#fff" } }, part.slice(2, -2));
+                    if (part.startsWith("*") && part.endsWith("*")) return React.createElement("em", { key: j, style: { color: "#E67E22" } }, part.slice(1, -1));
+                    return React.createElement("span", { key: j }, part);
+                  }));
+              }))),
+
+          currentStep.type === "example" && React.createElement("div", { style: { background: "rgba(230,126,34,0.08)", borderRadius: "16px", padding: "20px", border: "1px solid rgba(230,126,34,0.2)" } },
+            React.createElement("div", { style: { fontSize: "12px", color: "#E67E22", fontWeight: 700, marginBottom: "6px" } }, "💡 VOORBEELD"),
+            React.createElement("div", { style: { fontSize: "16px", fontWeight: 800, marginBottom: "12px" } }, currentStep.title),
+            React.createElement("div", { style: { fontSize: "14px", lineHeight: 1.8, color: "#ccc" } },
+              currentStep.text.split("\n").map((line, i) => {
+                const parts = line.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g);
+                return React.createElement("div", { key: i, style: { marginBottom: line === "" ? "8px" : "4px" } },
+                  parts.map((part, j) => {
+                    if (part.startsWith("**") && part.endsWith("**")) return React.createElement("strong", { key: j, style: { color: "#fff" } }, part.slice(2, -2));
+                    if (part.startsWith("*") && part.endsWith("*")) return React.createElement("em", { key: j, style: { color: "#E67E22" } }, part.slice(1, -1));
+                    return React.createElement("span", { key: j }, part);
+                  }));
+              }))),
+
+          currentStep.type === "check" && React.createElement(TheoryCheck, { step: currentStep, secId: activeSec, onRecord: handleTheoryCheck }),
+
+          // Navigation
+          React.createElement("div", { style: { display: "flex", gap: "8px", marginTop: "20px" } },
+            step > 0 && React.createElement("button", { style: { flex: 1, padding: "12px", borderRadius: "12px", border: "none", background: "rgba(255,255,255,0.06)", color: "#999", fontSize: "14px", fontWeight: 700 }, onClick: () => setStep(step - 1) }, "← Vorige"),
+            React.createElement("button", { style: { flex: 2, padding: "12px", borderRadius: "12px", border: "none", background: COL, color: "#fff", fontSize: "14px", fontWeight: 800 }, onClick: () => {
+              if (isLast) { progress.markTheoryDone(activeSec); forceUpdate(n => n + 1); setMode("home"); }
+              else setStep(step + 1);
+            } }, isLast ? "✅ Theorie afgerond!" : "Volgende →"))
+        )));
+  }
+
+  // ===== RENDER PRACTICE / QUIZ =====
+  if (mode === "practice") {
+    const q = questions[qIdx];
+    const sec = activeSec ? SECTIONS.find(s => s.id === activeSec) : null;
+    return React.createElement("div", { style: { minHeight: "100vh" } },
+      React.createElement("div", { style: { background: "rgba(0,0,0,0.3)", backdropFilter: "blur(12px)", borderBottom: "1px solid " + bdr, padding: "14px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", position: "sticky", top: 0, zIndex: 50 } },
+        React.createElement("button", { style: { background: "none", border: "none", color: "#666", fontSize: "16px" }, onClick: () => setMode("home") }, "✕"),
+        React.createElement("div", { style: { fontSize: "14px", fontWeight: 700, color: COL } }, quizMode === "quiz" ? "🎯 Eindtoets" : "✏️ " + (sec ? sec.title : "")),
+        React.createElement("div", { style: { fontSize: "12px", color: "#666" } }, (qIdx + 1) + "/" + questions.length)),
+
+      React.createElement("div", { style: { maxWidth: "640px", margin: "0 auto", padding: "20px 14px 60px" } },
+        pBar(((qIdx + 1) / questions.length) * 100, COL, "4px"),
+        React.createElement("div", { style: { display: "flex", justifyContent: "center", gap: "16px", marginTop: "12px", marginBottom: "16px" } },
+          React.createElement("span", { style: { fontSize: "13px", color: "#6bcb77" } }, "✓ " + score.correct),
+          React.createElement("span", { style: { fontSize: "13px", color: "#ff6b6b" } }, "✕ " + (score.total - score.correct))),
+
+        React.createElement("div", { key: qIdx, className: "fade-in" },
+          React.createElement("div", { style: { background: cBg, borderRadius: "16px", padding: "20px", border: "1px solid " + bdr, marginBottom: "16px" } },
+            React.createElement("div", { style: { fontSize: "16px", fontWeight: 700, lineHeight: 1.6 } }, q.q)),
+
+          q.o.map((opt, i) => {
+            const isCorrect = i === q.c;
+            const isSelected = answered === i;
+            const showResult = answered !== null;
+            let bg = "rgba(255,255,255,0.04)";
+            let border2 = bdr;
+            let col = "#ccc";
+            if (showResult && isCorrect) { bg = "rgba(107,203,119,0.15)"; border2 = "#6bcb7750"; col = "#6bcb77"; }
+            else if (showResult && isSelected && !isCorrect) { bg = "rgba(255,107,107,0.15)"; border2 = "#ff6b6b50"; col = "#ff6b6b"; }
+
+            return React.createElement("button", { key: i, style: { width: "100%", padding: "14px 16px", borderRadius: "12px", border: "1px solid " + border2, background: bg, color: col, fontSize: "14px", fontWeight: 600, textAlign: "left", marginBottom: "8px", transition: "all 0.2s" }, onClick: () => handleAnswer(i) },
+              (showResult && isCorrect ? "✅ " : showResult && isSelected ? "❌ " : "") + opt);
+          }),
+
+          answered !== null && React.createElement("button", { style: { width: "100%", padding: "14px", borderRadius: "14px", border: "none", background: COL, color: "#fff", fontSize: "15px", fontWeight: 800, marginTop: "8px" }, onClick: nextQuestion },
+            qIdx + 1 < questions.length ? "Volgende vraag →" : "Bekijk resultaat"))));
+  }
+
+  // ===== RENDER RESULTS =====
+  if (mode === "results") {
+    const pct = score.total > 0 ? Math.round(score.correct / score.total * 100) : 0;
+    const passed = pct >= 70;
+    return React.createElement("div", { style: { minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" } },
+      React.createElement("div", { style: { maxWidth: "400px", padding: "20px", textAlign: "center" } },
+        React.createElement("div", { style: { fontSize: "64px", marginBottom: "16px" } }, passed ? "🎉" : "💪"),
+        React.createElement("div", { style: { fontSize: "24px", fontWeight: 900, marginBottom: "8px", color: passed ? "#6bcb77" : "#ffd93d" } }, passed ? "Goed gedaan!" : "Blijf oefenen!"),
+        React.createElement("div", { style: { fontSize: "48px", fontWeight: 900, color: passed ? "#6bcb77" : "#ffd93d", marginBottom: "8px" } }, pct + "%"),
+        React.createElement("div", { style: { fontSize: "15px", color: "#999", marginBottom: "24px" } }, score.correct + " van " + score.total + " correct"),
+        passed && quizMode === "quiz" && React.createElement("div", { style: { background: "rgba(107,203,119,0.1)", borderRadius: "12px", padding: "12px", marginBottom: "16px", border: "1px solid rgba(107,203,119,0.2)" } },
+          React.createElement("div", { style: { fontSize: "13px", color: "#6bcb77" } }, "✅ Je beheerst de stof van par 1.3!")),
+        React.createElement("div", { style: { display: "flex", gap: "8px" } },
+          React.createElement("button", { style: { flex: 1, padding: "12px", borderRadius: "12px", border: "none", background: "rgba(255,255,255,0.06)", color: "#999", fontSize: "14px", fontWeight: 700 }, onClick: () => setMode("home") }, "← Terug"),
+          React.createElement("button", { style: { flex: 1, padding: "12px", borderRadius: "12px", border: "none", background: COL, color: "#fff", fontSize: "14px", fontWeight: 800 }, onClick: () => { quizMode === "quiz" ? startFinalQuiz() : startPractice(activeSec); } }, "Opnieuw"))));
+  }
+
+  return null;
+}
+
+// Theory check component
+function TheoryCheck({ step, secId, onRecord }) {
+  const [picked, setPicked] = useState(null);
+  const handle = (i) => {
+    if (picked !== null) return;
+    setPicked(i);
+    onRecord(i, step.correct, secId);
+  };
+  return React.createElement("div", { style: { background: "rgba(77,150,255,0.08)", borderRadius: "16px", padding: "20px", border: "1px solid rgba(77,150,255,0.2)" } },
+    React.createElement("div", { style: { fontSize: "12px", color: "#4d96ff", fontWeight: 700, marginBottom: "6px" } }, "❓ CHECK"),
+    React.createElement("div", { style: { fontSize: "16px", fontWeight: 700, marginBottom: "14px" } }, step.question),
+    step.options.map((opt, i) => {
+      const correct = i === step.correct;
+      const selected = picked === i;
+      const show = picked !== null;
+      let bg = "rgba(255,255,255,0.04)", brd = "rgba(255,255,255,0.06)", col = "#ccc";
+      if (show && correct) { bg = "rgba(107,203,119,0.15)"; brd = "#6bcb7750"; col = "#6bcb77"; }
+      else if (show && selected && !correct) { bg = "rgba(255,107,107,0.15)"; brd = "#ff6b6b50"; col = "#ff6b6b"; }
+      return React.createElement("button", { key: i, style: { width: "100%", padding: "12px 14px", borderRadius: "10px", border: "1px solid " + brd, background: bg, color: col, fontSize: "13px", fontWeight: 600, textAlign: "left", marginBottom: "6px" }, onClick: () => handle(i) },
+        (show && correct ? "✅ " : show && selected ? "❌ " : "") + opt);
+    }));
+}
+
+ReactDOM.render(React.createElement(App), document.getElementById("root"));
+</script>
+</body>
+</html>

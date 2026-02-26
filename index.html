@@ -2,42 +2,103 @@
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Studieplan Stijn – PW maart 2026</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{min-height:100vh;background:linear-gradient(160deg,#0c0c20,#141432 40%,#0e0e28);font-family:'Nunito',sans-serif;color:#ddd;display:flex;align-items:center;justify-content:center;padding:20px}
-.container{max-width:400px;width:100%;text-align:center}
-h1{font-size:28px;font-weight:900;margin-bottom:4px;background:linear-gradient(90deg,#ff6b6b,#feca57,#48dbfb,#6bcb77);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.sub{color:#777;font-size:14px;margin-bottom:32px}
-.card{display:block;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:24px;margin-bottom:14px;text-decoration:none;color:#ddd;transition:transform 0.2s,box-shadow 0.2s}
-.card:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,0.3)}
-.card .icon{font-size:36px;margin-bottom:10px}
-.card .title{font-size:18px;font-weight:800;margin-bottom:4px}
-.card .desc{font-size:13px;color:#888}
-.footer{margin-top:24px;font-size:11px;color:#444}
+body{background:linear-gradient(160deg,#0a0e1a,#111830 50%,#0c1020);font-family:'Nunito',sans-serif;color:#ddd;min-height:100vh;display:flex;align-items:center;justify-content:center}
+a{text-decoration:none}
+.card{background:rgba(255,255,255,0.04);border-radius:16px;padding:18px;border:1px solid rgba(255,255,255,0.06);margin-bottom:10px;display:flex;align-items:center;gap:14px;transition:all 0.2s}
+.card:hover{background:rgba(255,255,255,0.08);transform:translateY(-1px)}
+.card:active{transform:scale(0.98)}
+.soon{opacity:0.4;pointer-events:none}
 </style>
 </head>
 <body>
-<div class="container">
-  <div style="font-size:48px;margin-bottom:12px">📚</div>
-  <h1>Studieplan Stijn</h1>
-  <div class="sub">Proefwerkweek maart 2026</div>
+<div style="max-width:420px;width:100%;padding:20px">
+  <div style="text-align:center;margin-bottom:24px">
+    <div style="font-size:28px;font-weight:900;background:linear-gradient(90deg,#ff6b6b,#feca57,#48dbfb,#6bcb77);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px">Studieplan Stijn</div>
+    <div style="font-size:13px;color:#666">Proefwerkweek maart 2026</div>
+  </div>
 
-  <a href="trainer.html" class="card">
-    <div class="icon">🧮</div>
-    <div class="title">Wiskunde H6 Trainer</div>
-    <div class="desc">Theorie leren + oefenen met 3 niveaus</div>
+  <a href="dashboard.html" class="card" style="border-color:rgba(77,150,255,0.2);background:rgba(77,150,255,0.06)">
+    <span style="font-size:28px">📋</span>
+    <div>
+      <div style="font-size:15px;font-weight:800;color:#4d96ff">Studieplan Dashboard</div>
+      <div style="font-size:12px;color:#777">Planning, voortgang & proefwerken</div>
+    </div>
   </a>
 
-  <a href="dashboard.html" class="card">
-    <div class="icon">📋</div>
-    <div class="title">Studieplan Dashboard</div>
-    <div class="desc">Dagplanning afvinken + voortgang bijhouden</div>
+  <div style="font-size:12px;color:#555;font-weight:700;margin:16px 0 8px 4px">🎓 TRAINER-APPS</div>
+
+  <a href="trainers/wiskunde-h6/index.html" class="card">
+    <span style="font-size:28px">🧮</span>
+    <div>
+      <div style="font-size:15px;font-weight:700">Wiskunde H6</div>
+      <div style="font-size:12px;color:#777">Formules en letters – Theorie + oefenen</div>
+    </div>
+    <span style="margin-left:auto;font-size:10px;padding:3px 8px;border-radius:6px;background:#3498DB20;color:#3498DB;font-weight:700">ACTIEF</span>
   </a>
 
-  <div class="footer">Gemaakt door papa 💪</div>
+  <a href="trainers/nederlands-1.3/index.html" class="card">
+    <span style="font-size:28px">📖</span>
+    <div>
+      <div style="font-size:15px;font-weight:700">Nederlands 1.3</div>
+      <div style="font-size:12px;color:#777">Lezen – Titel, tussenkopje, alinea</div>
+    </div>
+    <span style="margin-left:auto;font-size:10px;padding:3px 8px;border-radius:6px;background:#E67E2220;color:#E67E22;font-weight:700">NIEUW</span>
+  </a>
+
+  <div class="card soon">
+    <span style="font-size:28px">🇫🇷</span>
+    <div>
+      <div style="font-size:15px;font-weight:700">Frans</div>
+      <div style="font-size:12px;color:#777">Woordjes + grammatica</div>
+    </div>
+    <span style="margin-left:auto;font-size:10px;padding:3px 8px;border-radius:6px;background:rgba(255,255,255,0.06);color:#555;font-weight:700">BINNENKORT</span>
+  </div>
+
+  <div class="card soon">
+    <span style="font-size:28px">📜</span>
+    <div>
+      <div style="font-size:15px;font-weight:700">Geschiedenis</div>
+      <div style="font-size:12px;color:#777">Par 4.1-4.3 + vaardigheden</div>
+    </div>
+    <span style="margin-left:auto;font-size:10px;padding:3px 8px;border-radius:6px;background:rgba(255,255,255,0.06);color:#555;font-weight:700">BINNENKORT</span>
+  </div>
+
+  <div class="card soon">
+    <span style="font-size:28px">🌿</span>
+    <div>
+      <div style="font-size:15px;font-weight:700">Biologie</div>
+      <div style="font-size:12px;color:#777">Thema 3 Ordening</div>
+    </div>
+    <span style="margin-left:auto;font-size:10px;padding:3px 8px;border-radius:6px;background:rgba(255,255,255,0.06);color:#555;font-weight:700">BINNENKORT</span>
+  </div>
+
+  <div class="card soon">
+    <span style="font-size:28px">🌍</span>
+    <div>
+      <div style="font-size:15px;font-weight:700">Aardrijkskunde</div>
+      <div style="font-size:12px;color:#777">H4 par 1-5</div>
+    </div>
+    <span style="margin-left:auto;font-size:10px;padding:3px 8px;border-radius:6px;background:rgba(255,255,255,0.06);color:#555;font-weight:700">BINNENKORT</span>
+  </div>
+
+  <div class="card soon">
+    <span style="font-size:28px">🎨</span>
+    <div>
+      <div style="font-size:15px;font-weight:700">Tekenen / HV</div>
+      <div style="font-size:12px;color:#777">Begrippen + stijlen herkennen</div>
+    </div>
+    <span style="margin-left:auto;font-size:10px;padding:3px 8px;border-radius:6px;background:rgba(255,255,255,0.06);color:#555;font-weight:700">BINNENKORT</span>
+  </div>
+
+  <div style="text-align:center;margin-top:20px;font-size:11px;color:#444">
+    Versie 4.0 · do 26 feb 2026
+  </div>
 </div>
 </body>
 </html>
