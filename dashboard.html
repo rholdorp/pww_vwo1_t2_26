@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Studieplan Stijn – PW maart 2026</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>*{box-sizing:border-box;margin:0;padding:0}body{background:linear-gradient(160deg,#0a0e1a,#111830 50%,#0c1020);font-family:'Nunito',sans-serif;color:#ddd;min-height:100vh}button{font-family:inherit}button:active{transform:scale(0.97)}</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+</head>
+<body><div id="root"></div>
+<script type="text/babel">
+const{useState,useEffect}=React;
+const ST="stijn_studieplan_v4";
+const load=()=>{try{return JSON.parse(localStorage.getItem(ST))}catch{return null}};
+const save=s=>{try{localStorage.setItem(ST,JSON.stringify(s))}catch{}};
+const loadTrainer=()=>{try{return JSON.parse(localStorage.getItem("wiskunde_h6_v2"))}catch{return null}};
+
+const Cd={WISK:"#3498DB",NED:"#E67E22",FRAN:"#9B59B6",GESCH:"#E74C3C",BIO:"#27AE60",AK:"#F1C40F",TKHV:"#1ABC9C"};
+const EXAMS=[{subject:"Wiskunde",date:"2026-03-12",color:Cd.WISK},{subject:"Nederlands",date:"2026-03-12",color:Cd.NED},{subject:"Frans",date:"2026-03-13",color:Cd.FRAN},{subject:"Geschiedenis",date:"2026-03-13",color:Cd.GESCH},{subject:"Biologie",date:"2026-03-17",color:Cd.BIO},{subject:"Aardrijkskunde",date:"2026-03-18",color:Cd.AK},{subject:"Tekenen/HV",date:"2026-03-18",color:Cd.TKHV}];
+const PHASES=[
+  {id:1,name:"Fase 1: Leren",range:"do 26 feb – wo 4 mrt",color:"#D35400",desc:"Alle stof voor het eerst doorwerken"},
+  {id:2,name:"Fase 2: Herhalen",range:"do 5 – zo 8 mrt",color:"#2E86C1",desc:"Herhalen + resterende nieuwe stof"},
+  {id:3,name:"Fase 3: Intensief",range:"ma 9 + di 10 mrt",color:"#8E44AD",desc:"Oefentoetsen, alles moet nu zitten"},
+  {id:4,name:"Fase 4: Laatste check",range:"wo 11 mrt",color:"#C0392B",desc:"Alleen opfrissen en zwakke punten"},
+  {id:5,name:"Fase 5: Proefwerkweek",range:"do 12 – wo 18 mrt",color:"#C0392B",desc:"Proefwerken + lichte herhaling"}];
+
+function mk(id,time,subject,activity,color,dur){return{id,time,subject,activity,color,dur}}
+
+const DAYS=[
+// ===== FASE 1: do 26 feb – wo 4 mrt (alle stof 1x doorwerken) =====
+// Do 26 feb — geen sport, schooldag, 3 blokken
+{date:"2026-02-26",label:"Donderdag 26 feb",phase:1,sport:false,tasks:[
+  mk("f1-1a","16:50","Wiskunde","H5 deel 1: theorie + voorbeelden doorrekenen",Cd.WISK,20),
+  mk("f1-1b","19:30","Nederlands","Par 1.3: theorie doorlezen, kernbegrippen",Cd.NED,20),
+  mk("f1-1c","20:00","Frans","Voc pg 131 (1e helft): woordjes leren",Cd.FRAN,20)]},
+// Vr 27 feb — geen sport, 3 blokken
+{date:"2026-02-27",label:"Vrijdag 27 feb",phase:1,sport:false,tasks:[
+  mk("f1-2a","16:50","Wiskunde","H5 deel 2: theorie + oefenopgaven",Cd.WISK,20),
+  mk("f1-2b","19:30","Nederlands","Par 2.3: theorie doorwerken",Cd.NED,20),
+  mk("f1-2c","20:00","Geschiedenis","Blz 10-11 + par 4.1: lezen + aantekeningen",Cd.GESCH,20)]},
+// Za 28 feb — SPORT (squash), weekend, studie in de middag
+{date:"2026-02-28",label:"Zaterdag 28 feb",phase:1,sport:true,tasks:[
+  mk("f1-3a","13:30","Frans","Voc pg 131 (2e helft) + herhaling",Cd.FRAN,20),
+  mk("f1-3b","13:50","Geschiedenis","Par 4.2: lezen + schema maken",Cd.GESCH,20),
+  mk("f1-3c","14:10","Biologie","Basisstof 1+2: theorie + schema's",Cd.BIO,20)]},
+// Zo 1 mrt — SPORT (squash), studie in de middag
+{date:"2026-03-01",label:"Zondag 1 mrt",phase:1,sport:true,tasks:[
+  mk("f1-4a","13:30","Wiskunde","H6 deel 1: theorie lezen + voorbeelden",Cd.WISK,20),
+  mk("f1-4b","13:50","Aardrijkskunde","H4 par 1: theorie + begrippen",Cd.AK,20),
+  mk("f1-4c","14:10","Nederlands","Par 3.3: theorie + tekst analyseren",Cd.NED,20)]},
+// Ma 2 mrt — geen sport, 3 blokken
+{date:"2026-03-02",label:"Maandag 2 mrt",phase:1,sport:false,tasks:[
+  mk("f1-5a","16:50","Wiskunde","H6 deel 2: theorie + oefenopgaven",Cd.WISK,20),
+  mk("f1-5b","19:30","Frans","Grammatica: avoir + être vervoegen",Cd.FRAN,20),
+  mk("f1-5c","20:00","Biologie","Basisstof 3+4: theorie + determineren",Cd.BIO,20)]},
+// Di 3 mrt — SPORT, 2 blokken
+{date:"2026-03-03",label:"Dinsdag 3 mrt",phase:1,sport:true,tasks:[
+  mk("f1-6a","19:30","Geschiedenis","Par 4.3: theorie + vaardigheden",Cd.GESCH,20),
+  mk("f1-6b","20:00","Nederlands","Par 4.3 + 5.3: theorie doorwerken",Cd.NED,20)]},
+// Wo 4 mrt — geen sport, 3 blokken
+{date:"2026-03-04",label:"Woensdag 4 mrt",phase:1,sport:false,tasks:[
+  mk("f1-7a","16:50","Frans","Gramm: -ER werkwoorden + bez.vnw",Cd.FRAN,20),
+  mk("f1-7b","19:30","Aardrijkskunde","H4 par 2: theorie + kaartwerk",Cd.AK,20),
+  mk("f1-7c","20:00","Biologie","Basisstof 5+6: theorie doorwerken",Cd.BIO,20)]},
+
+// ===== FASE 2: do 5 – zo 8 mrt (herhalen + restjes) =====
+// Do 5 mrt — geen sport, 3 blokken
+{date:"2026-03-05",label:"Donderdag 5 mrt",phase:2,sport:false,tasks:[
+  mk("f2-1a","16:50","Wiskunde","H5 herhaling: samenvatting + opgaven",Cd.WISK,20),
+  mk("f2-1b","19:30","Nederlands","Par 1.3-2.3 herhaling: begrippen overhoren",Cd.NED,20),
+  mk("f2-1c","20:00","Aardrijkskunde","H4 par 3 (nieuw): doorwerken",Cd.AK,20)]},
+// Vr 6 mrt — geen sport, 3 blokken
+{date:"2026-03-06",label:"Vrijdag 6 mrt",phase:2,sport:false,tasks:[
+  mk("f2-2a","16:50","Wiskunde","H6 herhaling: oefenopgaven + trainer",Cd.WISK,20),
+  mk("f2-2b","19:30","Frans","Alle woordjes + grammatica herhalen",Cd.FRAN,20),
+  mk("f2-2c","20:00","Aardrijkskunde","H4 par 4+5 (nieuw): doorwerken",Cd.AK,20)]},
+// Za 7 mrt — SPORT, weekend, studie in de middag
+{date:"2026-03-07",label:"Zaterdag 7 mrt",phase:2,sport:true,tasks:[
+  mk("f2-3a","13:30","Biologie","Extra stof 7+8 (nieuw): doorwerken",Cd.BIO,20),
+  mk("f2-3b","13:50","Tekenen/HV","Theorie: landschap + kleur + architectuur",Cd.TKHV,20),
+  mk("f2-3c","14:10","Geschiedenis","Alle par herhaling + vaardigheden",Cd.GESCH,20)]},
+// Zo 8 mrt — geen sport, weekend, studie in de ochtend
+{date:"2026-03-08",label:"Zondag 8 mrt",phase:2,sport:false,tasks:[
+  mk("f2-4a","10:00","Nederlands","Par 3.3-5.3 herhaling",Cd.NED,20),
+  mk("f2-4b","10:20","Wiskunde","H5+H6 zwakke punten oefenen",Cd.WISK,20),
+  mk("f2-4c","10:40","Frans","Complete voc + gramm herhaling",Cd.FRAN,20)]},
+
+// ===== FASE 3: ma 9 + di 10 mrt (intensief) =====
+// Ma 9 mrt — geen sport, 3+ blokken intensief
+{date:"2026-03-09",label:"Maandag 9 mrt ⚡",phase:3,sport:false,intensive:true,tasks:[
+  mk("f3-1a","16:50","Wiskunde","H5+H6 oefentoets simuleren",Cd.WISK,20),
+  mk("f3-1b","19:30","Nederlands","Oefenproefwerk: tekst + vragen op tijd",Cd.NED,20),
+  mk("f3-1c","20:00","Geschiedenis","Alles herhalen + oefenvragen",Cd.GESCH,20),
+  mk("f3-1d","20:30","Biologie","Basisstof 1-4 herhaling + oefenvragen",Cd.BIO,20),
+  mk("f3-1e","20:50","Aardrijkskunde","H4 complete herhaling + basisboeknrs",Cd.AK,20)]},
+// Di 10 mrt — SPORT (normaal schema), 2+ blokken intensief
+{date:"2026-03-10",label:"Dinsdag 10 mrt ⚡",phase:3,sport:true,intensive:true,tasks:[
+  mk("f3-2a","19:30","Wiskunde","Oefentoets nakijken + fouten herhalen",Cd.WISK,20),
+  mk("f3-2b","20:00","Frans","Complete herhaling: woordjes + gramm",Cd.FRAN,20),
+  mk("f3-2c","20:30","Biologie","Basisstof 5-6 + extra 7-8 + determineren",Cd.BIO,20),
+  mk("f3-2d","20:50","Tekenen/HV","Begrippen + stijlen herkennen oefenen",Cd.TKHV,20)]},
+
+// ===== FASE 4: wo 11 mrt (laatste check) =====
+{date:"2026-03-11",label:"Woensdag 11 mrt",phase:4,sport:false,tasks:[
+  mk("f4-1a","16:50","Wiskunde","⚠️ Zwakke punten: moeilijkste opgaven",Cd.WISK,20),
+  mk("f4-1b","19:30","Nederlands","⚠️ Kernbegrippen: laatste check",Cd.NED,20),
+  mk("f4-1c","20:00","Frans","⚠️ Woordjes + gramm snel checken",Cd.FRAN,20)]},
+
+// ===== FASE 5: do 12 – wo 18 mrt (proefwerkweek) =====
+// Do 12 mrt — PW Wisk+Ned, SPORT (do), 2 blokken
+{date:"2026-03-12",label:"Donderdag 12 mrt 📝",phase:5,sport:true,exam:["Wiskunde","Nederlands"],tasks:[
+  mk("f5-1a","19:30","Frans","Morgen PW! Alle woordjes doorlopen",Cd.FRAN,20),
+  mk("f5-1b","20:00","Geschiedenis","Morgen PW! Samenvatting herlezen",Cd.GESCH,20)]},
+// Vr 13 mrt — PW Frans+Gesch, geen sport, 3 blokken
+{date:"2026-03-13",label:"Vrijdag 13 mrt 📝",phase:5,sport:false,exam:["Frans","Geschiedenis"],tasks:[
+  mk("f5-2a","16:50","Biologie","Herhaling samenvatting thema 3",Cd.BIO,20),
+  mk("f5-2b","19:30","Aardrijkskunde","H4 samenvatting doorlezen",Cd.AK,20),
+  mk("f5-2c","20:00","Tekenen/HV","Begrippen doorlopen",Cd.TKHV,20)]},
+// Za 14 mrt — SPORT (za), weekend intensief
+{date:"2026-03-14",label:"Zaterdag 14 mrt ⚡",phase:5,sport:true,intensive:true,tasks:[
+  mk("f5-3a","13:00","Biologie","Basisstof 1-3 herhaling",Cd.BIO,20),
+  mk("f5-3b","13:20","Aardrijkskunde","Par 1-2 herhaling",Cd.AK,20),
+  mk("f5-3c","13:40","Tekenen/HV","Landschap + kleurenleer",Cd.TKHV,20),
+  mk("f5-3d","16:00","Biologie","Basisstof 4-6 + determineren",Cd.BIO,20),
+  mk("f5-3e","16:20","Aardrijkskunde","Par 3-5 + basisboeknrs",Cd.AK,20),
+  mk("f5-3f","16:40","Tekenen/HV","HV architectuur begrippen",Cd.TKHV,20),
+  mk("f5-3g","19:30","Biologie","Extra stof 7+8 herhaling",Cd.BIO,20)]},
+// Zo 15 mrt — geen sport, weekend intensief
+{date:"2026-03-15",label:"Zondag 15 mrt ⚡",phase:5,sport:false,intensive:true,tasks:[
+  mk("f5-4a","10:00","Biologie","Oefentoets simuleren",Cd.BIO,20),
+  mk("f5-4b","10:20","Aardrijkskunde","Oefentoets",Cd.AK,20),
+  mk("f5-4c","10:40","Tekenen/HV","Complete herhaling",Cd.TKHV,20),
+  mk("f5-4d","14:00","Biologie","Oefentoets nakijken + zwakke punten",Cd.BIO,20),
+  mk("f5-4e","14:20","Aardrijkskunde","Oefentoets nakijken",Cd.AK,20),
+  mk("f5-4f","14:40","Tekenen/HV","Laatste check afbeeldingen",Cd.TKHV,20)]},
+// Ma 16 mrt — geen sport, 3 blokken
+{date:"2026-03-16",label:"Maandag 16 mrt",phase:5,sport:false,tasks:[
+  mk("f5-5a","16:50","Biologie","⚠️ Morgen PW! Samenvatting + zwakke punten",Cd.BIO,20),
+  mk("f5-5b","19:30","Aardrijkskunde","⚠️ Overmorgen PW! Samenvatting",Cd.AK,20),
+  mk("f5-5c","20:00","Tekenen/HV","⚠️ Overmorgen PW! Alles doorlopen",Cd.TKHV,20)]},
+// Di 17 mrt — PW Bio, SPORT (di), 2 blokken
+{date:"2026-03-17",label:"Dinsdag 17 mrt 📝",phase:5,sport:true,exam:["Biologie"],tasks:[
+  mk("f5-6a","19:30","Aardrijkskunde","Morgen PW! Snel doorlopen",Cd.AK,20),
+  mk("f5-6b","20:00","Tekenen/HV","Morgen PW! Begrippen + stijlen",Cd.TKHV,20)]},
+// Wo 18 mrt — PW AK+TK/HV 🎉
+{date:"2026-03-18",label:"Woensdag 18 mrt 📝🎉",phase:5,sport:false,exam:["Aardrijkskunde","Tekenen/HV"],tasks:[]}
+];
+
+function App(){
+const[ck,setCk]=useState(()=>load()||{});
+const[expDay,setExpDay]=useState(null);
+const[view,setView]=useState("plan");
+const[selPhase,setSelPhase]=useState(null);
+const[trainer,setTrainer]=useState(null);
+useEffect(()=>{save(ck)},[ck]);
+useEffect(()=>{setTrainer(loadTrainer())},[view]);
+
+const toggle=id=>setCk(c=>{const n={...c};if(n[id])delete n[id];else n[id]=Date.now();return n});
+const isC=id=>!!ck[id];
+const totalT=DAYS.reduce((s,d)=>s+d.tasks.length,0);
+const doneT=DAYS.reduce((s,d)=>s+d.tasks.filter(t=>isC(t.id)).length,0);
+const totalPct=totalT>0?Math.round(doneT/totalT*100):0;
+const today=new Date().toISOString().slice(0,10);
+const subjects=["Wiskunde","Nederlands","Frans","Geschiedenis","Biologie","Aardrijkskunde","Tekenen/HV"];
+const subCol={Wiskunde:Cd.WISK,Nederlands:Cd.NED,Frans:Cd.FRAN,Geschiedenis:Cd.GESCH,Biologie:Cd.BIO,Aardrijkskunde:Cd.AK,"Tekenen/HV":Cd.TKHV};
+const subSt=subj=>{let t=0,d=0;DAYS.forEach(dy=>dy.tasks.forEach(tk=>{if(tk.subject===subj){t++;if(isC(tk.id))d++}}));return{total:t,done:d,pct:t>0?Math.round(d/t*100):0}};
+const firstExam=new Date("2026-03-12");const now=new Date();
+const daysUntil=Math.max(0,Math.ceil((firstExam-now)/(1000*60*60*24)));
+const phaseSt=pid=>{let t=0,d=0;DAYS.filter(dy=>dy.phase===pid).forEach(dy=>dy.tasks.forEach(tk=>{t++;if(isC(tk.id))d++}));return{total:t,done:d,pct:t>0?Math.round(d/t*100):0}};
+const trainerSt=()=>{if(!trainer)return null;let m=0;["6.1","6.2","6.3","6.4","6.5","6.6"].forEach(s=>{const d=trainer[s];if(d&&d.total>=5&&d.correct/d.total>=0.7)m++});return{mastered:m,pct:Math.round(m/6*100)}};
+
+const bdr="rgba(255,255,255,0.06)",cBg="rgba(255,255,255,0.04)";
+const tag=(c,txt)=>React.createElement("span",{style:{display:"inline-block",padding:"2px 8px",borderRadius:"6px",fontSize:"10px",fontWeight:700,background:c+"20",color:c}},txt);
+const pBar=(pct,c,h)=>React.createElement("div",{style:{height:h||"6px",borderRadius:"3px",background:"rgba(255,255,255,0.06)",position:"relative",overflow:"hidden"}},React.createElement("div",{style:{position:"absolute",top:0,left:0,height:"100%",width:Math.min(pct,100)+"%",background:c||"#4d96ff",borderRadius:"3px",transition:"width 0.6s"}}));
+
+return React.createElement("div",{style:{minHeight:"100vh"}},
+// Header
+React.createElement("div",{style:{background:"rgba(0,0,0,0.3)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+bdr,padding:"14px 20px",display:"flex",justifyContent:"space-between",alignItems:"center",position:"sticky",top:0,zIndex:50}},
+  React.createElement("div",{style:{fontSize:"17px",fontWeight:900,background:"linear-gradient(90deg,#ff6b6b,#feca57,#48dbfb,#6bcb77)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}},"Studieplan Stijn"),
+  React.createElement("div",{style:{fontSize:"12px",color:"#666"}},"PW maart 2026")),
+
+React.createElement("div",{style:{maxWidth:"640px",margin:"0 auto",padding:"16px 14px 60px"}},
+// Hero stats
+React.createElement("div",{style:{background:cBg,borderRadius:"16px",padding:"18px",border:"1px solid "+bdr,marginBottom:"12px",textAlign:"center"}},
+  React.createElement("div",{style:{display:"flex",justifyContent:"space-around",marginBottom:"12px"}},
+    React.createElement("div",null,React.createElement("div",{style:{fontSize:"28px",fontWeight:900,color:"#4d96ff"}},daysUntil),React.createElement("div",{style:{fontSize:"11px",color:"#777"}},"dagen tot PW")),
+    React.createElement("div",null,React.createElement("div",{style:{fontSize:"28px",fontWeight:900,color:totalPct===100?"#6bcb77":"#ffd93d"}},totalPct+"%"),React.createElement("div",{style:{fontSize:"11px",color:"#777"}},"voltooid")),
+    React.createElement("div",null,React.createElement("div",{style:{fontSize:"28px",fontWeight:900,color:"#ff6b6b"}},doneT+"/"+totalT),React.createElement("div",{style:{fontSize:"11px",color:"#777"}},"taken klaar"))),
+  pBar(totalPct,"linear-gradient(90deg,#4d96ff,#6bcb77)","8px")),
+
+// Trainer card
+(()=>{const ts=trainerSt();return React.createElement("div",{style:{background:cBg,borderRadius:"14px",padding:"14px 16px",border:"1px solid "+bdr,marginBottom:"12px",display:"flex",alignItems:"center",gap:"12px"}},
+  React.createElement("span",{style:{fontSize:"24px"}},"🧮"),
+  React.createElement("div",{style:{flex:1}},React.createElement("div",{style:{fontSize:"13px",fontWeight:700}},"Wiskunde H6 Trainer"),ts?React.createElement("div",null,React.createElement("div",{style:{fontSize:"11px",color:ts.mastered>=6?"#6bcb77":"#ffd93d"}},ts.mastered+"/6 beheerst"),pBar(ts.pct,Cd.WISK,"4px")):React.createElement("div",{style:{fontSize:"11px",color:"#777"}},"Open de Trainer-app om te oefenen")),
+  ts?tag(ts.mastered>=6?"#6bcb77":"#ffd93d",ts.pct+"%"):tag("#888","niet gestart"))})(),
+
+// Tabs
+React.createElement("div",{style:{display:"flex",gap:"4px",background:"rgba(255,255,255,0.04)",borderRadius:"12px",padding:"4px",marginBottom:"20px"}},
+  ["plan","subjects","exams","info"].map((v,i)=>React.createElement("button",{key:v,style:{flex:1,padding:"8px 4px",borderRadius:"10px",border:"none",background:view===v?"rgba(255,255,255,0.1)":"transparent",color:view===v?"#fff":"#666",fontSize:"12px",fontWeight:700,cursor:"pointer",textAlign:"center"},onClick:()=>setView(v)},["📋 Plan","📊 Vakken","📝 PW","📅 Info"][i]))),
+
+// ====== PLAN VIEW ======
+view==="plan"&&PHASES.map(phase=>{const ps=phaseSt(phase.id),pDays=DAYS.filter(d=>d.phase===phase.id),isOpen=selPhase===phase.id||selPhase===null;
+return React.createElement("div",{key:phase.id,style:{marginBottom:"16px"}},
+  React.createElement("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 14px",borderRadius:"12px",background:phase.color+"12",border:"1px solid "+phase.color+"25",cursor:"pointer",marginBottom:"8px"},onClick:()=>setSelPhase(selPhase===phase.id?null:phase.id)},
+    React.createElement("div",null,React.createElement("div",{style:{fontSize:"14px",fontWeight:800,color:phase.color}},phase.name),React.createElement("div",{style:{fontSize:"11px",color:"#777"}},phase.range)),
+    React.createElement("div",{style:{textAlign:"right"}},React.createElement("div",{style:{fontSize:"15px",fontWeight:800,color:ps.pct===100?"#6bcb77":"#fff"}},ps.done+"/"+ps.total),React.createElement("div",{style:{fontSize:"10px",color:"#777"}},isOpen?"▼":"▶"))),
+  isOpen&&pDays.map(day=>{const isToday=day.date===today,dayD=day.tasks.filter(t=>isC(t.id)).length,dayT=day.tasks.length,allD=dayT>0&&dayD===dayT,isExp=expDay===day.date;
+  return React.createElement("div",{key:day.date,style:{background:isToday?"rgba(77,150,255,0.08)":"rgba(255,255,255,0.03)",borderRadius:"14px",border:"1px solid "+(isToday?"rgba(77,150,255,0.25)":bdr),marginBottom:"8px",overflow:"hidden"}},
+    React.createElement("div",{style:{padding:"14px 16px",cursor:"pointer",display:"flex",justifyContent:"space-between",alignItems:"center"},onClick:()=>setExpDay(isExp?null:day.date)},
+      React.createElement("div",{style:{display:"flex",alignItems:"center",gap:"10px"}},
+        React.createElement("div",{style:{width:"28px",height:"28px",borderRadius:"8px",background:allD?"rgba(107,203,119,0.2)":isToday?"rgba(77,150,255,0.15)":"rgba(255,255,255,0.04)",border:"2px solid "+(allD?"#6bcb77":isToday?"#4d96ff":"rgba(255,255,255,0.08)"),display:"flex",alignItems:"center",justifyContent:"center",fontSize:"12px",fontWeight:700,color:allD?"#6bcb77":isToday?"#4d96ff":"#555"}},allD?"✓":dayT===0?"🎉":""+dayD),
+        React.createElement("div",null,
+          React.createElement("div",{style:{fontSize:"14px",fontWeight:700,color:isToday?"#4d96ff":"#ccc"}},day.label,isToday&&React.createElement("span",{style:{marginLeft:"6px",fontSize:"10px",background:"#4d96ff20",color:"#4d96ff",padding:"1px 6px",borderRadius:"4px"}},"VANDAAG")),
+          React.createElement("div",{style:{display:"flex",gap:"4px",marginTop:"3px",flexWrap:"wrap"}},
+            day.sport&&tag("#F39C12","🏃 sport"),day.intensive&&tag("#8E44AD","⚡ intensief"),
+            day.exam&&day.exam.map(e=>React.createElement("span",{key:e},tag("#ff6b6b","📝 PW "+e))),
+            dayT===0&&tag("#6bcb77","🎉 KLAAR!")))),
+      React.createElement("div",{style:{fontSize:"12px",color:"#555"}},isExp?"▲":"▼")),
+    isExp&&day.tasks.map(task=>{const done=isC(task.id);return React.createElement("div",{key:task.id,style:{display:"flex",gap:"12px",alignItems:"center",padding:"10px 16px",borderTop:"1px solid rgba(255,255,255,0.04)",opacity:done?0.5:1,cursor:"pointer"},onClick:()=>toggle(task.id)},
+      React.createElement("div",{style:{width:"22px",height:"22px",borderRadius:"6px",border:"2px solid "+(done?task.color:"rgba(255,255,255,0.15)"),background:done?task.color+"30":"transparent",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"12px",color:task.color,flexShrink:0}},done&&"✓"),
+      React.createElement("div",{style:{flex:1}},
+        React.createElement("div",{style:{display:"flex",alignItems:"center",gap:"6px"}},React.createElement("span",{style:{fontSize:"11px",color:"#666",fontFamily:"monospace"}},task.time),tag(task.color,task.subject)),
+        React.createElement("div",{style:{fontSize:"13px",fontWeight:600,marginTop:"2px",color:done?"#666":"#ccc",textDecoration:done?"line-through":"none"}},task.activity)),
+      React.createElement("span",{style:{fontSize:"11px",color:"#555"}},task.dur+" min"))}),
+    isExp&&dayT===0&&day.exam&&React.createElement("div",{style:{padding:"16px",textAlign:"center"}},React.createElement("div",{style:{fontSize:"32px",marginBottom:"8px"}},"🎉"),React.createElement("div",{style:{fontSize:"15px",fontWeight:700,color:"#6bcb77"}},"Proefwerkweek voorbij!"),React.createElement("div",{style:{fontSize:"12px",color:"#777"}},"Goed gedaan, Stijn!")))}))}),
+
+// ====== SUBJECTS VIEW ======
+view==="subjects"&&subjects.map(subj=>{const st=subSt(subj),c=subCol[subj],exam=EXAMS.find(e=>e.subject===subj);
+return React.createElement("div",{key:subj,style:{background:cBg,borderRadius:"16px",padding:"18px",border:"1px solid "+bdr,marginBottom:"12px"}},
+  React.createElement("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"8px"}},
+    React.createElement("div",{style:{display:"flex",alignItems:"center",gap:"10px"}},React.createElement("div",{style:{width:"10px",height:"10px",borderRadius:"3px",background:c}}),React.createElement("span",{style:{fontSize:"15px",fontWeight:700}},subj)),
+    React.createElement("div",null,React.createElement("span",{style:{fontSize:"14px",fontWeight:800,color:st.pct===100?"#6bcb77":"#fff"}},st.done+"/"+st.total),React.createElement("span",{style:{fontSize:"11px",color:"#666",marginLeft:"6px"}},st.pct+"%"))),
+  pBar(st.pct,c),
+  exam&&React.createElement("div",{style:{fontSize:"11px",color:"#777",marginTop:"8px"}},"📝 PW: "+new Date(exam.date).toLocaleDateString("nl-NL",{weekday:"short",day:"numeric",month:"short"})),
+  subj==="Wiskunde"&&(()=>{const ts=trainerSt();return ts?React.createElement("div",{style:{fontSize:"11px",color:ts.mastered>=6?"#6bcb77":"#ffd93d",marginTop:"4px"}},"🧮 Trainer: "+ts.mastered+"/6 beheerst ("+ts.pct+"%)"):null})())}),
+
+// ====== EXAMS VIEW ======
+view==="exams"&&React.createElement("div",null,
+  React.createElement("div",{style:{background:cBg,borderRadius:"16px",padding:"18px",border:"1px solid "+bdr,textAlign:"center",marginBottom:"16px"}},
+    React.createElement("div",{style:{fontSize:"36px",fontWeight:900,color:daysUntil<=3?"#ff6b6b":"#4d96ff"}},daysUntil===0?"VANDAAG!":"Nog "+daysUntil+" dagen"),
+    React.createElement("div",{style:{fontSize:"13px",color:"#777"}},"tot het eerste proefwerk")),
+  EXAMS.map(exam=>{const d=new Date(exam.date),past=exam.date<today,isT=exam.date===today,dt=Math.max(0,Math.ceil((d-now)/(1000*60*60*24))),st=subSt(exam.subject);
+  return React.createElement("div",{key:exam.subject,style:{background:past?"rgba(107,203,119,0.08)":exam.color+"10",border:"1px solid "+(past?"#6bcb7730":exam.color+"30"),borderRadius:"12px",padding:"14px 16px",marginBottom:"8px",display:"flex",justifyContent:"space-between",alignItems:"center"}},
+    React.createElement("div",null,
+      React.createElement("div",{style:{fontSize:"15px",fontWeight:700,color:past?"#6bcb77":isT?"#ff6b6b":"#ddd"}},(past?"✅ ":isT?"🔥 ":"")+exam.subject),
+      React.createElement("div",{style:{fontSize:"12px",color:"#777"}},d.toLocaleDateString("nl-NL",{weekday:"long",day:"numeric",month:"long"})),
+      React.createElement("div",{style:{fontSize:"11px",color:"#666",marginTop:"2px"}},"Voorbereiding: "+st.done+"/"+st.total+" ("+st.pct+"%)")),
+    past?React.createElement("span",{style:{fontSize:"20px"}},"✅"):isT?React.createElement("span",{style:{fontSize:"14px",fontWeight:800,color:"#ff6b6b"}},"NU!"):React.createElement("div",{style:{textAlign:"right"}},React.createElement("div",{style:{fontSize:"20px",fontWeight:900,color:dt<=3?"#ff6b6b":"#4d96ff"}},dt),React.createElement("div",{style:{fontSize:"10px",color:"#777"}},"dagen")))})),
+
+// ====== INFO VIEW ======
+view==="info"&&React.createElement("div",null,
+// Dagritme normaal
+React.createElement("div",{style:{background:cBg,borderRadius:"16px",padding:"18px",border:"1px solid "+bdr,marginBottom:"12px"}},
+  React.createElement("div",{style:{fontSize:"16px",fontWeight:800,marginBottom:"4px"}},"📗 Normale schooldag"),
+  React.createElement("div",{style:{fontSize:"11px",color:"#777",marginBottom:"12px"}},"ma, wo, vr — 3 studieblokken van 20 min"),
+  ...[["15:20","🏫 Klaar op school",0],["15:50","🚲 Thuis (30 min fietsen)",0],["15:50–16:20","🍩 Pauze + snack",0],["16:20–16:50","📚 Huiswerk",0],["16:50–17:10","📖 Studieblok 1",1],["17:00–19:00","🍽️ Eten + familie",0],["19:00–19:30","Vrije tijd",2],["19:30–19:50","📖 Studieblok 2",1],["19:50–20:00","☕ Korte pauze",0],["20:00–20:20","📖 Studieblok 3",1],["20:20–22:00","Vrije tijd",2],["22:00–22:30","Klaarmaken voor bed",2],["22:30","😴 Slapen",2]].map(([t,a,w],i)=>React.createElement("div",{key:i,style:{display:"flex",gap:"10px",alignItems:"center",padding:"5px 0",borderTop:i?"1px solid rgba(255,255,255,0.03)":"none"}},React.createElement("span",{style:{fontSize:"11px",color:"#777",fontFamily:"monospace",width:"85px",flexShrink:0}},t),React.createElement("span",{style:{fontSize:"13px",color:w===2?"#666":w===1?"#fff":"#ccc",fontWeight:w===1?700:400}},a)))),
+// Dagritme sport
+React.createElement("div",{style:{background:cBg,borderRadius:"16px",padding:"18px",border:"1px solid "+bdr,marginBottom:"12px"}},
+  React.createElement("div",{style:{fontSize:"16px",fontWeight:800,marginBottom:"4px"}},"🏃 Sportdag"),
+  React.createElement("div",{style:{fontSize:"11px",color:"#777",marginBottom:"12px"}},"di, do — 2 studieblokken van 20 min"),
+  ...[["15:50–16:20","🍩 Pauze + snack",0],["16:20–16:50","📚 Huiswerk",0],["16:30–18:30","🏃 Sport (2 uur)",1],["18:30–19:30","🍽️ Eten + uitrusten",0],["19:30–19:50","📖 Studieblok 1",1],["19:50–20:00","☕ Korte pauze",0],["20:00–20:20","📖 Studieblok 2",1],["20:20–22:00","Vrije tijd",2],["22:30","😴 Slapen",2]].map(([t,a,w],i)=>React.createElement("div",{key:i,style:{display:"flex",gap:"10px",alignItems:"center",padding:"5px 0",borderTop:i?"1px solid rgba(255,255,255,0.03)":"none"}},React.createElement("span",{style:{fontSize:"11px",color:"#777",fontFamily:"monospace",width:"85px",flexShrink:0}},t),React.createElement("span",{style:{fontSize:"13px",color:w===2?"#666":w===1?"#fff":"#ccc",fontWeight:w===1?700:400}},a)))),
+// Weekend
+React.createElement("div",{style:{background:cBg,borderRadius:"16px",padding:"18px",border:"1px solid "+bdr,marginBottom:"12px"}},
+  React.createElement("div",{style:{fontSize:"16px",fontWeight:800,marginBottom:"4px"}},"📅 Weekend"),
+  React.createElement("div",{style:{fontSize:"11px",color:"#777",marginBottom:"8px"}},"Normaal 1 uur studie — PW-weekend 2,5 uur"),
+  React.createElement("div",{style:{fontSize:"13px",lineHeight:1.7,color:"#bbb"}},
+    React.createElement("strong",{style:{color:"#fff"}},"Zaterdag: "),"Sport 10:00–12:00, studie in de middag",React.createElement("br"),
+    React.createElement("strong",{style:{color:"#fff"}},"Zondag: "),"Studie in de ochtend (geen sport)",React.createElement("br"),
+    React.createElement("strong",{style:{color:"#fff"}},"PW-weekend: "),"2,5 uur/dag verspreid over ochtend, middag en avond")),
+// Sportschema
+React.createElement("div",{style:{background:cBg,borderRadius:"16px",padding:"18px",border:"1px solid "+bdr,marginBottom:"12px"}},
+  React.createElement("div",{style:{fontSize:"16px",fontWeight:800,marginBottom:"12px"}},"🏃 Sportschema deze periode"),
+  ...[{w:"Week 1 (26 feb – 1 mrt)",d:"za 28 feb + zo 1 mrt",n:"Squash"},{w:"Week 2 (2 – 8 mrt)",d:"di 3 mrt + za 7 mrt",n:""},{w:"Vanaf 9 mrt",d:"di + do + za",n:"Normaal schema"}].map((s,i)=>React.createElement("div",{key:i,style:{padding:"8px 0",borderTop:i?"1px solid rgba(255,255,255,0.03)":"none"}},
+    React.createElement("div",{style:{fontSize:"13px",fontWeight:700,color:"#F39C12"}},s.w),
+    React.createElement("div",{style:{fontSize:"12px",color:"#aaa"}},s.d,s.n?React.createElement("span",{style:{color:"#777"}}," — "+s.n):"")))),
+// Tips
+React.createElement("div",{style:{background:cBg,borderRadius:"16px",padding:"18px",border:"1px solid "+bdr,marginBottom:"12px"}},
+  React.createElement("div",{style:{fontSize:"16px",fontWeight:800,marginBottom:"12px"}},"💡 Studietips"),
+  ...["Begin elk blok met 2 min herhalen wat je gisteren hebt geleerd","Gebruik een timer van 20 minuten — na het signaal wissel je van vak","Markeer moeilijke onderdelen met een ★ voor de herhalingsfase","Op sportdagen: kies de vakken die het meest urgent zijn","Wissel boek-leren af met trainer-apps: afwisseling helpt bij onthouden","Slaap goed de nacht vóór een proefwerk — beter dan laat doorleren","Na het sporten is je hoofd helder — ideaal moment voor studieblokken!"].map((tip,i)=>React.createElement("div",{key:i,style:{display:"flex",gap:"10px",padding:"7px 0",borderTop:i?"1px solid rgba(255,255,255,0.03)":"none"}},React.createElement("span",{style:{fontSize:"14px",flexShrink:0}},["🔁","⏱️","⭐","🏃","🔄","😴","💪"][i]),React.createElement("span",{style:{fontSize:"13px",color:"#bbb",lineHeight:1.5}},tip)))),
+// Fases
+React.createElement("div",{style:{background:cBg,borderRadius:"16px",padding:"18px",border:"1px solid "+bdr,marginBottom:"12px"}},
+  React.createElement("div",{style:{fontSize:"16px",fontWeight:800,marginBottom:"12px"}},"📌 De 5 fases"),
+  ...[{n:"Fase 1: Leren",d:"do 26 feb – wo 4 mrt",t:"Alle stof voor het eerst doorwerken. Na deze fase heb je alles minimaal 1× gezien.",c:"#D35400"},{n:"Fase 2: Herhalen",d:"do 5 – zo 8 mrt",t:"Alle stof is gezien. Nu herhalen + resterende nieuwe stof (AK par 3-5, Bio extra 7-8).",c:"#2E86C1"},{n:"Fase 3: Intensief",d:"ma 9 + di 10 mrt",t:"Oefentoetsen, trainer-apps, alles moet nu zitten!",c:"#8E44AD"},{n:"Fase 4: Laatste check",d:"wo 11 mrt",t:"Alleen opfrissen. Focus op zwakke punten. Morgen beginnen de proefwerken!",c:"#C0392B"},{n:"Fase 5: Proefwerkweek",d:"do 12 – wo 18 mrt",t:"Proefwerken + lichte herhaling. Weekend intensief voor Bio/AK/TK.",c:"#C0392B"}].map((f,i)=>React.createElement("div",{key:i,style:{padding:"10px 12px",borderRadius:"10px",background:f.c+"10",border:"1px solid "+f.c+"20",marginBottom:"8px"}},React.createElement("div",{style:{fontSize:"14px",fontWeight:800,color:f.c}},f.n),React.createElement("div",{style:{fontSize:"11px",color:"#888",marginTop:"2px"}},f.d),React.createElement("div",{style:{fontSize:"12px",color:"#aaa",marginTop:"4px",lineHeight:1.5}},f.t)))),
+// Proefwerken overzicht
+React.createElement("div",{style:{background:cBg,borderRadius:"16px",padding:"18px",border:"1px solid "+bdr,marginBottom:"12px"}},
+  React.createElement("div",{style:{fontSize:"16px",fontWeight:800,marginBottom:"12px"}},"📋 Proefwerken & stof"),
+  ...[{v:"Wiskunde",d:"Do 12 mrt",s:"H5 en H6",c:Cd.WISK},{v:"Nederlands",d:"Do 12 mrt",s:"Par 1.3, 2.3, 3.3, 4.3, 5.3",c:Cd.NED},{v:"Frans",d:"Vr 13 mrt",s:"Voc pg 131, gramm, pg 126-128",c:Cd.FRAN},{v:"Geschiedenis",d:"Vr 13 mrt",s:"Blz 10-11, par 4.1-4.3, 8 vaardigheden",c:Cd.GESCH},{v:"Biologie",d:"Di 17 mrt",s:"Thema 3: basisstof 1-6, extra 7-8",c:Cd.BIO},{v:"Aardrijkskunde",d:"Wo 18 mrt",s:"H4 par 1-5 + basisboeknummers",c:Cd.AK},{v:"Tekenen/HV",d:"Wo 18 mrt",s:"Tek H3+H6, HV H7 architectuur",c:Cd.TKHV}].map((e,i)=>React.createElement("div",{key:i,style:{display:"flex",gap:"10px",padding:"8px 0",borderTop:i?"1px solid rgba(255,255,255,0.03)":"none"}},React.createElement("div",{style:{width:"8px",height:"8px",borderRadius:"2px",background:e.c,marginTop:"5px",flexShrink:0}}),React.createElement("div",{style:{flex:1}},React.createElement("div",{style:{fontSize:"13px",fontWeight:700}},e.v,React.createElement("span",{style:{fontWeight:400,color:"#888",marginLeft:"6px"}},e.d)),React.createElement("div",{style:{fontSize:"11px",color:"#999",marginTop:"1px"}},e.s))))),
+// Engels
+React.createElement("div",{style:{background:"rgba(255,255,255,0.02)",borderRadius:"12px",padding:"14px 16px",border:"1px dashed rgba(255,255,255,0.08)",marginBottom:"12px"}},
+  React.createElement("div",{style:{fontSize:"13px",fontWeight:700,color:"#888"}},"🇬🇧 Engels — datum & stof nog onbekend"),
+  React.createElement("div",{style:{fontSize:"11px",color:"#666",marginTop:"4px"}},"Wordt ingepast zodra bekend."))),
+
+// Reset
+React.createElement("button",{style:{width:"100%",padding:"12px",borderRadius:"10px",border:"none",background:"rgba(255,255,255,0.03)",color:"#555",fontSize:"12px",fontWeight:600,cursor:"pointer",marginTop:"16px"},onClick:()=>{if(confirm("Reset alle vinkjes?"))setCk({})}},"🔄 Reset alle vinkjes")
+));
+}
+ReactDOM.render(React.createElement(App),document.getElementById("root"));
+</script>
+</body>
+</html>

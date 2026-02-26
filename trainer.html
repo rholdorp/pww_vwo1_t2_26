@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Wiskunde H6 Trainer – Stijn</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧮</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:linear-gradient(160deg,#0c0c20,#141432 40%,#0e0e28);font-family:'Nunito',sans-serif;color:#ddd;min-height:100vh}
+button{font-family:inherit}
+button:active{transform:scale(0.97)}
+input::placeholder{color:#555}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect,useRef}=React;
+
+const rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+
+const STORE_KEY="wiskunde_h6_v2";
+const loadState=()=>{try{return JSON.parse(localStorage.getItem(STORE_KEY))}catch{return null}};
+const saveState=s=>{try{localStorage.setItem(STORE_KEY,JSON.stringify(s))}catch{}};
+const defaultProgress=()=>({"6.1":{theoryDone:false,correct:0,total:0,bestStreak:0},"6.2":{theoryDone:false,correct:0,total:0,bestStreak:0},"6.3":{theoryDone:false,correct:0,total:0,bestStreak:0},"6.4":{theoryDone:false,correct:0,total:0,bestStreak:0},"6.5":{theoryDone:false,correct:0,total:0,bestStreak:0},"6.6":{theoryDone:false,correct:0,total:0,bestStreak:0}});
+
+const SECTIONS=[
+  {id:"6.1",name:"Kwadraten",icon:"²",color:"#E74C3C",desc:"Kwadraten, negatieve getallen, wortels, rekenvolgorde"},
+  {id:"6.2",name:"Kwadratische formules",icon:"x²",color:"#3498DB",desc:"Rekenen met y = ax² + b en y = (x−p)²"},
+  {id:"6.3",name:"Grafieken",icon:"📈",color:"#2ECC71",desc:"Parabolen tekenen, lineair vs kwadratisch"},
+  {id:"6.4",name:"Rekenen met letters",icon:"ab",color:"#F39C12",desc:"Producten herleiden, gelijksoortige termen"},
+  {id:"6.5",name:"Herleiden",icon:"±",color:"#9B59B6",desc:"Optellen en aftrekken met mintekens"},
+  {id:"6.6",name:"Herleiden van breuken",icon:"a⁄b",color:"#1ABC9C",desc:"Breuken vereenvoudigen, gelijknamig en niet-gelijknamig"},
+];
+const getSection=id=>SECTIONS.find(s=>s.id===id);
+
+// ========== THEORY ==========
+const THEORY={
+"6.1":[
+  {type:"explain",title:"Wat is een kwadraat?",text:"Het **kwadraat** van een getal bereken je door het getal met zichzelf te vermenigvuldigen.\n\nHet kwadraat van 7 is **7² = 7 × 7 = 49**.\nHet kwadraat van 15 is **15² = 15 × 15 = 225**.\n\nWe schrijven dit als 7² (spreek uit: 'zeven kwadraat')."},
+  {type:"example",title:"Voorbeeld: kwadraten berekenen",text:"6² = 6 × 6 = **36**\n(⅔)² = ⅔ × ⅔ = **4/9**\n\nBij berekeningen gaat kwadrateren vóór vermenigvuldigen en delen:\n2 · 3² = 2 · 9 = **18** (eerst kwadrateren!)"},
+  {type:"check",q:"Bereken: 8²",answer:64,hint:"8² = 8 × 8 = 64"},
+  {type:"check",q:"Bereken: 2 · 5²",answer:50,hint:"Eerst kwadrateren: 5² = 25\nDan: 2 × 25 = 50"},
+  {type:"explain",title:"Rekenvolgorde",text:"Bij berekeningen is de volgorde heel belangrijk:\n\n**1.** Werk binnen de **haakjes**\n**2.** **Kwadrateren** (en wortels)\n**3.** **Vermenigvuldigen en delen** (van links naar rechts)\n**4.** **Optellen en aftrekken** (van links naar rechts)\n\nOnthoud: **H**oeveel **K**oekjes **V**ond **O**ma?"},
+  {type:"check",q:"Bereken: (3 + 2)²",answer:25,hint:"Eerst haakjes: 3 + 2 = 5\nDan kwadrateren: 5² = 25"},
+  {type:"explain",title:"Kwadraat van een negatief getal",text:"Let goed op het verschil:\n\n**(−5)² = (−5) × (−5) = 25** ← de min zit IN het kwadraat\nMin × min = plus!\n\n**−5² = −(5²) = −25** ← de min zit NIET in het kwadraat\n\nHaakjes maken het verschil!"},
+  {type:"example",title:"Voorbeelden met mintekens",text:"(−3)² = (−3) × (−3) = **9**\n−3² = −(3 × 3) = **−9**\n\n−8² + (−7)² = −64 + 49 = **−15**"},
+  {type:"check",q:"Bereken: (−4)²",answer:16,hint:"(−4)² = (−4) × (−4) = 16\nMin × min = plus!"},
+  {type:"check",q:"Bereken: −4²",answer:-16,hint:"−4² = −(4²) = −16\nGeen haakjes → min gaat NIET mee!"},
+  {type:"explain",title:"De wortel",text:"De **wortel** is het omgekeerde van kwadrateren.\n\n**√25 = 5**, want 5² = 25\n**√81 = 9**, want 9² = 81\n\nStandaard wortels:\n√1=1, √4=2, √9=3, √16=4, √25=5\n√36=6, √49=7, √64=8, √81=9\n√100=10, √121=11, √144=12"},
+  {type:"check",q:"Bereken: √49",answer:7,hint:"√49 = 7, want 7² = 49"},
+  {type:"check",q:"Bereken: √144",answer:12,hint:"√144 = 12, want 12² = 144"},
+],
+"6.2":[
+  {type:"explain",title:"Wat zijn kwadratische formules?",text:"Formules zoals:\n• y = x² − 8\n• y = −3x²\n• y = (x − 7)²\n• A = 2n²\n\nzijn **kwadratische formules**. Ze bevatten altijd een kwadraat van de variabele."},
+  {type:"example",title:"Voorbeeld: waarden berekenen",text:"Gegeven: **y = x² + 4**\n\nVoor x = 5: y = 25 + 4 = **29**\nVoor x = −5: y = (−5)² + 4 = 25 + 4 = **29**\n\n⚠️ Gebruik haakjes bij negatieve getallen!"},
+  {type:"check",q:"y = x² + 3\nBereken y voor x = 4",answer:19,hint:"y = 4² + 3 = 16 + 3 = 19"},
+  {type:"example",title:"Met min-teken ervoor",text:"Gegeven: **y = −x² + 6**\n\nVoor x = −4: y = −(−4)² + 6 = −16 + 6 = **−10**\n\n⚠️ Bij y = −x²: eerst x² berekenen, dan min ervoor!"},
+  {type:"check",q:"y = −x² + 7\nBereken y voor x = 3",answer:-2,hint:"y = −(3²) + 7 = −9 + 7 = −2"},
+  {type:"example",title:"Formule met haakjes",text:"Gegeven: **y = (x − 3)²**\n\nVoor x = 7: y = (7−3)² = 4² = **16**\nVoor x = −1: y = (−1−3)² = (−4)² = **16**\n\nEerst haakjes uitrekenen, dan kwadrateren!"},
+  {type:"check",q:"y = (x − 5)² − 3\nBereken y voor x = 2",answer:6,hint:"y = (2−5)² − 3 = (−3)² − 3 = 9 − 3 = 6"},
+  {type:"check",q:"y = 2x² − 8\nBereken y voor x = −3",answer:10,hint:"y = 2·(−3)² − 8 = 2·9 − 8 = 18 − 8 = 10"},
+],
+"6.3":[
+  {type:"explain",title:"De grafiek van een kwadratische formule",text:"De grafiek van een kwadratische formule (met x²) is altijd een **parabool** — een U-vorm.\n\nDe grafiek van een lineaire formule (zonder x²) is altijd een **rechte lijn**.\n\n**Parabool tekenen:**\n1. Maak een tabel met **7 punten**\n2. Teken de punten\n3. Teken een **vloeiende kromme**"},
+  {type:"example",title:"Tabel invullen",text:"y = x² − 2:\n\nx = −3: y = 9−2 = **7**\nx = −2: y = 4−2 = **2**\nx = −1: y = 1−2 = **−1**\nx = 0: y = 0−2 = **−2**\nx = 1: y = 1−2 = **−1**\nx = 2: y = 4−2 = **2**\nx = 3: y = 9−2 = **7**\n\nx=3 en x=−3 geven dezelfde y!"},
+  {type:"check",q:"y = x² + 1\nBereken y voor x = −2",answer:5,hint:"y = (−2)² + 1 = 4 + 1 = 5"},
+  {type:"explain",title:"Lineair vs kwadratisch",text:"**Lineair**: geen x² → rechte lijn\ny = 2x − 1, y = 0,5x + 1\n\n**Kwadratisch**: bevat x² → parabool\ny = x² − 1, y = −x² + 4\n\n**Trucje**: staat er x² in? → kwadratisch!"},
+  {type:"check",q:"Is y = 3x + 7 lineair of kwadratisch?",answer:"lineair",type2:"choice",options:["lineair","kwadratisch"],hint:"Geen x² → lineair!"},
+  {type:"check",q:"Is y = (x − 4)² lineair of kwadratisch?",answer:"kwadratisch",type2:"choice",options:["lineair","kwadratisch"],hint:"Er staat ² → kwadratisch!"},
+],
+"6.4":[
+  {type:"explain",title:"Producten herleiden",text:"**Werkschema:**\n1. Vermenigvuldig de **getallen** → uitkomst vooraan\n2. Zet de **letters** in alfabetische volgorde\n3. Laat vermenigvuldigingspunten weg\n\n5a · 8b = **40ab**\n(5×8=40, letters: ab)"},
+  {type:"example",title:"Voorbeelden",text:"5n · −4k · 2m = **−40kmn**\n5x · −x = **−5x²** (x · x = x²)\n\n**Speciale gevallen:**\n0 · a = **0**\n1 · a = **a**\n−1 · a = **−a**\na · a = **a²**"},
+  {type:"check",q:"Herleid: 3a · 7b",answer:"21ab",type2:"text",hint:"3×7=21, letters: ab → 21ab"},
+  {type:"check",q:"Herleid: −4p · −2q",answer:"8pq",type2:"text",hint:"−4×−2=8, letters: pq → 8pq"},
+  {type:"explain",title:"Gelijksoortige termen",text:"Termen met **dezelfde letters** zijn **gelijksoortig**.\n\n✅ 5a + 3a = **8a**\n✅ 7ab + 3ab = **10ab**\n❌ 2a + 3b = **kan niet**\n❌ 5x + 3x² = **kan niet**\n\nAlleen gelijksoortige termen kun je samennemen!"},
+  {type:"check",q:"Herleid: 9a + 4a",answer:"13a",type2:"text",hint:"9a + 4a = 13a"},
+  {type:"check",q:"Kan je 5x + 3y herleiden?",answer:"nee",type2:"choice",options:["ja","nee"],hint:"Niet gelijksoortig (andere letters), kan niet."},
+  {type:"check",q:"Herleid: 5a + 2b + 3a + 4b",answer:"8a+6b",type2:"text",hint:"a: 5+3=8a, b: 2+4=6b → 8a+6b"},
+],
+"6.5":[
+  {type:"explain",title:"Herleiden met mintekens",text:"8a − 5a = **3a**\n−3x − x = **−4x**\n−xy + 12xy = **11xy**\n\n**Onthoud:**\n• − − is hetzelfde als + (dubbel min = plus)\n• Het minteken hoort bij de term"},
+  {type:"example",title:"Voorbeelden",text:"3x − 2 + x − 8 = **4x − 10**\n5p + 7q − 5p − 8q = **−q**\n\n3a + 8b − 7a − 3b:\na-termen: 3a − 7a = **−4a**\nb-termen: 8b − 3b = **5b**\nAntwoord: **−4a + 5b**"},
+  {type:"check",q:"Herleid: 12x − 5x",answer:"7x",type2:"text",hint:"12x − 5x = 7x"},
+  {type:"check",q:"Herleid: −3a − 7a",answer:"-10a",type2:"text",hint:"−3a − 7a = −10a"},
+  {type:"check",q:"Herleid: 5a + 3b − 2a − 7b",answer:"3a-4b",type2:"text",hint:"a: 5−2=3a, b: 3−7=−4b → 3a−4b"},
+],
+"6.6":[
+  {type:"explain",title:"Breuken vereenvoudigen",text:"Deel teller en noemer door hetzelfde:\n\n5a / 8a = **5/8**\n15xy / 25y = **3x/5**\n\n**Gelijknamig optellen/aftrekken:**\n5a/b − 2a/b = **3a/b**\n(tellers samenvoegen, noemer blijft)"},
+  {type:"example",title:"Niet-gelijknamige breuken",text:"2/a + 1/b:\nNieuwe noemer: a·b = **ab**\n2/a = 2b/ab\n1/b = a/ab\nSamen: **(2b+a)/ab**\n\n5/x + 4 = 5/x + 4x/x = **(5+4x)/x**"},
+  {type:"check",q:"Vereenvoudig: 12a / 4a",answer:"3",type2:"text",hint:"12a / 4a = 3"},
+  {type:"check",q:"Herleid: 7p/q − 3p/q",answer:"4p/q",type2:"text",hint:"Gelijknamig: 7p−3p=4p → 4p/q"},
+  {type:"check",q:"Herleid: 3/a + 2/a",answer:"5/a",type2:"text",hint:"Al gelijknamig! 3+2=5 → 5/a"},
+],
+};
+
+// ========== QUESTION GENERATORS ==========
+function genQ(section,lv){
+  const g={"6.1":g61,"6.2":g62,"6.3":g63,"6.4":g64,"6.5":g65,"6.6":g66};
+  return g[section](lv);
+}
+
+function g61(lv){
+  if(lv===1){const t=rand(1,3);if(t===1){const n=pick([3,4,5,6,7,8,9,10,11,12]);return{q:`Bereken: ${n}²`,a:n*n,h:`${n}² = ${n}×${n} = ${n*n}`}}if(t===2){const n=pick([4,9,16,25,36,49,64,81,100,121,144]);const r=Math.round(Math.sqrt(n));return{q:`Bereken: √${n}`,a:r,h:`√${n} = ${r}`}}const n=pick([2,3,4,5,6,7]);return{q:`Bereken: (−${n})²`,a:n*n,h:`(−${n})² = ${n*n}\nMin × min = plus!`}}
+  if(lv===2){const t=rand(1,3);if(t===1){const n=pick([2,3,4,5,6,7,8]);return{q:`Bereken: −${n}²`,a:-(n*n),h:`−${n}² = −${n*n}\nMin gaat NIET mee!`}}if(t===2){const a=pick([2,3,4,5]),b=pick([2,3,4]);return{q:`Bereken: ${a} · ${b}²`,a:a*b*b,h:`${b}² = ${b*b}, dan ${a}·${b*b} = ${a*b*b}`}}const a=pick([2,3,4]),b=pick([2,3,5]);return{q:`Bereken: ${a}² + ${b}²`,a:a*a+b*b,h:`${a*a} + ${b*b} = ${a*a+b*b}`}}
+  const t=rand(1,2);if(t===1){const a=pick([3,4,5]),b=pick([2,3,4]),c=pick([2,3]);const r=-(a*a)+c*b*b;return{q:`Bereken: −${a}² + ${c}·${b}²`,a:r,h:`−${a*a} + ${c}·${b*b} = −${a*a}+${c*b*b} = ${r}`}}
+  const a=pick([5,6,7,8]),sq=pick([4,9,16,25,36]),rt=Math.round(Math.sqrt(sq));return{q:`Bereken: ${a}² − √${sq}`,a:a*a-rt,h:`${a*a} − ${rt} = ${a*a-rt}`};
+}
+
+function g62(lv){
+  if(lv===1){const a=pick([1,2,3]),c=pick([1,3,5]),x=pick([2,3,4]);const y=a*x*x+c;return{q:`y = ${a===1?"":a}x² + ${c}\nBereken y voor x = ${x}`,a:y,h:`y = ${a===1?"":a+"·"}${x*x} + ${c} = ${y}`}}
+  if(lv===2){const t=rand(1,2);if(t===1){const a=pick([-1,-2,-3]),c=pick([5,7,10]),x=pick([2,3,4]);return{q:`y = ${a}x² + ${c}\nBereken y voor x = ${x}`,a:a*x*x+c,h:`y = ${a}·${x*x}+${c} = ${a*x*x+c}`}}const p=pick([2,3,4,5]),x=pick([0,1,6,7,8]);return{q:`y = (x−${p})²\nBereken y voor x = ${x}`,a:(x-p)*(x-p),h:`(${x}−${p})² = (${x-p})² = ${(x-p)*(x-p)}`}}
+  const a=pick([-2,-3,2,3]),p=pick([1,3]),c=pick([7,10]),x=pick([-2,4,5]);const y=a*(x-p)*(x-p)+c;return{q:`y = ${a}(x−${p})² + ${c}\nBereken y voor x = ${x}`,a:y,h:`${a}·(${x-p})²+${c} = ${a}·${(x-p)*(x-p)}+${c} = ${y}`};
+}
+
+function g63(lv){
+  if(lv<=2){const isQ=rand(0,1);if(isQ){const a=pick([1,-1,2]),c=pick([-3,0,4]);const aS=a===1?"":a===-1?"−":""+a;return{q:`Is y = ${aS}x²${c>0?" + "+c:c<0?" − "+Math.abs(c):""} lineair of kwadratisch?`,a:"kwadratisch",t:"choice",o:["lineair","kwadratisch"],h:"Er staat x² → kwadratisch!"}}const m=pick([-2,1,3]),b=pick([-2,0,4]);return{q:`Is y = ${m===1?"":m===-1?"−":""+m}x${b>0?" + "+b:b<0?" − "+Math.abs(b):""} lineair of kwadratisch?`,a:"lineair",t:"choice",o:["lineair","kwadratisch"],h:"Geen x² → lineair!"}}
+  const a=pick([1,-1]),c=pick([-3,0,2,4]),x=pick([-3,-2,-1,0,1,2,3]);return{q:`y = ${a===-1?"−":""}x²${c>0?" + "+c:c<0?" − "+Math.abs(c):""}\nBereken y voor x = ${x}`,a:a*x*x+c,h:`y = ${a===-1?"−":""}${x*x}${c>0?"+"+c:c<0?"−"+Math.abs(c):""} = ${a*x*x+c}`};
+}
+
+function g64(lv){
+  if(lv===1){const t=rand(1,2);if(t===1){const a=pick([2,3,4,5]),b=pick([2,3,4,6,7]),v1=pick(["a","p","x"]),v2=pick(["b","q","y"]);const vs=[v1,v2].sort().join("");return{q:`Herleid: ${a}${v1} · ${b}${v2}`,a:`${a*b}${vs}`,t:"text",h:`${a}×${b}=${a*b} → ${a*b}${vs}`}}const a=pick([3,5,7,8,9]),b=pick([2,3,4,5]),v=pick(["a","x","p"]);return{q:`Herleid: ${a}${v} + ${b}${v}`,a:`${a+b}${v}`,t:"text",h:`${a+b}${v}`}}
+  if(lv===2){const a=pick([2,3,5]),b=pick([4,6,8]),c=pick([1,2,3]),d=pick([2,3,5]);return{q:`Herleid: ${a}a + ${b}b + ${c}a + ${d}b`,a:`${a+c}a+${b+d}b`,t:"text",h:`a:${a}+${c}=${a+c}, b:${b}+${d}=${b+d}`}}
+  const a=pick([3,5,8]),b=pick([2,4,6]),c=pick([2,3]),d=pick([1,5]);return{q:`Herleid: ${a}a + ${b}b + ${c}a + ${d}`,a:`${a+c}a+${b}b+${d}`,t:"text",h:`a:${a+c}a, b:${b}b, getal:${d}`};
+}
+
+function g65(lv){
+  if(lv===1){const a=pick([8,10,12,15]),b=pick([3,4,5,7]),v=pick(["a","x","p","n"]);return{q:`Herleid: ${a}${v} − ${b}${v}`,a:`${a-b}${v}`,t:"text",h:`${a-b}${v}`}}
+  if(lv===2){const t=rand(1,2);if(t===1){const a=pick([3,5,7]),b=pick([4,6,8]),v=pick(["a","x"]);return{q:`Herleid: −${a}${v} − ${b}${v}`,a:`${-(a+b)}${v}`,t:"text",h:`−${a+b}${v}`}}const a=pick([5,7,9]),b=pick([3,6,8]),c=pick([2,4]),d=pick([1,3,5]);const rx=a-c,ry=b-d;return{q:`Herleid: ${a}x + ${b}y − ${c}x − ${d}y`,a:`${rx}x${ry>0?"+":""}${ry}y`,t:"text",h:`x:${rx}, y:${ry}`}}
+  const a=pick([2,3]),b=pick([7,8]),c=pick([5,6,7]),d=pick([3,4,5]);const ra=a-c,rb=b-d;return{q:`Herleid: ${a}a + ${b}b − ${c}a − ${d}b`,a:`${ra}a${rb>=0?"+":""}${rb}b`,t:"text",h:`a:${ra}, b:${rb}`};
+}
+
+function g66(lv){
+  if(lv===1){const m=pick([2,3,4,5,6]),d=pick([2,3,4]),v=pick(["a","x","p"]);return{q:`Vereenvoudig: ${m*d}${v} / ${d}${v}`,a:`${m}`,t:"text",h:`${m*d}${v}/${d}${v} = ${m}`}}
+  if(lv===2){const t=rand(1,2);if(t===1){const a=pick([5,7,9]),b=pick([2,3,4]),v1=pick(["a","x"]),v2=pick(["b","y"]);return{q:`Herleid: ${a}${v1}/${v2} + ${b}${v1}/${v2}`,a:`${a+b}${v1}/${v2}`,t:"text",h:`${a+b}${v1}/${v2}`}}const m=pick([3,4,5,6]),d=pick([2,3,4]),v1=pick(["a","x"]),v2=pick(["b","y"]);return{q:`Vereenvoudig: ${m*d}${v1}${v2} / ${d}${v1}`,a:`${m}${v2}`,t:"text",h:`${m}${v2}`}}
+  const a=pick([8,10,12]),b=pick([3,5,7]),v1="a",v2="b";return{q:`Herleid: ${a}${v1}/${v2} − ${b}${v1}/${v2}`,a:`${a-b}${v1}/${v2}`,t:"text",h:`${a-b}${v1}/${v2}`};
+}
+
+// ========== APP ==========
+function App(){
+  const[progress,setProgress]=useState(()=>loadState()||defaultProgress());
+  const[screen,setScreen]=useState("home");
+  const[section,setSection]=useState(null);
+  const[level,setLevel]=useState(1);
+  const[theoryStep,setTheoryStep]=useState(0);
+  const[theoryAnswer,setTheoryAnswer]=useState("");
+  const[theoryChecked,setTheoryChecked]=useState(false);
+  const[theoryCorrect,setTheoryCorrect]=useState(false);
+  const[question,setQuestion]=useState(null);
+  const[answer,setAnswer]=useState("");
+  const[checked,setChecked]=useState(false);
+  const[correct,setCorrect]=useState(false);
+  const[qNum,setQNum]=useState(0);
+  const[session,setSession]=useState({c:0,t:0});
+  const[streak,setStreak]=useState(0);
+  const[animKey,setAnimKey]=useState(0);
+
+  useEffect(()=>{saveState(progress)},[progress]);
+
+  const updateProg=(sid,ok)=>setProgress(p=>({...p,[sid]:{...p[sid],correct:p[sid].correct+(ok?1:0),total:p[sid].total+1,bestStreak:Math.max(p[sid].bestStreak,ok?streak+1:streak)}}));
+  const markTheory=sid=>setProgress(p=>({...p,[sid]:{...p[sid],theoryDone:true}}));
+  const getPct=sid=>{const s=progress[sid];return s.total>0?Math.round(s.correct/s.total*100):0};
+  const isMastered=sid=>{const s=progress[sid];return s.total>=5&&getPct(sid)>=70};
+  const totalMastered=SECTIONS.filter(s=>isMastered(s.id)).length;
+
+  const startTheory=sid=>{setSection(sid);setTheoryStep(0);setTheoryAnswer("");setTheoryChecked(false);setScreen("theory")};
+  const startQuiz=(sid,lv)=>{setSection(sid);setLevel(lv);setQNum(0);setSession({c:0,t:0});setStreak(0);setScreen("quiz");loadQ(sid,lv)};
+  const loadQ=(sec,lv)=>{setQuestion(genQ(sec||section,lv||level));setAnswer("");setChecked(false);setQNum(n=>n+1);setAnimKey(k=>k+1)};
+
+  const theorySteps=section?THEORY[section]||[]:[];
+  const curStep=theorySteps[theoryStep];
+
+  const checkTheory=()=>{if(!curStep)return;let ok=false;if(curStep.type2==="choice")ok=theoryAnswer===String(curStep.answer);else if(curStep.type2==="text")ok=theoryAnswer.replace(/\s/g,"").toLowerCase()===String(curStep.answer).replace(/\s/g,"").toLowerCase();else ok=parseFloat(theoryAnswer.replace(",","."))=== curStep.answer;setTheoryCorrect(ok);setTheoryChecked(true)};
+  const nextTheory=()=>{if(theoryStep<theorySteps.length-1){setTheoryStep(s=>s+1);setTheoryAnswer("");setTheoryChecked(false)}else{markTheory(section);setScreen("home")}};
+
+  const checkQuiz=()=>{if(!question)return;let ok=false;if(question.t==="choice")ok=answer===question.a;else if(question.t==="text")ok=answer.replace(/\s/g,"").toLowerCase()===String(question.a).replace(/\s/g,"").toLowerCase();else ok=parseFloat(answer.replace(",","."))=== question.a;setCorrect(ok);setChecked(true);setStreak(s=>ok?s+1:0);setSession(s=>({c:s.c+(ok?1:0),t:s.t+1}));updateProg(section,ok)};
+  const nextQuiz=()=>{if(session.t>=10)setScreen("results");else loadQ(section,level)};
+
+  const fmtBold=text=>{const parts=text.split(/(\*\*[^*]+\*\*)/g);return parts.map((p,i)=>p.startsWith("**")&&p.endsWith("**")?React.createElement("strong",{key:i,style:{color:"#fff",fontWeight:800}},p.slice(2,-2)):React.createElement("span",{key:i},p))};
+
+  const bdr="rgba(255,255,255,0.07)";
+  const cBg="rgba(255,255,255,0.04)";
+
+  // HOME
+  if(screen==="home")return(
+    React.createElement("div",{style:{minHeight:"100vh",background:"linear-gradient(160deg,#0c0c20,#141432 40%,#0e0e28)"}},
+      React.createElement("div",{style:{background:"rgba(0,0,0,0.25)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+bdr,padding:"14px 20px",display:"flex",justifyContent:"space-between",alignItems:"center",position:"sticky",top:0,zIndex:50}},
+        React.createElement("div",{style:{fontSize:"18px",fontWeight:900,background:"linear-gradient(90deg,#ff6b6b,#feca57,#48dbfb)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}},"Wiskunde Trainer"),
+        React.createElement("div",{style:{fontSize:"12px",color:"#666"}},"H6 · Formules & Letters")
+      ),
+      React.createElement("div",{style:{maxWidth:"640px",margin:"0 auto",padding:"20px 16px"}},
+        React.createElement("div",{style:{textAlign:"center",margin:"8px 0 4px"}},React.createElement("span",{style:{fontSize:"42px"}},"🧮")),
+        React.createElement("div",{style:{fontSize:"clamp(26px,5vw,34px)",fontWeight:900,textAlign:"center",marginBottom:"6px"}},"Hoofdstuk 6"),
+        React.createElement("div",{style:{textAlign:"center",color:"#777",fontSize:"14px",marginBottom:"28px"}},"Kies een paragraaf om theorie te leren of te oefenen"),
+        // Overall progress card
+        React.createElement("div",{style:{background:cBg,borderRadius:"16px",padding:"18px",border:"1px solid "+bdr,marginBottom:"24px",textAlign:"center"}},
+          React.createElement("div",{style:{fontSize:"28px",fontWeight:900,color:totalMastered===6?"#6bcb77":"#fff"}},totalMastered+"/6 beheerst"),
+          React.createElement("div",{style:{fontSize:"13px",color:"#777",marginTop:"4px"}},totalMastered===6?"🎉 Alles beheerst! Klaar voor de toets!":"Min. 5 opgaven met ≥70% goed per paragraaf"),
+          React.createElement("div",{style:{display:"flex",gap:"6px",justifyContent:"center",marginTop:"12px"}},
+            SECTIONS.map(s=>React.createElement("div",{key:s.id,style:{width:"32px",height:"32px",borderRadius:"8px",background:isMastered(s.id)?s.color+"30":"rgba(255,255,255,0.05)",border:"2px solid "+(isMastered(s.id)?s.color:"rgba(255,255,255,0.08)"),display:"flex",alignItems:"center",justifyContent:"center",fontSize:"14px",color:isMastered(s.id)?s.color:"#555"}},isMastered(s.id)?"✓":s.id.split(".")[1]))
+          )
+        ),
+        // Section cards
+        SECTIONS.map(sec=>{const p=progress[sec.id],pct=getPct(sec.id),m=isMastered(sec.id);return React.createElement("div",{key:sec.id,style:{background:m?sec.color+"12":cBg,border:"1px solid "+(m?sec.color+"40":bdr),borderRadius:"16px",padding:"18px",marginBottom:"12px"}},
+          React.createElement("div",{style:{display:"flex",gap:"14px",alignItems:"center"}},
+            React.createElement("div",{style:{width:"40px",height:"40px",borderRadius:"10px",background:sec.color+"20",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"16px",fontWeight:800,color:sec.color,flexShrink:0}},sec.icon),
+            React.createElement("div",{style:{flex:1}},
+              React.createElement("div",{style:{fontSize:"16px",fontWeight:700}},"§"+sec.id+" "+sec.name),
+              React.createElement("div",{style:{fontSize:"12px",color:"#888",marginTop:"2px"}},sec.desc)
+            ),
+            m&&React.createElement("span",{style:{fontSize:"20px"}},"✅")
+          ),
+          React.createElement("div",{style:{display:"flex",gap:"6px",flexWrap:"wrap",marginTop:"10px"}},
+            React.createElement("span",{style:{display:"inline-block",padding:"2px 8px",borderRadius:"6px",fontSize:"11px",fontWeight:700,background:(p.theoryDone?"#6bcb77":"#888")+"20",color:p.theoryDone?"#6bcb77":"#888"}},p.theoryDone?"✓ Theorie":"○ Theorie"),
+            React.createElement("span",{style:{display:"inline-block",padding:"2px 8px",borderRadius:"6px",fontSize:"11px",fontWeight:700,background:(pct>=70&&p.total>=5?"#6bcb77":"#888")+"20",color:pct>=70&&p.total>=5?"#6bcb77":"#888"}},p.total>0?p.correct+"/"+p.total+" ("+pct+"%)":"Nog niet geoefend"),
+            p.bestStreak>=3&&React.createElement("span",{style:{display:"inline-block",padding:"2px 8px",borderRadius:"6px",fontSize:"11px",fontWeight:700,background:"#ffd93d20",color:"#ffd93d"}},"🔥 "+p.bestStreak+"x")
+          ),
+          p.total>0&&React.createElement("div",{style:{height:"4px",borderRadius:"2px",background:"rgba(255,255,255,0.08)",marginTop:"8px",position:"relative",overflow:"hidden"}},
+            React.createElement("div",{style:{position:"absolute",top:0,left:0,height:"100%",width:Math.min(pct,100)+"%",background:sec.color,borderRadius:"2px",transition:"width 0.5s"}})
+          ),
+          React.createElement("div",{style:{display:"flex",gap:"8px",marginTop:"12px"}},
+            React.createElement("button",{style:{padding:"10px 20px",borderRadius:"12px",border:"2px solid "+sec.color,background:"transparent",color:sec.color,fontSize:"14px",fontWeight:700,cursor:"pointer"},onClick:()=>startTheory(sec.id)},"📖 "+(p.theoryDone?"Herhaal":"Leer")),
+            React.createElement("button",{style:{padding:"10px 20px",borderRadius:"12px",border:"none",background:sec.color,color:"#fff",fontSize:"14px",fontWeight:700,cursor:"pointer"},onClick:()=>startQuiz(sec.id,1)},"✏️ Oefenen")
+          )
+        )}),
+        React.createElement("button",{style:{width:"100%",padding:"12px",borderRadius:"10px",border:"none",background:"rgba(255,255,255,0.03)",color:"#555",fontSize:"12px",fontWeight:600,cursor:"pointer",marginTop:"20px"},onClick:()=>{setProgress(defaultProgress())}},"🔄 Reset voortgang"),
+        React.createElement("div",{style:{textAlign:"center",color:"#444",fontSize:"11px",marginTop:"16px",paddingBottom:"40px"}},"Studieplan Stijn · PW maart 2026")
+      )
+    )
+  );
+
+  // THEORY
+  if(screen==="theory"){const sec=getSection(section),step=curStep,pctD=Math.round((theoryStep+1)/theorySteps.length*100);
+    return React.createElement("div",{style:{minHeight:"100vh",background:"linear-gradient(160deg,#0c0c20,#141432 40%,#0e0e28)"}},
+      React.createElement("div",{style:{background:"rgba(0,0,0,0.25)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+bdr,padding:"14px 20px",display:"flex",justifyContent:"space-between",alignItems:"center",position:"sticky",top:0,zIndex:50}},
+        React.createElement("button",{style:{background:"none",border:"none",color:"#888",cursor:"pointer",fontSize:"14px",fontWeight:600},onClick:()=>setScreen("home")},"← Terug"),
+        React.createElement("div",{style:{fontSize:"16px",fontWeight:800,color:sec.color}},"§"+section+" Theorie"),
+        React.createElement("div",{style:{fontSize:"12px",color:"#666"}},(theoryStep+1)+"/"+theorySteps.length)
+      ),
+      React.createElement("div",{style:{maxWidth:"640px",margin:"0 auto",padding:"20px 16px"}},
+        React.createElement("div",{style:{height:"3px",borderRadius:"2px",background:"rgba(255,255,255,0.06)",marginBottom:"20px"}},
+          React.createElement("div",{style:{height:"100%",width:pctD+"%",background:sec.color,borderRadius:"2px",transition:"width 0.4s"}})
+        ),
+        step&&step.type==="explain"&&React.createElement("div",{style:{background:cBg,borderRadius:"18px",padding:"24px 20px",border:"1px solid "+bdr}},
+          React.createElement("span",{style:{display:"inline-block",padding:"3px 9px",borderRadius:"7px",background:sec.color+"18",color:sec.color,fontSize:"11px",fontWeight:700,marginBottom:"10px"}},"📖 Uitleg"),
+          React.createElement("div",{style:{fontSize:"20px",fontWeight:800,marginBottom:"14px",color:"#fff"}},step.title),
+          React.createElement("div",{style:{fontSize:"15px",lineHeight:1.75,whiteSpace:"pre-line"}},fmtBold(step.text)),
+          React.createElement("button",{style:{width:"100%",padding:"14px",borderRadius:"12px",border:"none",background:sec.color,color:"#fff",fontSize:"16px",fontWeight:700,cursor:"pointer",marginTop:"20px"},onClick:nextTheory},theoryStep<theorySteps.length-1?"Verder →":"✅ Theorie afronden")
+        ),
+        step&&step.type==="example"&&React.createElement("div",{style:{background:cBg,borderRadius:"18px",padding:"24px 20px",border:"1px solid "+bdr}},
+          React.createElement("span",{style:{display:"inline-block",padding:"3px 9px",borderRadius:"7px",background:"#ffd93d18",color:"#ffd93d",fontSize:"11px",fontWeight:700,marginBottom:"10px"}},"💡 Voorbeeld"),
+          React.createElement("div",{style:{fontSize:"20px",fontWeight:800,marginBottom:"14px",color:"#fff"}},step.title),
+          React.createElement("div",{style:{fontSize:"15px",lineHeight:1.75,whiteSpace:"pre-line",fontFamily:"monospace",background:"rgba(255,255,255,0.03)",padding:"14px",borderRadius:"10px"}},fmtBold(step.text)),
+          React.createElement("button",{style:{width:"100%",padding:"14px",borderRadius:"12px",border:"none",background:sec.color,color:"#fff",fontSize:"16px",fontWeight:700,cursor:"pointer",marginTop:"20px"},onClick:nextTheory},theoryStep<theorySteps.length-1?"Verder →":"✅ Theorie afronden")
+        ),
+        step&&step.type==="check"&&React.createElement("div",{style:{background:cBg,borderRadius:"18px",padding:"24px 20px",border:"1px solid "+bdr}},
+          React.createElement("span",{style:{display:"inline-block",padding:"3px 9px",borderRadius:"7px",background:"#48dbfb18",color:"#48dbfb",fontSize:"11px",fontWeight:700,marginBottom:"10px"}},"🧪 Tussenvraag"),
+          React.createElement("div",{style:{fontSize:"clamp(17px,4vw,22px)",fontWeight:700,lineHeight:1.5,whiteSpace:"pre-line",marginBottom:"18px"}},step.q),
+          step.type2==="choice"?
+            React.createElement("div",null,step.options.map(o=>React.createElement("button",{key:o,style:{width:"100%",padding:"12px 18px",borderRadius:"11px",border:"2px solid "+(theoryAnswer===o?"#4d96ff":bdr),background:theoryAnswer===o?"rgba(77,150,255,0.12)":"rgba(255,255,255,0.03)",color:"#ddd",fontSize:"16px",fontWeight:600,cursor:"pointer",marginBottom:"8px",textAlign:"left"},onClick:()=>!theoryChecked&&setTheoryAnswer(o),disabled:theoryChecked},o)))
+            :React.createElement("input",{style:{width:"100%",padding:"14px 18px",borderRadius:"12px",border:"2px solid "+bdr,background:"rgba(255,255,255,0.05)",color:"#fff",fontSize:"18px",fontWeight:600,outline:"none",boxSizing:"border-box",fontFamily:"'Nunito',monospace"},value:theoryAnswer,onChange:e=>setTheoryAnswer(e.target.value),onKeyDown:e=>e.key==="Enter"&&theoryAnswer&&!theoryChecked&&checkTheory(),placeholder:"Typ je antwoord...",disabled:theoryChecked,autoFocus:true}),
+          !theoryChecked?
+            React.createElement("button",{style:{width:"100%",padding:"14px",borderRadius:"12px",border:"none",background:"#4d96ff",color:"#fff",fontSize:"16px",fontWeight:700,cursor:"pointer",marginTop:"14px",opacity:theoryAnswer?1:0.4},onClick:checkTheory,disabled:!theoryAnswer},"Controleer")
+            :React.createElement("div",null,
+              React.createElement("div",{style:{padding:"16px",borderRadius:"14px",background:theoryCorrect?"rgba(107,203,119,0.1)":"rgba(255,107,107,0.1)",border:"1px solid "+(theoryCorrect?"#6bcb7730":"#ff6b6b30"),marginTop:"14px"}},
+                React.createElement("div",{style:{fontSize:"17px",fontWeight:800,color:theoryCorrect?"#6bcb77":"#ff6b6b",marginBottom:"6px"}},theoryCorrect?"Goed! 🎉":"Antwoord: "+step.answer),
+                React.createElement("div",{style:{whiteSpace:"pre-line",fontSize:"14px",color:"#aaa",fontFamily:"monospace",lineHeight:1.6}},step.hint)
+              ),
+              React.createElement("button",{style:{width:"100%",padding:"14px",borderRadius:"12px",border:"none",background:"#6bcb77",color:"#fff",fontSize:"16px",fontWeight:700,cursor:"pointer",marginTop:"14px"},onClick:nextTheory},theoryStep<theorySteps.length-1?"Verder →":"✅ Theorie afronden")
+            )
+        )
+      )
+    );
+  }
+
+  // QUIZ
+  if(screen==="quiz"){const sec=getSection(section),pct=session.t>0?Math.round(session.c/session.t*100):0;
+    const lvN=["","Basis","Gemiddeld","Diagnostisch"],lvC=["","#6bcb77","#ffd93d","#ff6b6b"];
+    return React.createElement("div",{style:{minHeight:"100vh",background:"linear-gradient(160deg,#0c0c20,#141432 40%,#0e0e28)"}},
+      React.createElement("div",{style:{background:"rgba(0,0,0,0.25)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+bdr,padding:"14px 20px",display:"flex",justifyContent:"space-between",alignItems:"center",position:"sticky",top:0,zIndex:50}},
+        React.createElement("button",{style:{background:"none",border:"none",color:"#888",cursor:"pointer",fontSize:"14px",fontWeight:600},onClick:()=>setScreen("home")},"← Stop"),
+        React.createElement("div",{style:{fontSize:"16px",fontWeight:800,color:sec.color}},"§"+section),
+        React.createElement("div",{style:{fontSize:"13px",fontWeight:700}},session.c+"/"+session.t)
+      ),
+      React.createElement("div",{style:{maxWidth:"640px",margin:"0 auto",padding:"20px 16px"}},
+        // Level selector
+        React.createElement("div",{style:{display:"flex",gap:"8px",marginBottom:"16px"}},
+          [1,2,3].map(lv=>React.createElement("button",{key:lv,style:{flex:1,padding:"12px",borderRadius:"10px",border:"2px solid "+(level===lv?lvC[lv]:bdr),background:level===lv?lvC[lv]+"15":"transparent",color:level===lv?lvC[lv]:"#888",fontSize:"13px",fontWeight:700,cursor:"pointer",textAlign:"center"},onClick:()=>{setLevel(lv);loadQ(section,lv);setSession({c:0,t:0});setQNum(0)}},(lv===1?"⭐":lv===2?"⭐⭐":"⭐⭐⭐")+" "+lvN[lv]))
+        ),
+        // Score bar
+        React.createElement("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 16px",borderRadius:"12px",background:cBg,marginBottom:"16px",fontSize:"13px"}},
+          React.createElement("span",null,"Vraag "+qNum+"/10 · "+pct+"% goed"),
+          React.createElement("div",{style:{display:"flex",gap:"6px",alignItems:"center"}},
+            streak>=3&&React.createElement("span",{style:{background:"linear-gradient(135deg,#ffd93d,#ff6b6b)",color:"#000",padding:"3px 10px",borderRadius:"16px",fontSize:"12px",fontWeight:800}},"🔥 "+streak+"x"),
+            React.createElement("span",{style:{display:"inline-block",padding:"2px 8px",borderRadius:"6px",fontSize:"11px",fontWeight:700,background:lvC[level]+"20",color:lvC[level]}},lvN[level])
+          )
+        ),
+        // Question
+        question&&React.createElement("div",{key:animKey,style:{background:cBg,borderRadius:"18px",padding:"24px 20px",border:"1px solid "+bdr,animation:"fadeIn 0.3s ease"}},
+          React.createElement("div",{style:{fontSize:"clamp(17px,4vw,22px)",fontWeight:700,lineHeight:1.5,whiteSpace:"pre-line",marginBottom:"20px"}},question.q),
+          question.t==="choice"?
+            React.createElement("div",null,question.o.map(o=>React.createElement("button",{key:o,style:{width:"100%",padding:"12px 18px",borderRadius:"11px",border:"2px solid "+(answer===o?"#4d96ff":bdr),background:answer===o?"rgba(77,150,255,0.12)":"rgba(255,255,255,0.03)",color:"#ddd",fontSize:"16px",fontWeight:600,cursor:"pointer",marginBottom:"8px",textAlign:"left"},onClick:()=>!checked&&setAnswer(o),disabled:checked},o)))
+            :React.createElement("input",{style:{width:"100%",padding:"14px 18px",borderRadius:"12px",border:"2px solid "+bdr,background:"rgba(255,255,255,0.05)",color:"#fff",fontSize:"18px",fontWeight:600,outline:"none",boxSizing:"border-box",fontFamily:"'Nunito',monospace"},value:answer,onChange:e=>setAnswer(e.target.value),onKeyDown:e=>e.key==="Enter"&&answer&&!checked&&checkQuiz(),placeholder:"Typ je antwoord...",disabled:checked,inputMode:question.t==="text"?"text":"numeric",autoFocus:true}),
+          !checked?
+            React.createElement("button",{style:{width:"100%",padding:"14px",borderRadius:"12px",border:"none",background:"#4d96ff",color:"#fff",fontSize:"16px",fontWeight:700,cursor:"pointer",marginTop:"14px",opacity:answer?1:0.4},onClick:checkQuiz,disabled:!answer},"Controleer")
+            :React.createElement("div",null,
+              React.createElement("div",{style:{padding:"16px",borderRadius:"14px",background:correct?"rgba(107,203,119,0.1)":"rgba(255,107,107,0.1)",border:"1px solid "+(correct?"#6bcb7730":"#ff6b6b30"),marginTop:"14px"}},
+                React.createElement("div",{style:{fontSize:"17px",fontWeight:800,color:correct?"#6bcb77":"#ff6b6b",marginBottom:"6px"}},correct?pick(["Goed zo! 🎉","Correct! ✅","Top! 💪"]):"Antwoord: "+question.a),
+                React.createElement("div",{style:{whiteSpace:"pre-line",fontSize:"14px",color:"#aaa",fontFamily:"monospace",lineHeight:1.6}},question.h)
+              ),
+              React.createElement("button",{style:{width:"100%",padding:"14px",borderRadius:"12px",border:"none",background:"#6bcb77",color:"#fff",fontSize:"16px",fontWeight:700,cursor:"pointer",marginTop:"14px"},onClick:nextQuiz},session.t>=10?"📊 Resultaten":"Volgende →")
+            )
+        )
+      )
+    );
+  }
+
+  // RESULTS
+  if(screen==="results"){const sec=getSection(section),pct=Math.round(session.c/session.t*100),ok=pct>=70;
+    return React.createElement("div",{style:{minHeight:"100vh",background:"linear-gradient(160deg,#0c0c20,#141432 40%,#0e0e28)"}},
+      React.createElement("div",{style:{background:"rgba(0,0,0,0.25)",padding:"14px 20px",borderBottom:"1px solid "+bdr}},React.createElement("div",{style:{fontSize:"18px",fontWeight:900,background:"linear-gradient(90deg,#ff6b6b,#feca57,#48dbfb)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",textAlign:"center"}},"Resultaten")),
+      React.createElement("div",{style:{maxWidth:"640px",margin:"0 auto",padding:"20px 16px"}},
+        React.createElement("div",{style:{background:cBg,borderRadius:"18px",padding:"28px 20px",border:"1px solid "+bdr,textAlign:"center"}},
+          React.createElement("div",{style:{fontSize:"64px",marginBottom:"12px"}},ok?"🎉":"💪"),
+          React.createElement("div",{style:{fontSize:"32px",fontWeight:900,color:ok?"#6bcb77":"#ffd93d"}},pct+"%"),
+          React.createElement("div",{style:{fontSize:"18px",fontWeight:700,marginTop:"4px"}},session.c+" van "+session.t+" goed"),
+          React.createElement("div",{style:{fontSize:"14px",color:"#888",marginTop:"8px"}},ok?"§"+section+" beheerst! Ga door naar het volgende onderwerp.":"Je hebt ≥70% nodig. Bestudeer de theorie en probeer opnieuw!"),
+          React.createElement("div",{style:{display:"flex",gap:"8px",marginTop:"20px",justifyContent:"center"}},
+            React.createElement("button",{style:{padding:"10px 20px",borderRadius:"12px",border:"2px solid "+sec.color,background:"transparent",color:sec.color,fontSize:"14px",fontWeight:700,cursor:"pointer"},onClick:()=>startTheory(section)},"📖 Theorie"),
+            React.createElement("button",{style:{padding:"10px 20px",borderRadius:"12px",border:"none",background:sec.color,color:"#fff",fontSize:"14px",fontWeight:700,cursor:"pointer"},onClick:()=>startQuiz(section,level)},"🔄 Opnieuw")
+          ),
+          React.createElement("button",{style:{width:"100%",padding:"12px",borderRadius:"10px",border:"none",background:"rgba(255,255,255,0.05)",color:"#aaa",fontSize:"13px",fontWeight:600,cursor:"pointer",marginTop:"12px"},onClick:()=>setScreen("home")},"← Terug naar overzicht")
+        )
+      )
+    );
+  }
+  return null;
+}
+
+ReactDOM.render(React.createElement(App),document.getElementById("root"));
+</script>
+</body>
+</html>
