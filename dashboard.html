@@ -19,8 +19,8 @@ const load=()=>{try{return JSON.parse(localStorage.getItem(ST))}catch{return nul
 const save=s=>{try{localStorage.setItem(ST,JSON.stringify(s))}catch{}};
 const loadTrainer=()=>{try{return JSON.parse(localStorage.getItem("wiskunde_h6_v2"))}catch{return null}};
 
-const Cd={WISK:"#3498DB",NED:"#E67E22",FRAN:"#9B59B6",GESCH:"#E74C3C",BIO:"#27AE60",AK:"#F1C40F",TKHV:"#1ABC9C"};
-const EXAMS=[{subject:"Wiskunde",date:"2026-03-12",color:Cd.WISK},{subject:"Nederlands",date:"2026-03-12",color:Cd.NED},{subject:"Frans",date:"2026-03-13",color:Cd.FRAN},{subject:"Geschiedenis",date:"2026-03-13",color:Cd.GESCH},{subject:"Biologie",date:"2026-03-17",color:Cd.BIO},{subject:"Aardrijkskunde",date:"2026-03-18",color:Cd.AK},{subject:"Tekenen/HV",date:"2026-03-18",color:Cd.TKHV}];
+const Cd={WISK:"#3498DB",NED:"#E67E22",FRAN:"#9B59B6",GESCH:"#E74C3C",BIO:"#27AE60",AK:"#F1C40F",TKHV:"#1ABC9C",ENG:"#E74C3C"};
+const EXAMS=[{subject:"Wiskunde",date:"2026-03-12",color:Cd.WISK},{subject:"Nederlands",date:"2026-03-12",color:Cd.NED},{subject:"Frans",date:"2026-03-13",color:Cd.FRAN},{subject:"Geschiedenis",date:"2026-03-13",color:Cd.GESCH},{subject:"Engels",date:"2026-03-16",color:Cd.ENG},{subject:"Biologie",date:"2026-03-17",color:Cd.BIO},{subject:"Aardrijkskunde",date:"2026-03-18",color:Cd.AK},{subject:"Tekenen/HV",date:"2026-03-18",color:Cd.TKHV}];
 const PHASES=[
   {id:1,name:"Fase 1: Leren",range:"do 26 feb – wo 4 mrt",color:"#D35400",desc:"Alle stof voor het eerst doorwerken"},
   {id:2,name:"Fase 2: Herhalen",range:"do 5 – zo 8 mrt",color:"#2E86C1",desc:"Herhalen + resterende nieuwe stof"},
@@ -87,7 +87,9 @@ const DAYS=[
 {date:"2026-03-08",label:"Zondag 8 mrt",phase:2,sport:false,tasks:[
   mk("f2-4a","10:00","Nederlands","Par 3.3-5.3 herhaling",Cd.NED,20),
   mk("f2-4b","10:20","Wiskunde","H5+H6 zwakke punten oefenen",Cd.WISK,20),
-  mk("f2-4c","10:40","Frans","Complete voc + gramm herhaling",Cd.FRAN,20)]},
+  mk("f2-4c","10:40","Frans","Complete voc + gramm herhaling",Cd.FRAN,20),
+  mk("f2-4d","14:00","Engels","Vocab Unit 2+3: alle woordjes leren",Cd.ENG,20),
+  mk("f2-4e","14:20","Engels","Past Simple be + regular verbs oefenen",Cd.ENG,20)]},
 
 // ===== FASE 3: ma 9 + di 10 mrt (intensief) =====
 // Ma 9 mrt — geen sport, 3+ blokken intensief
@@ -101,14 +103,16 @@ const DAYS=[
 {date:"2026-03-10",label:"Dinsdag 10 mrt ⚡",phase:3,sport:true,intensive:true,tasks:[
   mk("f3-2a","19:30","Wiskunde","Oefentoets nakijken + fouten herhalen",Cd.WISK,20),
   mk("f3-2b","20:00","Frans","Complete herhaling: woordjes + gramm",Cd.FRAN,20),
-  mk("f3-2c","20:30","Biologie","Basisstof 5-6 + extra 7-8 + determineren",Cd.BIO,20),
-  mk("f3-2d","20:50","Tekenen/HV","Begrippen + stijlen herkennen oefenen",Cd.TKHV,20)]},
+  mk("f3-2c","20:30","Engels","Vocab + Past Simple herhaling trainer",Cd.ENG,20),
+  mk("f3-2d","20:50","Biologie","Basisstof 5-6 + extra 7-8 + determineren",Cd.BIO,20),
+  mk("f3-2e","21:10","Tekenen/HV","Begrippen + stijlen herkennen oefenen",Cd.TKHV,20)]},
 
 // ===== FASE 4: wo 11 mrt (laatste check) =====
 {date:"2026-03-11",label:"Woensdag 11 mrt",phase:4,sport:false,tasks:[
   mk("f4-1a","16:50","Wiskunde","⚠️ Zwakke punten: moeilijkste opgaven",Cd.WISK,20),
   mk("f4-1b","19:30","Nederlands","⚠️ Kernbegrippen: laatste check",Cd.NED,20),
-  mk("f4-1c","20:00","Frans","⚠️ Woordjes + gramm snel checken",Cd.FRAN,20)]},
+  mk("f4-1c","20:00","Frans","⚠️ Woordjes + gramm snel checken",Cd.FRAN,20),
+  mk("f4-1d","20:30","Engels","⚠️ Vocab U2+3 + Past Simple laatste check",Cd.ENG,20)]},
 
 // ===== FASE 5: do 12 – wo 18 mrt (proefwerkweek) =====
 // Do 12 mrt — PW Wisk+Ned, SPORT (do), 2 blokken
@@ -136,9 +140,11 @@ const DAYS=[
   mk("f5-4c","10:40","Tekenen/HV","Complete herhaling",Cd.TKHV,20),
   mk("f5-4d","14:00","Biologie","Oefentoets nakijken + zwakke punten",Cd.BIO,20),
   mk("f5-4e","14:20","Aardrijkskunde","Oefentoets nakijken",Cd.AK,20),
-  mk("f5-4f","14:40","Tekenen/HV","Laatste check afbeeldingen",Cd.TKHV,20)]},
-// Ma 16 mrt — geen sport, 3 blokken
-{date:"2026-03-16",label:"Maandag 16 mrt",phase:5,sport:false,tasks:[
+  mk("f5-4f","14:40","Tekenen/HV","Laatste check afbeeldingen",Cd.TKHV,20),
+  mk("f5-4g","19:30","Engels","⚠️ Morgen PW! Vocab U2+3 doorlopen",Cd.ENG,20),
+  mk("f5-4h","20:00","Engels","⚠️ Past Simple be + regular verbs herhalen",Cd.ENG,20)]},
+// Ma 16 mrt — PW Engels, geen sport, 3 blokken
+{date:"2026-03-16",label:"Maandag 16 mrt 📝",phase:5,sport:false,exam:["Engels"],tasks:[
   mk("f5-5a","16:50","Biologie","⚠️ Morgen PW! Samenvatting + zwakke punten",Cd.BIO,20),
   mk("f5-5b","19:30","Aardrijkskunde","⚠️ Overmorgen PW! Samenvatting",Cd.AK,20),
   mk("f5-5c","20:00","Tekenen/HV","⚠️ Overmorgen PW! Alles doorlopen",Cd.TKHV,20)]},
@@ -165,8 +171,8 @@ const totalT=DAYS.reduce((s,d)=>s+d.tasks.length,0);
 const doneT=DAYS.reduce((s,d)=>s+d.tasks.filter(t=>isC(t.id)).length,0);
 const totalPct=totalT>0?Math.round(doneT/totalT*100):0;
 const today=new Date().toISOString().slice(0,10);
-const subjects=["Wiskunde","Nederlands","Frans","Geschiedenis","Biologie","Aardrijkskunde","Tekenen/HV"];
-const subCol={Wiskunde:Cd.WISK,Nederlands:Cd.NED,Frans:Cd.FRAN,Geschiedenis:Cd.GESCH,Biologie:Cd.BIO,Aardrijkskunde:Cd.AK,"Tekenen/HV":Cd.TKHV};
+const subjects=["Wiskunde","Nederlands","Frans","Geschiedenis","Engels","Biologie","Aardrijkskunde","Tekenen/HV"];
+const subCol={Wiskunde:Cd.WISK,Nederlands:Cd.NED,Frans:Cd.FRAN,Geschiedenis:Cd.GESCH,Engels:Cd.ENG,Biologie:Cd.BIO,Aardrijkskunde:Cd.AK,"Tekenen/HV":Cd.TKHV};
 const subSt=subj=>{let t=0,d=0;DAYS.forEach(dy=>dy.tasks.forEach(tk=>{if(tk.subject===subj){t++;if(isC(tk.id))d++}}));return{total:t,done:d,pct:t>0?Math.round(d/t*100):0}};
 const firstExam=new Date("2026-03-12");const now=new Date();
 const daysUntil=Math.max(0,Math.ceil((firstExam-now)/(1000*60*60*24)));
@@ -288,11 +294,8 @@ React.createElement("div",{style:{background:cBg,borderRadius:"16px",padding:"18
 // Proefwerken overzicht
 React.createElement("div",{style:{background:cBg,borderRadius:"16px",padding:"18px",border:"1px solid "+bdr,marginBottom:"12px"}},
   React.createElement("div",{style:{fontSize:"16px",fontWeight:800,marginBottom:"12px"}},"📋 Proefwerken & stof"),
-  ...[{v:"Wiskunde",d:"Do 12 mrt",s:"H5 en H6",c:Cd.WISK},{v:"Nederlands",d:"Do 12 mrt",s:"Par 1.3, 2.3, 3.3, 4.3, 5.3",c:Cd.NED},{v:"Frans",d:"Vr 13 mrt",s:"Voc pg 131, gramm, pg 126-128",c:Cd.FRAN},{v:"Geschiedenis",d:"Vr 13 mrt",s:"Blz 10-11, par 4.1-4.3, 8 vaardigheden",c:Cd.GESCH},{v:"Biologie",d:"Di 17 mrt",s:"Thema 3: basisstof 1-6, extra 7-8",c:Cd.BIO},{v:"Aardrijkskunde",d:"Wo 18 mrt",s:"H4 par 1-5 + basisboeknummers",c:Cd.AK},{v:"Tekenen/HV",d:"Wo 18 mrt",s:"Tek H3+H6, HV H7 architectuur",c:Cd.TKHV}].map((e,i)=>React.createElement("div",{key:i,style:{display:"flex",gap:"10px",padding:"8px 0",borderTop:i?"1px solid rgba(255,255,255,0.03)":"none"}},React.createElement("div",{style:{width:"8px",height:"8px",borderRadius:"2px",background:e.c,marginTop:"5px",flexShrink:0}}),React.createElement("div",{style:{flex:1}},React.createElement("div",{style:{fontSize:"13px",fontWeight:700}},e.v,React.createElement("span",{style:{fontWeight:400,color:"#888",marginLeft:"6px"}},e.d)),React.createElement("div",{style:{fontSize:"11px",color:"#999",marginTop:"1px"}},e.s))))),
-// Engels
-React.createElement("div",{style:{background:"rgba(255,255,255,0.02)",borderRadius:"12px",padding:"14px 16px",border:"1px dashed rgba(255,255,255,0.08)",marginBottom:"12px"}},
-  React.createElement("div",{style:{fontSize:"13px",fontWeight:700,color:"#888"}},"🇬🇧 Engels — datum & stof nog onbekend"),
-  React.createElement("div",{style:{fontSize:"11px",color:"#666",marginTop:"4px"}},"Wordt ingepast zodra bekend."))),
+  ...[{v:"Wiskunde",d:"Do 12 mrt",s:"H5 en H6",c:Cd.WISK},{v:"Nederlands",d:"Do 12 mrt",s:"Par 1.3, 2.3, 3.3, 4.3, 5.3",c:Cd.NED},{v:"Frans",d:"Vr 13 mrt",s:"Voc pg 131, gramm, pg 126-128",c:Cd.FRAN},{v:"Geschiedenis",d:"Vr 13 mrt",s:"Blz 10-11, par 4.1-4.3, 8 vaardigheden",c:Cd.GESCH},{v:"Engels",d:"Ma 16 mrt",s:"Vocab Unit 2+3, Past Simple be + regular verbs, WB 112-118 & 125-126",c:Cd.ENG},{v:"Biologie",d:"Di 17 mrt",s:"Thema 3: basisstof 1-6, extra 7-8",c:Cd.BIO},{v:"Aardrijkskunde",d:"Wo 18 mrt",s:"H4 par 1-5 + basisboeknummers",c:Cd.AK},{v:"Tekenen/HV",d:"Wo 18 mrt",s:"Tek H3+H6, HV H7 architectuur",c:Cd.TKHV}].map((e,i)=>React.createElement("div",{key:i,style:{display:"flex",gap:"10px",padding:"8px 0",borderTop:i?"1px solid rgba(255,255,255,0.03)":"none"}},React.createElement("div",{style:{width:"8px",height:"8px",borderRadius:"2px",background:e.c,marginTop:"5px",flexShrink:0}}),React.createElement("div",{style:{flex:1}},React.createElement("div",{style:{fontSize:"13px",fontWeight:700}},e.v,React.createElement("span",{style:{fontWeight:400,color:"#888",marginLeft:"6px"}},e.d)),React.createElement("div",{style:{fontSize:"11px",color:"#999",marginTop:"1px"}},e.s))))),
+// Engels is now included in the exam list above),
 
 // Reset
 React.createElement("button",{style:{width:"100%",padding:"12px",borderRadius:"10px",border:"none",background:"rgba(255,255,255,0.03)",color:"#555",fontSize:"12px",fontWeight:600,cursor:"pointer",marginTop:"16px"},onClick:()=>{if(confirm("Reset alle vinkjes?"))setCk({})}},"🔄 Reset alle vinkjes")
