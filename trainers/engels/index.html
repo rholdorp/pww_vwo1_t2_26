@@ -6,7 +6,7 @@
 <title>Engels Trainer – Unit 2+3</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🇬🇧</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-<style>*{box-sizing:border-box;margin:0;padding:0}body{background:linear-gradient(160deg,#0a0e1a,#111830 50%,#0c1020);font-family:'Nunito',sans-serif;color:#ddd;min-height:100vh}button{font-family:inherit;cursor:pointer}button:active{transform:scale(0.97)}.fade-in{animation:fadeIn 0.3s ease}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}</style>
+<style>*{box-sizing:border-box;margin:0;padding:0}body{background:linear-gradient(160deg,#0a0e1a,#111830 50%,#0c1020);font-family:'Nunito',sans-serif;color:#ddd;min-height:100vh}button{font-family:inherit;cursor:pointer}button:active{transform:scale(0.97)}.fade-in{animation:fadeIn 0.3s ease}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}input[type=text]{font-family:inherit;font-size:16px;padding:14px 16px;border-radius:12px;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);color:#fff;width:100%;outline:none;transition:border-color 0.2s}input[type=text]:focus{border-color:#E74C3C80}input[type=text].correct{border-color:#6bcb77;background:rgba(107,203,119,0.1)}input[type=text].wrong{border-color:#ff6b6b;background:rgba(255,107,107,0.1)}</style>
 <script src="../../shared/progress.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
@@ -14,36 +14,131 @@
 </head>
 <body><div id="root"></div>
 <script type="text/babel">
-const{useState,useEffect}=React;
+const{useState,useEffect,useRef}=React;
 const progress=new TrainerProgress("engels_u23","Engels Unit 2+3",{subject:"Engels",color:"#E74C3C",icon:"🇬🇧"});
 const COL="#E74C3C",bdr="rgba(255,255,255,0.06)",cBg="rgba(255,255,255,0.04)";
 
-const U2=[["acting","toneelspelen"],["aerobics","aerobics"],["archery","boogschieten"],["athletics","atletiek"],["bad","slecht (in iets)"],["badminton","badminton"],["basketball","basketbal"],["canoeing","kanoën"],["cello","cello"],["clarinet","klarinet"],["computer game","computerspel"],["cooking","koken"],["cricket","cricket"],["dancing","dansen"],["different","verschillend"],["difficult","moeilijk"],["drawing","tekenen"],["drums","drums"],["easy","makkelijk"],["enjoy","genieten van"],["flute","fluit"],["good","goed (in iets)"],["guitar","gitaar"],["gymnastics","turnen"],["hockey","hockey"],["interested","geïnteresseerd"],["karate","karate"],["keyboards","keyboard"],["like","leuk vinden"],["love","houden van"],["new","nieuw"],["noisy","lawaaierig"],["old","oud"],["painting","schilderen"],["piano","piano"],["quiet","stil"],["rock climbing","rotsklimmen"],["rugby","rugby"],["running","hardlopen"],["sailing","zeilen"],["same","hetzelfde"],["saxophone","saxofoon"],["singing","zingen"],["skateboarding","skateboarden"],["skiing","skiën"],["swimming","zwemmen"],["tennis","tennis"],["trumpet","trompet"],["unusual","ongewoon"],["usual","gewoon"],["violin","viool"],["volleyball","volleybal"]];
+const U2=[["acting","toneelspelen"],["aerobics","aerobics"],["archery","boogschieten"],["athletics","atletiek"],["bad (at)","slecht (in iets)"],["badminton","badminton"],["basketball","basketbal"],["canoeing","kanoën"],["cello","cello"],["clarinet","klarinet"],["computer game","computerspel"],["cooking","koken"],["cricket","cricket"],["dancing","dansen"],["different","verschillend"],["difficult","moeilijk"],["drawing","tekenen"],["drums","drums"],["easy","makkelijk"],["enjoy","genieten van"],["flute","fluit"],["good (at)","goed (in iets)"],["guitar","gitaar"],["gymnastics","turnen"],["hockey","hockey"],["interested","geïnteresseerd"],["karate","karate"],["keyboards","keyboard"],["like","leuk vinden"],["love","houden van"],["new","nieuw"],["noisy","lawaaierig"],["old","oud"],["painting","schilderen"],["piano","piano"],["quiet","stil"],["rock climbing","rotsklimmen"],["rugby","rugby"],["running","hardlopen"],["sailing","zeilen"],["same","hetzelfde"],["saxophone","saxofoon"],["singing","zingen"],["skateboarding","skateboarden"],["skiing","skiën"],["swimming","zwemmen"],["tennis","tennis"],["trumpet","trompet"],["unusual","ongewoon"],["usual","gewoon"],["violin","viool"],["volleyball","volleybal"]];
 
-const U3=[["armchair","fauteuil"],["bank","bank (geld)"],["bath","bad"],["bathroom","badkamer"],["bed","bed"],["bedroom","slaapkamer"],["bedside table","nachtkastje"],["bus stop","bushalte"],["café","café"],["capital","hoofdstad"],["carpet","tapijt/vloerkleed"],["ceiling","plafond"],["chest of drawers","ladekast"],["cinema","bioscoop"],["city","stad"],["city centre","stadscentrum"],["cooker","fornuis"],["countryside","platteland"],["cupboard","kast"],["curtains","gordijnen"],["cushion","kussen"],["dining room","eetkamer"],["dishwasher","vaatwasser"],["fireplace","open haard"],["floor","vloer"],["freezer","vriezer"],["fridge","koelkast"],["front door","voordeur"],["garden","tuin"],["hall","hal"],["hospital","ziekenhuis"],["kitchen","keuken"],["lamp","lamp"],["leisure centre","sportcentrum"],["library","bibliotheek"],["living room","woonkamer"],["mirror","spiegel"],["museum","museum"],["park","park"],["police station","politiebureau"],["restaurant","restaurant"],["roof","dak"],["rug","kleed(je)"],["shelf","plank"],["shopping centre","winkelcentrum"],["shower","douche"],["shutters","luiken"],["sink","gootsteen"],["sofa","bank (meubel)"],["stadium","stadion"],["stairs","trap"],["suburb","buitenwijk"],["table","tafel"],["theatre","theater"],["toilet","toilet"],["town","stad/dorp"],["train station","treinstation"],["university","universiteit"],["village","dorp"],["wall","muur"],["wardrobe","kledingkast"],["washbasin","wasbak"],["washing machine","wasmachine"],["window","raam"]];
+const U3=[["armchair","fauteuil"],["bank","bank (geld)"],["bath","bad"],["bathroom","badkamer"],["bed","bed"],["bedroom","slaapkamer"],["bedside table","nachtkastje"],["bus stop","bushalte"],["café","café"],["capital","hoofdstad"],["carpet","tapijt"],["ceiling","plafond"],["chest of drawers","ladekast"],["cinema","bioscoop"],["city","stad"],["city centre","stadscentrum"],["cooker","fornuis"],["countryside","platteland"],["cupboard","kast"],["curtains","gordijnen"],["cushion","kussen"],["dining room","eetkamer"],["dishwasher","vaatwasser"],["fireplace","open haard"],["floor","vloer"],["freezer","vriezer"],["fridge","koelkast"],["front door","voordeur"],["garden","tuin"],["hall","hal"],["hospital","ziekenhuis"],["kitchen","keuken"],["lamp","lamp"],["leisure centre","sportcentrum"],["library","bibliotheek"],["living room","woonkamer"],["mirror","spiegel"],["museum","museum"],["park","park"],["police station","politiebureau"],["restaurant","restaurant"],["roof","dak"],["rug","kleed"],["shelf","plank"],["shopping centre","winkelcentrum"],["shower","douche"],["shutters","luiken"],["sink","gootsteen"],["sofa","bank (meubel)"],["stadium","stadion"],["stairs","trap"],["suburb","buitenwijk"],["table","tafel"],["theatre","theater"],["toilet","toilet"],["town","stad"],["train station","treinstation"],["university","universiteit"],["village","dorp"],["wall","muur"],["wardrobe","kledingkast"],["washbasin","wasbak"],["washing machine","wasmachine"],["window","raam"]];
 
-const PS_BE=[["I","was"],["you","were"],["he","was"],["she","was"],["it","was"],["we","were"],["they","were"]];
-const REG_VERBS=[["play","played"],["watch","watched"],["listen","listened"],["walk","walked"],["talk","talked"],["start","started"],["finish","finished"],["enjoy","enjoyed"],["like","liked"],["love","loved"],["live","lived"],["arrive","arrived"],["cook","cooked"],["clean","cleaned"],["wash","washed"],["study","studied"],["carry","carried"],["try","tried"],["stop","stopped"],["plan","planned"]];
+// Past Simple be: subject → correct form
+const PS_BE_QS=[
+  {q:"I _____ at school yesterday.",a:"was"},
+  {q:"You _____ very tired last night.",a:"were"},
+  {q:"He _____ happy about the result.",a:"was"},
+  {q:"She _____ not at the party.",a:"was"},
+  {q:"It _____ very cold last winter.",a:"was"},
+  {q:"We _____ in London last summer.",a:"were"},
+  {q:"They _____ at the cinema on Saturday.",a:"were"},
+  {q:"_____ you at home yesterday? (was/were)",a:"were"},
+  {q:"_____ he your teacher last year? (was/were)",a:"was"},
+  {q:"The children _____ in the garden.",a:"were"},
+  {q:"My mum _____ born in 1980.",a:"was"},
+  {q:"The books _____ on the table.",a:"were"},
+  {q:"I _____ not (ontken: was/were) ready.",a:"was"},
+  {q:"You _____ late for school.",a:"were"},
+  {q:"The film _____ really good.",a:"was"},
+];
 
-const SECTIONS=[{id:"unit2",title:"Unit 2 Vocabulary",icon:"📖",desc:"Hobbies, sports & music"},{id:"unit3",title:"Unit 3 Vocabulary",icon:"🏠",desc:"House, rooms & places"},{id:"pastbe",title:"Past Simple 'be'",icon:"🔵",desc:"was / were"},{id:"pastreg",title:"Past Simple Regular",icon:"🟢",desc:"-ed verbs"},{id:"mix",title:"Mixed Test",icon:"📝",desc:"Alle stof door elkaar"}];
+// Past Simple regular: base → past
+const REG_VERBS=[["play","played"],["watch","watched"],["listen","listened"],["walk","walked"],["talk","talked"],["start","started"],["finish","finished"],["enjoy","enjoyed"],["like","liked"],["love","loved"],["live","lived"],["arrive","arrived"],["cook","cooked"],["clean","cleaned"],["wash","washed"],["study","studied"],["carry","carried"],["try","tried"],["stop","stopped"],["plan","planned"],["travel","travelled"],["dance","danced"],["hate","hated"],["want","wanted"],["need","needed"]];
 
-function genVocQs(words,secId,n=10){const pool=[...words].sort(()=>Math.random()-0.5).slice(0,n);return pool.map(([en,nl])=>{if(Math.random()>0.5){const w=words.filter(x=>x[1]!==nl).sort(()=>Math.random()-0.5).slice(0,3).map(x=>x[1]);const o=[nl,...w].sort(()=>Math.random()-0.5);return{q:"What does '"+en+"' mean?",o,c:o.indexOf(nl),secId}}else{const w=words.filter(x=>x[0]!==en).sort(()=>Math.random()-0.5).slice(0,3).map(x=>x[0]);const o=[en,...w].sort(()=>Math.random()-0.5);return{q:"Vertaal: "+nl,o,c:o.indexOf(en),secId}}})}
+const SECTIONS=[
+  {id:"unit2",title:"Unit 2 Vocabulary",icon:"📖",desc:"Hobbies, sports & music – "+U2.length+" woorden"},
+  {id:"unit3",title:"Unit 3 Vocabulary",icon:"🏠",desc:"House, rooms & places – "+U3.length+" woorden"},
+  {id:"pastbe",title:"Past Simple 'be'",icon:"🔵",desc:"was / were invullen"},
+  {id:"pastreg",title:"Past Simple Regular",icon:"🟢",desc:"-ed werkwoorden"},
+  {id:"mix",title:"Mixed Test",icon:"📝",desc:"Alle stof door elkaar"},
+];
 
-function genPastBeQs(){const qs=PS_BE.map(([s,f])=>({q:s+" _____ at school yesterday.",o:["was","were"],c:["was","were"].indexOf(f),secId:"pastbe"}));qs.push({q:"_____ you tired last night?",o:["Was","Were"],c:1,secId:"pastbe"},{q:"She _____ not happy yesterday.",o:["was","were"],c:0,secId:"pastbe"},{q:"They _____ at the cinema on Saturday.",o:["was","were"],c:1,secId:"pastbe"},{q:"It _____ very cold last winter.",o:["was","were"],c:0,secId:"pastbe"},{q:"We _____ in London last summer.",o:["was","were"],c:1,secId:"pastbe"},{q:"_____ he at the party?",o:["Was","Were"],c:0,secId:"pastbe"});return qs.sort(()=>Math.random()-0.5).slice(0,10)}
+// ===== NORMALIZE for comparison =====
+function normalize(s){return s.toLowerCase().trim().replace(/[''`]/g,"'").replace(/\s+/g," ").replace(/[.!?,;:]+$/,"")}
 
-function genPastRegQs(){return[...REG_VERBS].sort(()=>Math.random()-0.5).slice(0,10).map(([b,p])=>{const w=REG_VERBS.filter(v=>v[1]!==p).sort(()=>Math.random()-0.5).slice(0,3).map(v=>v[1]);const o=[p,...w].sort(()=>Math.random()-0.5);return{q:"Past Simple of '"+b+"':",o,c:o.indexOf(p),secId:"pastreg"}})}
+// Accept multiple correct answers separated by /
+function checkAnswer(input,correctStr){
+  const inp=normalize(input);
+  if(!inp)return false;
+  // Split on / for alternatives
+  const alts=correctStr.split("/").map(a=>normalize(a));
+  // Check exact match first
+  if(alts.some(a=>a===inp))return true;
+  // Check if answer is contained (for answers with extra info in parentheses)
+  if(alts.some(a=>{
+    // Strip parenthetical from correct: "slecht (in iets)" matches "slecht"
+    const base=normalize(a.replace(/\s*\([^)]*\)/g,""));
+    if(base&&base===inp)return true;
+    // Also match if user typed the full thing
+    return false;
+  }))return true;
+  return false;
+}
 
-function genMixQs(){return[...genVocQs(U2,"unit2",4),...genVocQs(U3,"unit3",4),...genPastBeQs().slice(0,3),...genPastRegQs().slice(0,4)].sort(()=>Math.random()-0.5).slice(0,15)}
+// ===== QUESTION GENERATORS =====
+function genVocQs(words,secId,n=10){
+  const pool=[...words].sort(()=>Math.random()-0.5).slice(0,n);
+  return pool.map(([en,nl])=>{
+    if(Math.random()>0.5){
+      return{prompt:en,answer:nl,direction:"EN → NL",hint:"Vertaal naar Nederlands",secId};
+    } else {
+      return{prompt:nl,answer:en,direction:"NL → EN",hint:"Translate to English",secId};
+    }
+  });
+}
 
-const THEORY={unit2:[{type:"explain",title:"Unit 2: Hobbies, Sports & Music",text:"In Unit 2 leer je woorden over **hobby's**, **sporten** en **muziekinstrumenten**.\n\n• Sports: **athletics**, **badminton**, **canoeing**, **gymnastics**, **rock climbing**, **sailing**\n• Music: **cello**, **clarinet**, **drums**, **flute**, **guitar**, **keyboards**, **piano**, **saxophone**, **trumpet**, **violin**\n• Activities: **acting**, **cooking**, **dancing**, **drawing**, **painting**, **singing**\n• Adjectives: **easy/difficult**, **good/bad**, **noisy/quiet**, **same/different**, **usual/unusual**"},{type:"check",question:"What does 'canoeing' mean?",options:["kanoën","zeilen","zwemmen","skiën"],correct:0}],
-unit3:[{type:"explain",title:"Unit 3: Home & Places",text:"In Unit 3 leer je woorden over het **huis**, **kamers**, **meubels** en **plaatsen**.\n\n**Rooms:** bedroom, bathroom, kitchen, living room, dining room, hall\n**Furniture:** armchair, sofa, wardrobe, chest of drawers, shelf, cushion\n**Kitchen:** cooker, fridge, freezer, dishwasher, sink, washing machine\n**House parts:** ceiling, floor, wall, roof, stairs, front door, garden, curtains, carpet\n**Places:** bank, café, cinema, hospital, library, museum, park, stadium, theatre"},{type:"check",question:"What is 'plafond' in English?",options:["ceiling","floor","roof","wall"],correct:0}],
-pastbe:[{type:"explain",title:"Past Simple of 'be'",text:"**be** heeft twee vormen in de Past Simple:\n\n**was** → I / he / she / it\n**were** → you / we / they\n\nI **was** happy yesterday.\nThey **were** at school.\n\n**Ontkenning:** was not (**wasn't**) / were not (**weren't**)\n**Vragen:** **Was** he tired? / **Were** they at school?\n\nBij vragen draai je was/were en het onderwerp om!"},{type:"check",question:"'They _____ at the cinema.' Which form?",options:["was","were","is","are"],correct:1}],
-pastreg:[{type:"explain",title:"Past Simple: Regular Verbs",text:"Bij **regelmatige werkwoorden** voeg je **-ed** toe:\n\nplay → **played**, watch → **watched**, listen → **listened**\n\n**Spellingregels:**\n• Eindigt op -e → alleen -d: live → **lived**, like → **liked**\n• Medeklinker + y → y wordt ied: study → **studied**, carry → **carried**\n• Korte klinker + medeklinker → dubbel: stop → **stopped**, plan → **planned**\n\n**Ontkenning:** I **didn't** play (NIET: didn't played!)\n**Vraag:** **Did** you play? (NIET: Did you played?)"},{type:"check",question:"Past Simple of 'study':",options:["studyed","studied","studid","studieed"],correct:1}]};
+function genPastBeQs(n=10){
+  return[...PS_BE_QS].sort(()=>Math.random()-0.5).slice(0,n).map(q=>({
+    prompt:q.q,answer:q.a,direction:"Fill in",hint:"was of were?",secId:"pastbe"
+  }));
+}
 
+function genPastRegQs(n=10){
+  return[...REG_VERBS].sort(()=>Math.random()-0.5).slice(0,n).map(([base,past])=>({
+    prompt:"Past Simple of '"+base+"':",answer:past,direction:"Conjugate",hint:"Typ de Past Simple vorm",secId:"pastreg"
+  }));
+}
+
+function genMixQs(){
+  return[
+    ...genVocQs(U2,"unit2",4),
+    ...genVocQs(U3,"unit3",4),
+    ...genPastBeQs(3),
+    ...genPastRegQs(4)
+  ].sort(()=>Math.random()-0.5);
+}
+
+// ===== THEORY =====
+const THEORY={
+  unit2:[
+    {type:"explain",title:"Unit 2: Hobbies, Sports & Music",text:"In Unit 2 leer je woorden over **hobby's**, **sporten** en **muziekinstrumenten**.\n\n• Sports: **athletics**, **badminton**, **canoeing**, **gymnastics**, **rock climbing**, **sailing**\n• Music: **cello**, **clarinet**, **drums**, **flute**, **guitar**, **keyboards**, **piano**, **saxophone**, **trumpet**, **violin**\n• Activities: **acting**, **cooking**, **dancing**, **drawing**, **painting**, **singing**\n• Adjectives: **easy/difficult**, **good/bad**, **noisy/quiet**, **same/different**, **usual/unusual**"},
+    {type:"check",prompt:"canoeing",answer:"kanoën",hint:"Vertaal naar Nederlands"},
+  ],
+  unit3:[
+    {type:"explain",title:"Unit 3: Home & Places",text:"In Unit 3 leer je woorden over het **huis**, **kamers**, **meubels** en **plaatsen**.\n\n**Rooms:** bedroom, bathroom, kitchen, living room, dining room, hall\n**Furniture:** armchair, sofa, wardrobe, chest of drawers, shelf, cushion\n**Kitchen:** cooker, fridge, freezer, dishwasher, sink, washing machine\n**House parts:** ceiling, floor, wall, roof, stairs, front door, garden, curtains, carpet\n**Places:** bank, café, cinema, hospital, library, museum, park, stadium, theatre"},
+    {type:"check",prompt:"plafond",answer:"ceiling",hint:"Translate to English"},
+  ],
+  pastbe:[
+    {type:"explain",title:"Past Simple of 'be'",text:"**be** heeft twee vormen in de Past Simple:\n\n**was** → I / he / she / it\n**were** → you / we / they\n\nI **was** happy yesterday.\nThey **were** at school.\n\n**Ontkenning:** was not (**wasn't**) / were not (**weren't**)\n**Vragen:** **Was** he tired? / **Were** they at school?\n\nBij vragen draai je was/were en het onderwerp om!"},
+    {type:"check",prompt:"They _____ at the cinema.",answer:"were",hint:"was of were?"},
+  ],
+  pastreg:[
+    {type:"explain",title:"Past Simple: Regular Verbs",text:"Bij **regelmatige werkwoorden** voeg je **-ed** toe:\n\nplay → **played**, watch → **watched**, listen → **listened**\n\n**Spellingregels:**\n• Eindigt op -e → alleen -d: live → **lived**, like → **liked**\n• Medeklinker + y → y wordt ied: study → **studied**, carry → **carried**\n• Korte klinker + medeklinker → dubbel: stop → **stopped**, plan → **planned**\n\n**Ontkenning:** I **didn't** play (NIET: didn't played!)\n**Vraag:** **Did** you play? (NIET: Did you played?)"},
+    {type:"check",prompt:"Past Simple of 'study':",answer:"studied",hint:"Typ de Past Simple vorm"},
+  ],
+};
+
+// ===== MAIN APP =====
 function App(){
-  const[mode,setMode]=useState("home");const[activeSec,setActiveSec]=useState(null);const[step,setStep]=useState(0);
-  const[questions,setQuestions]=useState([]);const[qIdx,setQIdx]=useState(0);const[score,setScore]=useState({correct:0,total:0});
-  const[answered,setAnswered]=useState(null);const[,forceUpdate]=useState(0);
+  const[mode,setMode]=useState("home");
+  const[activeSec,setActiveSec]=useState(null);
+  const[step,setStep]=useState(0);
+  const[questions,setQuestions]=useState([]);
+  const[qIdx,setQIdx]=useState(0);
+  const[score,setScore]=useState({correct:0,total:0});
+  const[input,setInput]=useState("");
+  const[result,setResult]=useState(null); // null | "correct" | "wrong"
+  const[,forceUpdate]=useState(0);
+  const inputRef=useRef(null);
 
   const tag=(c,t)=>React.createElement("span",{style:{display:"inline-block",padding:"2px 8px",borderRadius:"6px",fontSize:"10px",fontWeight:700,background:c+"20",color:c}},t);
   const pBar=(p,c,h)=>React.createElement("div",{style:{height:h||"6px",borderRadius:"3px",background:"rgba(255,255,255,0.06)",position:"relative",overflow:"hidden"}},React.createElement("div",{style:{position:"absolute",top:0,left:0,height:"100%",width:Math.min(p,100)+"%",background:c||COL,borderRadius:"3px",transition:"width 0.6s"}}));
@@ -51,16 +146,54 @@ function App(){
   const overall=progress.getOverallStats();
 
   const startTheory=id=>{setActiveSec(id);setStep(0);setMode("theory")};
-  const startPractice=id=>{setActiveSec(id);let qs;switch(id){case"unit2":qs=genVocQs(U2,"unit2",10);break;case"unit3":qs=genVocQs(U3,"unit3",10);break;case"pastbe":qs=genPastBeQs();break;case"pastreg":qs=genPastRegQs();break;case"mix":qs=genMixQs();break;default:qs=[]}setQuestions(qs);setQIdx(0);setScore({correct:0,total:0});setAnswered(null);setMode("practice")};
-  const handleAnswer=i=>{if(answered!==null)return;const q=questions[qIdx];const ok=i===q.c;setAnswered(i);progress.recordAnswer(q.secId||activeSec,ok);setScore(s=>({correct:s.correct+(ok?1:0),total:s.total+1}));forceUpdate(n=>n+1)};
-  const nextQ=()=>{if(qIdx+1<questions.length){setQIdx(qIdx+1);setAnswered(null)}else setMode("results")};
+  const startPractice=id=>{
+    setActiveSec(id);
+    let qs;
+    switch(id){
+      case"unit2":qs=genVocQs(U2,"unit2",12);break;
+      case"unit3":qs=genVocQs(U3,"unit3",12);break;
+      case"pastbe":qs=genPastBeQs(10);break;
+      case"pastreg":qs=genPastRegQs(10);break;
+      case"mix":qs=genMixQs();break;
+      default:qs=[];
+    }
+    setQuestions(qs);setQIdx(0);setScore({correct:0,total:0});setInput("");setResult(null);setMode("practice");
+  };
 
+  const submitAnswer=()=>{
+    if(result!==null)return;
+    const q=questions[qIdx];
+    const ok=checkAnswer(input,q.answer);
+    setResult(ok?"correct":"wrong");
+    progress.recordAnswer(q.secId||activeSec,ok);
+    setScore(s=>({correct:s.correct+(ok?1:0),total:s.total+1}));
+    forceUpdate(n=>n+1);
+  };
+
+  const nextQ=()=>{
+    if(qIdx+1<questions.length){
+      setQIdx(qIdx+1);setInput("");setResult(null);
+      setTimeout(()=>{if(inputRef.current)inputRef.current.focus()},100);
+    } else setMode("results");
+  };
+
+  const handleKey=(e)=>{
+    if(e.key==="Enter"){
+      if(result===null&&input.trim())submitAnswer();
+      else if(result!==null)nextQ();
+    }
+  };
+
+  // ===== HOME =====
   if(mode==="home"){
     return React.createElement("div",{style:{minHeight:"100vh"}},
       React.createElement("div",{style:{background:"rgba(0,0,0,0.3)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+bdr,padding:"14px 20px",display:"flex",justifyContent:"space-between",alignItems:"center",position:"sticky",top:0,zIndex:50}},
-        React.createElement("div",{style:{display:"flex",alignItems:"center",gap:"10px"}},React.createElement("a",{href:"../../index.html",style:{color:"#666",textDecoration:"none",fontSize:"18px"}},"←"),React.createElement("div",{style:{fontSize:"17px",fontWeight:900,color:COL}},"🇬🇧 Engels")),
+        React.createElement("div",{style:{display:"flex",alignItems:"center",gap:"10px"}},
+          React.createElement("a",{href:"../../index.html",style:{color:"#666",textDecoration:"none",fontSize:"18px"}},"←"),
+          React.createElement("div",{style:{fontSize:"17px",fontWeight:900,color:COL}},"🇬🇧 Engels")),
         React.createElement("div",{style:{fontSize:"12px",color:"#666"}},"Unit 2+3")),
       React.createElement("div",{style:{maxWidth:"640px",margin:"0 auto",padding:"16px 14px 60px"}},
+        // Overall progress
         React.createElement("div",{style:{background:cBg,borderRadius:"16px",padding:"18px",border:"1px solid "+bdr,marginBottom:"16px",textAlign:"center"}},
           React.createElement("div",{style:{fontSize:"15px",fontWeight:800,marginBottom:"8px"}},"Voortgang Engels"),
           React.createElement("div",{style:{display:"flex",justifyContent:"space-around",marginBottom:"12px"}},
@@ -68,26 +201,41 @@ function App(){
             React.createElement("div",null,React.createElement("div",{style:{fontSize:"24px",fontWeight:900,color:"#fff"}},overall.mastered+"/"+SECTIONS.length),React.createElement("div",{style:{fontSize:"10px",color:"#777"}},"secties")),
             React.createElement("div",null,React.createElement("div",{style:{fontSize:"24px",fontWeight:900,color:overall.accuracy>=70?"#6bcb77":"#ffd93d"}},overall.accuracy+"%"),React.createElement("div",{style:{fontSize:"10px",color:"#777"}},"correct"))),
           pBar(overall.masteryPct,COL,"8px")),
+        // Exam info
         React.createElement("div",{style:{background:COL+"12",borderRadius:"12px",padding:"14px",border:"1px solid "+COL+"25",marginBottom:"16px"}},
           React.createElement("div",{style:{fontSize:"13px",fontWeight:700,color:COL}},"📝 PW Engels — Ma 16 mrt 09:25-10:15"),
-          React.createElement("div",{style:{fontSize:"11px",color:"#999",marginTop:"4px"}},"Vocab Unit 2+3 • Past Simple \"be\" (was/were) • Past Simple regular verbs (-ed) • WB blz. 112-118 & 125-126")),
-        SECTIONS.map(sec=>{const st=getSt(sec.id),hasTh=THEORY[sec.id];
+          React.createElement("div",{style:{fontSize:"11px",color:"#999",marginTop:"4px"}},"Vocab Unit 2+3 • Past Simple \"be\" (was/were) • Past Simple regular verbs (-ed)")),
+        // Typing indicator
+        React.createElement("div",{style:{background:"rgba(231,76,60,0.06)",borderRadius:"10px",padding:"10px 14px",marginBottom:"16px",display:"flex",alignItems:"center",gap:"8px"}},
+          React.createElement("span",{style:{fontSize:"16px"}},"⌨️"),
+          React.createElement("span",{style:{fontSize:"12px",color:"#999"}},"Type-modus: je typt zelf het antwoord — geen multiple choice!")),
+        // Sections
+        SECTIONS.map(sec=>{
+          const st=getSt(sec.id),hasTh=THEORY[sec.id];
           return React.createElement("div",{key:sec.id,style:{background:cBg,borderRadius:"16px",padding:"16px",border:"1px solid "+(st.mastered?"#6bcb7730":bdr),marginBottom:"10px"}},
             React.createElement("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"10px"}},
-              React.createElement("div",{style:{display:"flex",alignItems:"center",gap:"8px"}},React.createElement("span",{style:{fontSize:"20px"}},sec.icon),React.createElement("div",null,React.createElement("div",{style:{fontSize:"14px",fontWeight:700}},sec.title),React.createElement("div",{style:{fontSize:"11px",color:"#777"}},sec.desc," · ",st.total," vragen",st.total>0?" ("+st.pct+"%)":""))),
-              st.mastered?tag("#6bcb77","✓ Mastered"):st.total>=5?tag("#ff6b6b",st.pct+"%"):tag("#888","not started")),
+              React.createElement("div",{style:{display:"flex",alignItems:"center",gap:"8px"}},
+                React.createElement("span",{style:{fontSize:"20px"}},sec.icon),
+                React.createElement("div",null,
+                  React.createElement("div",{style:{fontSize:"14px",fontWeight:700}},sec.title),
+                  React.createElement("div",{style:{fontSize:"11px",color:"#777"}},sec.desc,st.total>0?" · "+st.pct+"%":""))),
+              st.mastered?tag("#6bcb77","✓ Mastered"):st.total>=5?tag(st.pct>=70?"#6bcb77":"#ff6b6b",st.pct+"%"):st.total>0?tag("#ffd93d",st.total+" gedaan"):tag("#888","start")),
             st.total>0&&pBar(st.pct,st.mastered?"#6bcb77":COL,"4px"),
             React.createElement("div",{style:{display:"flex",gap:"8px",marginTop:"10px"}},
-              hasTh&&React.createElement("button",{style:{flex:1,padding:"10px",borderRadius:"10px",border:"none",background:COL+"20",color:COL,fontSize:"13px",fontWeight:700},onClick:()=>startTheory(sec.id)},st.theoryDone?"📖 Review":"📖 Theory"),
-              React.createElement("button",{style:{flex:1,padding:"10px",borderRadius:"10px",border:"none",background:"rgba(255,255,255,0.08)",color:"#fff",fontSize:"13px",fontWeight:700},onClick:()=>startPractice(sec.id)},sec.id==="mix"?"📝 Start Test":"✏️ Practice")))}),
+              hasTh&&React.createElement("button",{style:{flex:1,padding:"10px",borderRadius:"10px",border:"none",background:COL+"20",color:COL,fontSize:"13px",fontWeight:700},onClick:()=>startTheory(sec.id)},"📖 Theorie"),
+              React.createElement("button",{style:{flex:1,padding:"10px",borderRadius:"10px",border:"none",background:"rgba(255,255,255,0.08)",color:"#fff",fontSize:"13px",fontWeight:700},onClick:()=>startPractice(sec.id)},sec.id==="mix"?"📝 Start Test":"✏️ Oefenen")));
+        }),
+        // Footer
         React.createElement("div",{style:{display:"flex",gap:"8px",marginTop:"16px"}},
           React.createElement("a",{href:"../../index.html",style:{flex:1,display:"block",padding:"10px",borderRadius:"10px",background:"rgba(255,255,255,0.03)",color:"#666",fontSize:"12px",fontWeight:600,textDecoration:"none",textAlign:"center"}},"← Terug"),
           React.createElement("button",{style:{padding:"10px 16px",borderRadius:"10px",border:"none",background:"rgba(255,255,255,0.03)",color:"#555",fontSize:"12px",fontWeight:600},onClick:()=>{if(confirm("Reset all progress?")){progress.reset();forceUpdate(n=>n+1)}}},"🔄"))));
   }
 
+  // ===== THEORY =====
   if(mode==="theory"){
     const steps=THEORY[activeSec],sec=SECTIONS.find(s=>s.id===activeSec),cs=steps[step],isLast=step===steps.length-1;
     const renderText=text=>text.split("\n").map((line,i)=>{const parts=line.split(/(\*\*[^*]+\*\*)/g);return React.createElement("div",{key:i,style:{marginBottom:line===""?"8px":"4px"}},parts.map((p,j)=>p.startsWith("**")&&p.endsWith("**")?React.createElement("strong",{key:j,style:{color:"#fff"}},p.slice(2,-2)):React.createElement("span",{key:j},p)))});
+
     return React.createElement("div",{style:{minHeight:"100vh"}},
       React.createElement("div",{style:{background:"rgba(0,0,0,0.3)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+bdr,padding:"14px 20px",display:"flex",justifyContent:"space-between",alignItems:"center",position:"sticky",top:0,zIndex:50}},
         React.createElement("button",{style:{background:"none",border:"none",color:"#666",fontSize:"16px"},onClick:()=>setMode("home")},"✕"),
@@ -96,13 +244,19 @@ function App(){
       React.createElement("div",{style:{maxWidth:"640px",margin:"0 auto",padding:"20px 14px 60px"}},
         pBar(((step+1)/steps.length)*100,COL,"4px"),
         React.createElement("div",{key:step,className:"fade-in",style:{marginTop:"20px"}},
-          cs.type==="explain"&&React.createElement("div",{style:{background:cBg,borderRadius:"16px",padding:"20px",border:"1px solid "+bdr}},React.createElement("div",{style:{fontSize:"12px",color:COL,fontWeight:700,marginBottom:"6px"}},"📖 THEORY"),React.createElement("div",{style:{fontSize:"18px",fontWeight:800,marginBottom:"12px"}},cs.title),React.createElement("div",{style:{fontSize:"14px",lineHeight:1.8,color:"#ccc"}},renderText(cs.text))),
-          cs.type==="check"&&React.createElement(ThCheck,{step:cs,secId:activeSec}),
+          cs.type==="explain"&&React.createElement("div",{style:{background:cBg,borderRadius:"16px",padding:"20px",border:"1px solid "+bdr}},
+            React.createElement("div",{style:{fontSize:"12px",color:COL,fontWeight:700,marginBottom:"6px"}},"📖 THEORIE"),
+            React.createElement("div",{style:{fontSize:"18px",fontWeight:800,marginBottom:"12px"}},cs.title),
+            React.createElement("div",{style:{fontSize:"14px",lineHeight:1.8,color:"#ccc"}},renderText(cs.text))),
+          cs.type==="check"&&React.createElement(ThCheckTyping,{step:cs,secId:activeSec}),
           React.createElement("div",{style:{display:"flex",gap:"8px",marginTop:"20px"}},
-            step>0&&React.createElement("button",{style:{flex:1,padding:"12px",borderRadius:"12px",border:"none",background:"rgba(255,255,255,0.06)",color:"#999",fontSize:"14px",fontWeight:700},onClick:()=>setStep(step-1)},"← Back"),
-            React.createElement("button",{style:{flex:2,padding:"12px",borderRadius:"12px",border:"none",background:COL,color:"#fff",fontSize:"14px",fontWeight:800},onClick:()=>{if(isLast){progress.markTheoryDone(activeSec);forceUpdate(n=>n+1);setMode("home")}else setStep(step+1)}},isLast?"✅ Theory done!":"Next →")))));
+            step>0&&React.createElement("button",{style:{flex:1,padding:"12px",borderRadius:"12px",border:"none",background:"rgba(255,255,255,0.06)",color:"#999",fontSize:"14px",fontWeight:700},onClick:()=>setStep(step-1)},"← Terug"),
+            React.createElement("button",{style:{flex:2,padding:"12px",borderRadius:"12px",border:"none",background:COL,color:"#fff",fontSize:"14px",fontWeight:800},onClick:()=>{
+              if(isLast){progress.markTheoryDone(activeSec);forceUpdate(n=>n+1);setMode("home")}else setStep(step+1)
+            }},isLast?"✅ Theorie klaar!":"Volgende →")))));
   }
 
+  // ===== PRACTICE (TYPING) =====
   if(mode==="practice"){
     const q=questions[qIdx],sec=SECTIONS.find(s=>s.id===activeSec);
     return React.createElement("div",{style:{minHeight:"100vh"}},
@@ -112,13 +266,48 @@ function App(){
         React.createElement("div",{style:{fontSize:"12px",color:"#666"}},(qIdx+1)+"/"+questions.length)),
       React.createElement("div",{style:{maxWidth:"640px",margin:"0 auto",padding:"20px 14px 60px"}},
         pBar(((qIdx+1)/questions.length)*100,COL,"4px"),
-        React.createElement("div",{style:{display:"flex",justifyContent:"center",gap:"16px",margin:"12px 0 16px"}},React.createElement("span",{style:{fontSize:"13px",color:"#6bcb77"}},"✓ "+score.correct),React.createElement("span",{style:{fontSize:"13px",color:"#ff6b6b"}},"✕ "+(score.total-score.correct))),
+        React.createElement("div",{style:{display:"flex",justifyContent:"center",gap:"16px",margin:"12px 0 16px"}},
+          React.createElement("span",{style:{fontSize:"13px",color:"#6bcb77"}},"✓ "+score.correct),
+          React.createElement("span",{style:{fontSize:"13px",color:"#ff6b6b"}},"✕ "+(score.total-score.correct))),
         React.createElement("div",{key:qIdx,className:"fade-in"},
-          React.createElement("div",{style:{background:cBg,borderRadius:"16px",padding:"20px",border:"1px solid "+bdr,marginBottom:"16px"}},React.createElement("div",{style:{fontSize:"16px",fontWeight:700,lineHeight:1.6}},q.q)),
-          q.o.map((opt,i)=>{const isC=i===q.c,isSel=answered===i,sh=answered!==null;let bg=cBg,b2=bdr,cl="#ccc";if(sh&&isC){bg="rgba(107,203,119,0.15)";b2="#6bcb7750";cl="#6bcb77"}else if(sh&&isSel&&!isC){bg="rgba(255,107,107,0.15)";b2="#ff6b6b50";cl="#ff6b6b"}return React.createElement("button",{key:i,style:{width:"100%",padding:"14px 16px",borderRadius:"12px",border:"1px solid "+b2,background:bg,color:cl,fontSize:"14px",fontWeight:600,textAlign:"left",marginBottom:"8px"},onClick:()=>handleAnswer(i)},(sh&&isC?"✅ ":sh&&isSel?"❌ ":"")+opt)}),
-          answered!==null&&React.createElement("button",{style:{width:"100%",padding:"14px",borderRadius:"14px",border:"none",background:COL,color:"#fff",fontSize:"15px",fontWeight:800,marginTop:"8px"},onClick:nextQ},qIdx+1<questions.length?"Next question →":"See results"))));
+          // Direction badge
+          q.direction&&React.createElement("div",{style:{marginBottom:"8px"}},tag(COL,q.direction)),
+          // Question prompt
+          React.createElement("div",{style:{background:cBg,borderRadius:"16px",padding:"24px 20px",border:"1px solid "+bdr,marginBottom:"16px",textAlign:"center"}},
+            React.createElement("div",{style:{fontSize:"22px",fontWeight:800,lineHeight:1.5}},q.prompt),
+            q.hint&&result===null&&React.createElement("div",{style:{fontSize:"12px",color:"#666",marginTop:"8px"}},q.hint)),
+          // Input field
+          React.createElement("input",{
+            ref:inputRef,
+            type:"text",
+            value:input,
+            onChange:e=>result===null&&setInput(e.target.value),
+            onKeyDown:handleKey,
+            className:result==="correct"?"correct":result==="wrong"?"wrong":"",
+            placeholder:"Typ je antwoord...",
+            autoFocus:true,
+            autoComplete:"off",
+            autoCapitalize:"off",
+            spellCheck:false,
+            readOnly:result!==null,
+          }),
+          // Result feedback
+          result!==null&&React.createElement("div",{style:{marginTop:"12px",padding:"14px 16px",borderRadius:"12px",background:result==="correct"?"rgba(107,203,119,0.1)":"rgba(255,107,107,0.1)",border:"1px solid "+(result==="correct"?"#6bcb7730":"#ff6b6b30")}},
+            result==="correct"
+              ?React.createElement("div",{style:{fontSize:"14px",fontWeight:700,color:"#6bcb77"}},"✅ Correct!")
+              :React.createElement("div",null,
+                  React.createElement("div",{style:{fontSize:"14px",fontWeight:700,color:"#ff6b6b"}},"❌ Helaas!"),
+                  React.createElement("div",{style:{fontSize:"14px",color:"#ccc",marginTop:"4px"}},"Goed antwoord: ",React.createElement("strong",{style:{color:"#fff"}},q.answer)),
+                  React.createElement("div",{style:{fontSize:"12px",color:"#888",marginTop:"2px"}},"Jouw antwoord: ",input||"(leeg)"))),
+          // Submit / Next button
+          result===null
+            ?React.createElement("button",{style:{width:"100%",padding:"14px",borderRadius:"14px",border:"none",background:input.trim()?COL:"rgba(255,255,255,0.06)",color:input.trim()?"#fff":"#555",fontSize:"15px",fontWeight:800,marginTop:"12px"},onClick:submitAnswer,disabled:!input.trim()},"Check ✓")
+            :React.createElement("button",{style:{width:"100%",padding:"14px",borderRadius:"14px",border:"none",background:COL,color:"#fff",fontSize:"15px",fontWeight:800,marginTop:"12px"},onClick:nextQ},
+              qIdx+1<questions.length?"Volgende →":"Bekijk resultaat")
+        )));
   }
 
+  // ===== RESULTS =====
   if(mode==="results"){
     const pct=score.total>0?Math.round(score.correct/score.total*100):0,passed=pct>=70;
     return React.createElement("div",{style:{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center"}},
@@ -128,19 +317,25 @@ function App(){
         React.createElement("div",{style:{fontSize:"48px",fontWeight:900,color:passed?"#6bcb77":"#ffd93d",marginBottom:"8px"}},pct+"%"),
         React.createElement("div",{style:{fontSize:"15px",color:"#999",marginBottom:"24px"}},score.correct+"/"+score.total+" correct"),
         React.createElement("div",{style:{display:"flex",gap:"8px"}},
-          React.createElement("button",{style:{flex:1,padding:"12px",borderRadius:"12px",border:"none",background:"rgba(255,255,255,0.06)",color:"#999",fontSize:"14px",fontWeight:700},onClick:()=>setMode("home")},"← Back"),
-          React.createElement("button",{style:{flex:1,padding:"12px",borderRadius:"12px",border:"none",background:COL,color:"#fff",fontSize:"14px",fontWeight:800},onClick:()=>startPractice(activeSec)},"Try again"))));
+          React.createElement("button",{style:{flex:1,padding:"12px",borderRadius:"12px",border:"none",background:"rgba(255,255,255,0.06)",color:"#999",fontSize:"14px",fontWeight:700},onClick:()=>setMode("home")},"← Terug"),
+          React.createElement("button",{style:{flex:1,padding:"12px",borderRadius:"12px",border:"none",background:COL,color:"#fff",fontSize:"14px",fontWeight:800},onClick:()=>startPractice(activeSec)},"Opnieuw"))));
   }
   return null;
 }
 
-function ThCheck({step,secId}){
-  const[picked,setPicked]=useState(null);
-  const handle=i=>{if(picked!==null)return;setPicked(i);progress.recordAnswer(secId,i===step.correct)};
+// Theory check with typing
+function ThCheckTyping({step,secId}){
+  const[input,setInput]=useState("");
+  const[result,setResult]=useState(null);
+  const handle=()=>{if(result!==null||!input.trim())return;const ok=checkAnswer(input,step.answer);setResult(ok?"correct":"wrong");progress.recordAnswer(secId,ok)};
+  const onKey=e=>{if(e.key==="Enter")handle()};
   return React.createElement("div",{style:{background:"rgba(77,150,255,0.08)",borderRadius:"16px",padding:"20px",border:"1px solid rgba(77,150,255,0.2)"}},
     React.createElement("div",{style:{fontSize:"12px",color:"#4d96ff",fontWeight:700,marginBottom:"6px"}},"❓ CHECK"),
-    React.createElement("div",{style:{fontSize:"16px",fontWeight:700,marginBottom:"14px"}},step.question),
-    step.options.map((opt,i)=>{const c=i===step.correct,s=picked===i,sh=picked!==null;let bg=cBg,b=bdr,cl="#ccc";if(sh&&c){bg="rgba(107,203,119,0.15)";b="#6bcb7750";cl="#6bcb77"}else if(sh&&s&&!c){bg="rgba(255,107,107,0.15)";b="#ff6b6b50";cl="#ff6b6b"}return React.createElement("button",{key:i,style:{width:"100%",padding:"12px 14px",borderRadius:"10px",border:"1px solid "+b,background:bg,color:cl,fontSize:"13px",fontWeight:600,textAlign:"left",marginBottom:"6px"},onClick:()=>handle(i)},(sh&&c?"✅ ":sh&&s?"❌ ":"")+opt)}));
+    React.createElement("div",{style:{fontSize:"18px",fontWeight:700,marginBottom:"6px"}},step.prompt),
+    step.hint&&React.createElement("div",{style:{fontSize:"12px",color:"#888",marginBottom:"12px"}},step.hint),
+    React.createElement("input",{type:"text",value:input,onChange:e=>result===null&&setInput(e.target.value),onKeyDown:onKey,className:result||"",placeholder:"Typ je antwoord...",autoComplete:"off",autoCapitalize:"off",spellCheck:false,readOnly:result!==null,style:{fontSize:"16px",padding:"12px 14px",borderRadius:"10px",border:"2px solid "+(result==="correct"?"#6bcb77":result==="wrong"?"#ff6b6b":"rgba(255,255,255,0.1)"),background:result==="correct"?"rgba(107,203,119,0.1)":result==="wrong"?"rgba(255,107,107,0.1)":"rgba(255,255,255,0.06)",color:"#fff",width:"100%",outline:"none",fontFamily:"inherit"}}),
+    result==="wrong"&&React.createElement("div",{style:{fontSize:"13px",color:"#ff6b6b",marginTop:"8px"}},"Goed antwoord: ",React.createElement("strong",{style:{color:"#fff"}},step.answer)),
+    result===null&&React.createElement("button",{style:{width:"100%",padding:"10px",borderRadius:"10px",border:"none",background:input.trim()?"#4d96ff":"rgba(255,255,255,0.06)",color:input.trim()?"#fff":"#555",fontSize:"13px",fontWeight:700,marginTop:"10px"},onClick:handle,disabled:!input.trim()},"Check ✓"));
 }
 
 ReactDOM.render(React.createElement(App),document.getElementById("root"));
