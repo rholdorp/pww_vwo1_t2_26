@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Biologie Trainer – Thema 3 Ordening</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>*{box-sizing:border-box;margin:0;padding:0}body{background:linear-gradient(160deg,#0a0e1a,#111830 50%,#0c1020);font-family:'Nunito',sans-serif;color:#ddd;min-height:100vh}button{font-family:inherit;cursor:pointer}button:active{transform:scale(0.97)}.fade-in{animation:fadeIn 0.3s ease}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}</style>
+<script src="../../shared/progress.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+</head>
+<body><div id="root"></div>
+<script type="text/babel">
+const{useState,useEffect}=React;
+
+const progress=new TrainerProgress("biologie_t3","Biologie Thema 3 Ordening",{subject:"Biologie",color:"#27AE60",icon:"🌿"});
+
+const COL="#27AE60";
+const bdr="rgba(255,255,255,0.06)",cBg="rgba(255,255,255,0.04)";
+
+const SECTIONS=[
+  {id:"bs1",title:"BS1: Celkenmerken & Rijken",icon:"🔬",desc:"Prokaryoten, eukaryoten, 7 rijken, indeling"},
+  {id:"bs2",title:"BS2: Soorten & Verwantschap",icon:"🧬",desc:"Soort, variatie, selectie, evolutie, DNA"},
+  {id:"bs3",title:"BS3: Dieren",icon:"🐾",desc:"Symmetrie, skelet, 7 stammen van het dierenrijk"},
+  {id:"bs4",title:"BS4: Planten",icon:"🌱",desc:"Groenwieren, sporenplanten, zaadplanten"},
+  {id:"bs5",title:"BS5: Schimmels",icon:"🍄",desc:"Celkenmerken, voortplanting, nuttig & schadelijk"},
+  {id:"bs6",title:"BS6: Bacteriën",icon:"🦠",desc:"Celkenmerken, voortplanting, nuttig & schadelijk"},
+  {id:"es7",title:"Extra: Gewervelden",icon:"🦴",desc:"5 klassen: vissen, amfibieën, reptielen, vogels, zoogdieren"},
+  {id:"es8",title:"Extra: Geleedpotigen",icon:"🦗",desc:"4 groepen: insecten, spinachtigen, kreeftachtigen, veelpotigen"},
+];
+
+const THEORY={
+  bs1:[
+    {title:"Twee hoofdgroepen",text:"Alle levende wezens worden ingedeeld in twee hoofdgroepen:\n\n🔵 PROKARYOTEN — geen celkern\n   bijv. bacteriën en archaea\n\n🟢 EUKARYOTEN — wél een celkern\n   bijv. planten, dieren, schimmels, chromista, protozoa"},
+    {title:"Drie celkenmerken",text:"We kijken naar drie kenmerken bij de indeling:\n\n1. Celkern (ja/nee?)\n2. Celwand (ja/nee?)\n3. Bladgroenkorrels (ja/nee?)\n\nBacteriën:  ❌ celkern  ✅ celwand  ❌ bladgroenkorrels\nSchimmels:  ✅ celkern  ✅ celwand  ❌ bladgroenkorrels\nPlanten:    ✅ celkern  ✅ celwand  ✅ bladgroenkorrels\nDieren:     ✅ celkern  ❌ celwand  ❌ bladgroenkorrels"},
+    {title:"7 Rijken",text:"Prokaryoten (2 rijken):\n• Bacteriën\n• Archaea\n\nEukaryoten (5 rijken):\n• Chromista\n• Protozoa (oerdiertjes)\n• Schimmels\n• Planten\n• Dieren"},
+    {title:"Indeling van groot → klein",text:"Ezelsbruggetje: Dokter Scheikunde Of Geschiedenis\n\nRijk → Stam → Klasse → Orde → Familie → Geslacht → Soort\n\nVoorbeeld: leeuw\nRijk: dieren → Stam: gewervelden → Klasse: zoogdieren\n→ Orde: roofdieren → Familie: katachtigen\n→ Geslacht: panters → Soort: leeuw"},
+  ],
+  bs2:[
+    {title:"Soort & ras",text:"Organismen behoren tot dezelfde SOORT als:\n✅ Ze kunnen samen voortplanten\n✅ De nakomelingen zijn vruchtbaar\n\nEen paard en ezel kunnen nakomelingen krijgen (muildier), maar deze zijn bijna altijd ONVRUCHTBAAR. Dus: verschillende soorten.\n\nBinnen een soort kunnen RASSEN voorkomen (bijv. hondenrassen). Rassen kunnen wel samen vruchtbare nakomelingen krijgen."},
+    {title:"Variatie & selectie",text:"VARIATIE: kleine verschillen tussen organismen van dezelfde soort\n→ bijv. lichtere of donkerdere kleur, groter of kleiner gebouwd\n\nSELECTIE: organismen met de beste kenmerken voor hun omgeving overleven beter en krijgen meer nakomelingen\n\nEVOLUTIE: door variatie + selectie veranderen soorten langzaam over vele generaties"},
+    {title:"Verwantschap & DNA",text:"VERWANTSCHAP:\n• Soorten met een gemeenschappelijke voorouder zijn verwant\n• Hoe korter geleden die voorouder leefde → hoe meer verwant\n\nDNA:\n• Hoe meer overeenkomst in DNA → hoe meer verwant\n• DNA-sequentie = de volgorde van de basen (A, C, T, G) in het DNA\n• DNA-sequencing = techniek om DNA-sequentie snel in kaart te brengen\n\nChimpansee: 1,4% DNA-verschil met mens (meest verwant)\nGorilla: 1,8% | Orang-oetan: 3,4%"},
+  ],
+  bs3:[
+    {title:"Symmetrie",text:"Dieren worden ingedeeld op basis van SYMMETRIE:\n\n❌ NIET symmetrisch\n   Bijv. spons — geen twee gelijke helften\n\n↔️ TWEEZIJDIG symmetrisch\n   Links = spiegelbeeld rechts\n   Bijv. krokodil, insect, mens, vissen\n\n⭕ VEELZIJDIG symmetrisch\n   Meerdere assen van symmetrie\n   Bijv. zee-egel, zeeanemoon"},
+    {title:"Skelet",text:"Twee soorten skelet:\n\n🏗️ UITWENDIG skelet (pantser)\n   Van buiten, geeft bescherming\n   Bijv. geleedpotigen (insecten, spinnen)\n\n🦴 INWENDIG skelet\n   Van binnen\n   Bijv. gewervelden (wervelkolom), stekelhuidigen (kalk)\n\nFunctie skelet: stevigheid en bescherming"},
+    {title:"7 Stammen van het dierenrijk",text:"Indeling op basis van symmetrie + skelet:\n\n1. Sponsdieren — niet symm. | inwendig (hoornvezels)\n2. Neteldieren — veelzijdig | geen skelet\n3. Weekdieren — tweezijdig | schelp/huisje\n4. Stekelhuidigen — veelzijdig | inwendig kalk\n5. Geleedpotigen — tweezijdig | uitwendig pantser\n6. Gewervelden — tweezijdig | inwendig (wervelkolom)\n7. Wormen — tweezijdig | geen skelet\n\nNB: Er zijn in totaal 34 stammen, maar deze 7 zijn de belangrijkste."},
+  ],
+  bs4:[
+    {title:"Stammen van het plantenrijk",text:"Drie stammen:\n\n🌊 GROENWIEREN\n   • Leven in water\n   • Geen wortels, stengels, bladeren\n   • Eencellig of meercellig\n   • Cellen hebben: celkern + celwand + bladgroenkorrels\n\n🌿 SPORENPLANTEN (vaatplanten)\n   • Wél wortels, stengels, bladeren\n   • Geen bloemen, geen zaden — wél sporen\n   • Bijv. varens, mossen, paardenstaart\n\n🌸 ZAADPLANTEN (vaatplanten)\n   • Alle kenmerken + bloemen + zaden\n   • Naaktzadigen (den) of bedektzadigen (bloemplanten)"},
+    {title:"Vaatplanten & voortplanting",text:"VAATPLANTEN:\n• Hebben vaten voor transport van water en voedingsstoffen\n• Alle zaadplanten zijn vaatplanten ✅\n• Niet alle vaatplanten zijn zaadplanten ✅ (varens ook!)\n\nVOORTPLANTING:\n• Groenwieren: deling of sporen\n• Sporenplanten: sporen\n• Zaadplanten: zaden\n   - Naaktzadigen: zaden tussen schubben van een kegel\n   - Bedektzadigen: zaden in vruchten"},
+  ],
+  bs5:[
+    {title:"Celkenmerken schimmels",text:"Schimmels zijn EUKARYOTEN:\n✅ Celkern (ja)\n✅ Celwand (ja)\n❌ Bladgroenkorrels (nee!)\n\nDaardoor: schimmels kunnen GEEN fotosynthese uitvoeren.\nZe moeten voedsel opnemen uit hun omgeving (bijv. dode organismen, voedsel)."},
+    {title:"Bouw & voortplanting",text:"EENCELLIGE schimmels (gisten):\n• Bestaan uit één cel\n• Voortplanting door KNOPVORMING\n• Bijv. bakkersgist\n\nMEERCELLIGE schimmels:\n• Bestaan uit schimmeldraden\n• Voortplanting door SPOREN\n• Sporen bij penseelschimmel: aan uiteinde van schimmeldraden\n• Sporen bij paddenstoelen: in de paddenstoel\n\nLet op: paddenstoelen zijn het vruchtlichaam van een meercellige schimmel"},
+    {title:"Nuttig & schadelijk",text:"NUTTIGE schimmels:\n✅ Penicilline (antibioticum) — van penseelschimmel\n✅ Gist — voor brood, bier, wijn\n✅ Eetbare paddenstoelen\n✅ Opruimen van dode organismen in de natuur\n\nSCHADELIJKE schimmels:\n❌ Infectieziekten: zwemmerseczeem (voetschimmel), candida\n❌ Voedselbederf (schimmel op brood, kaas)\n❌ Plantenziekten (meeldauw)"},
+  ],
+  bs6:[
+    {title:"Celkenmerken bacteriën",text:"Bacteriën zijn PROKARYOTEN — geen celkern!\n\n✅ Celwand (ja)\n❌ Celkern (nee) ← dit maakt ze prokaryoot\n❌ Bladgroenkorrels (nee)\n\nBacteriën zijn altijd EENCELLIG.\n\nVerschil met schimmels:\n• Schimmels: wél celkern (eukaryoot)\n• Bacteriën: geen celkern (prokaryoot)"},
+    {title:"Voortplanting bacteriën",text:"Bacteriën planten zich voort door CELDELING:\n• Eén bacterie deelt zich in tweeën\n• Beide cellen delen zich weer, enz.\n\nOnder optimale omstandigheden: ELKE 20 MINUTEN!\n\nNa 12 uur uit één bacterie: al 68 miljard nakomelingen (theoretisch)\nIn werkelijkheid minder: voedsel, ruimte, concurrentie raken op."},
+    {title:"Nuttig & schadelijk",text:"NUTTIGE bacteriën:\n✅ Darmbacteriën — helpen bij vertering van voedsel\n✅ Huidbacteriën — beschermen tegen ziekteverwekkers\n✅ Bodembacteriën — ruimen dode organismen op (voedingsstoffen vrij voor planten)\n✅ Yoghurt, zuurkool maken\n\nSCHADELIJKE bacteriën:\n❌ Infectieziekten: cholera, longontsteking, TBC, oorontsteking\n❌ Voedselbederf\n\n💊 Behandeling: ANTIBIOTICA\n⚠️ Breedspectrum doodt ook nuttige bacteriën!"},
+  ],
+  es7:[
+    {title:"5 klassen gewervelden",text:"Gewervelden worden ingedeeld op basis van:\n1. Lichaamstemperatuur\n2. Huidbedekking\n3. Ademhaling\n4. Voortplanting\n5. Leefomgeving\n\nEzelsbruggetje klassen:\nVissen – Amfibieën – Reptielen – Vogels – Zoogdieren\n= VAR VoZo"},
+    {title:"Overzicht: koudbloedigen",text:"🐟 VISSEN\n• Koudbloedig\n• Huid: schubben met slijm\n• Ademhaling: kieuwen\n• Voortplanting: eieren zonder schaal (in water)\n\n🐸 AMFIBIEËN\n• Koudbloedig\n• Huid: slijm\n• Ademhaling: longen (+ kieuwen als larve/kikkervisje)\n• Voortplanting: eieren zonder schaal (in water)\n• Bijv. kikker, salamander, pad\n\n🦎 REPTIELEN\n• Koudbloedig\n• Huid: droge schubben\n• Ademhaling: longen\n• Voortplanting: eieren met leerachtige schaal (op land)\n• Bijv. krokodil, slang, hagedis, schildpad"},
+    {title:"Overzicht: warmbloedigen",text:"🐦 VOGELS\n• Warmbloedig\n• Huid: veren\n• Ademhaling: longen\n• Voortplanting: eieren met kalkschaal\n• Bijv. mus, arend, struis (niet vliegend — uitzondering!)\n\n🐘 ZOOGDIEREN\n• Warmbloedig\n• Huid: haren\n• Ademhaling: longen\n• Voortplanting: levendbarend\n• Bijv. mens, hond, walvis (amper haren — uitzondering!)\n\nOnthoud: warmbloedig = constante lichaamstemperatuur (haren/veren isoleren)"},
+  ],
+  es8:[
+    {title:"Kenmerken geleedpotigen",text:"GELEEDPOTIGEN zijn de grootste stam: ~80% van alle diersoorten!\n\nKenmerken van ALLE geleedpotigen:\n🔹 Lichaam bestaat uit segmenten\n🔹 Poten zijn geleed (vandaar de naam)\n🔹 Uitwendig skelet (pantser)\n🔹 Tweezijdig symmetrisch\n\nIndeling: op basis van aantal poten"},
+    {title:"4 groepen geleedpotigen",text:"🦟 INSECTEN (zespotigen)\n• 6 poten\n• Lichaam: kop + borststuk + achterlijf\n• Poten + vleugels zitten aan borststuk\n• Bijv. vlinder, bij, mug, kever, sprinkhaan\n\n🕷️ SPINACHTIGEN (gifkakigen)\n• 8 poten\n• Bijv. spin, schorpioen, mijt, teek\n\n🦀 KREEFTACHTIGEN\n• 10 of meer poten\n• Bijv. krab, kreeft, garnaal, pissebed\n\n🐛 VEELPOTIGEN\n• Aan elk segment poten\n• Bijv. duizendpoot, miljoenpoot"},
+  ],
+};
+
+const QUESTIONS={
+  bs1:[
+    {q:"Wat is het verschil tussen prokaryoten en eukaryoten?",a:"Prokaryoten hebben geen celkern, eukaryoten wel",opts:["Prokaryoten hebben geen celkern, eukaryoten wel","Prokaryoten zijn altijd meercellig","Prokaryoten hebben bladgroenkorrels, eukaryoten niet","Prokaryoten hebben een celwand, eukaryoten niet"]},
+    {q:"Welk celkenmerk hebben bacteriën WEL?",a:"Celwand",opts:["Celkern","Celwand","Bladgroenkorrels","Celkern en celwand"]},
+    {q:"Welke celkenmerken heeft een plantencel?",a:"Celkern + celwand + bladgroenkorrels",opts:["Celkern + celwand + bladgroenkorrels","Celkern + celwand (geen bladgroenkorrels)","Alleen celkern","Celwand + bladgroenkorrels (geen celkern)"]},
+    {q:"Welk(e) celkenmerk(en) hebben dierlijke cellen NIET?",a:"Celwand en bladgroenkorrels",opts:["Celwand en bladgroenkorrels","Alleen celkern","Celmembraan","Celkern en celwand"]},
+    {q:"Welke celkenmerken heeft een schimmelcel?",a:"Celkern + celwand, GEEN bladgroenkorrels",opts:["Celkern + celwand, GEEN bladgroenkorrels","Celkern + bladgroenkorrels, GEEN celwand","Alleen celkern","Alleen celwand, GEEN celkern"]},
+    {q:"Tot welke hoofdgroep behoren bacteriën?",a:"Prokaryoten",opts:["Prokaryoten","Eukaryoten","Chromista","Protozoa"]},
+    {q:"Hoeveel rijken heeft het eukaryotendomein?",a:"5 rijken",opts:["5 rijken","3 rijken","7 rijken","2 rijken"]},
+    {q:"Wat is de juiste volgorde van indeling (van groot naar klein)?",a:"Stam → Klasse → Orde → Familie",opts:["Stam → Klasse → Orde → Familie","Klasse → Stam → Familie → Orde","Orde → Familie → Klasse → Stam","Stam → Orde → Klasse → Familie"]},
+    {q:"Welk ezelsbruggetje hoort bij de volgorde Rijk → Stam → Klasse → Orde → Familie → Geslacht → Soort?",a:"Dokter Scheikunde Of Geschiedenis",opts:["Dokter Scheikunde Of Geschiedenis","Dieren Staan Koud Op Frisse Grond","Soms Kun Je Ook Fouten Gewoon Snel","Recht Staat Kenmerk Over Feit Geslacht"]},
+    {q:"Een lynx behoort tot de stam gewervelden en de klasse zoogdieren. Welke groep komt NA de klasse?",a:"Orde",opts:["Orde","Geslacht","Familie","Stam"]},
+    {q:"Kunnen rode bloedcellen een celkern hebben?",a:"Nee, maar ze zijn toch eukaryoot (onderdeel van een eukaryoot organisme)",opts:["Nee, maar ze zijn toch eukaryoot (onderdeel van een eukaryoot organisme)","Ja, want alle dierencellen hebben een celkern","Nee, want rode bloedcellen zijn prokaryoot","Ja, maar alleen jonge rode bloedcellen"]},
+    {q:"Welke rijken zijn ALTIJD eencellig?",a:"Bacteriën, archaea en protozoa",opts:["Bacteriën, archaea en protozoa","Alleen bacteriën","Bacteriën en schimmels","Alle prokaryoten en protozoa"]},
+  ],
+  bs2:[
+    {q:"Wanneer behoren organismen tot dezelfde soort?",a:"Ze kunnen samen voortplanten EN nakomelingen zijn vruchtbaar",opts:["Ze kunnen samen voortplanten EN nakomelingen zijn vruchtbaar","Ze lijken op elkaar en leven in hetzelfde gebied","Ze hebben hetzelfde uiterlijk","Ze produceren nakomelingen (ook al zijn die onvruchtbaar)"]},
+    {q:"Wat is variatie?",a:"Kleine verschillen tussen organismen van dezelfde soort",opts:["Kleine verschillen tussen organismen van dezelfde soort","Het verdwijnen van soorten over tijd","Aanpassing van een individu aan zijn omgeving","Verschil tussen twee verschillende soorten"]},
+    {q:"Wat is selectie?",a:"Organismen met betere kenmerken hebben meer kans op overleven en voortplanten",opts:["Organismen met betere kenmerken hebben meer kans op overleven en voortplanten","Organismen kiezen zelf hun leefgebied","De verdeling van soorten over de aarde","Plotselinge verandering door rampen"]},
+    {q:"Wat is evolutie?",a:"Langzame verandering van soorten door variatie en selectie",opts:["Langzame verandering van soorten door variatie en selectie","Plotselinge verandering van soorten","Het uitsterven van soorten","Aanpassing van één organisme in zijn leven"]},
+    {q:"Hoe weet je welke soorten het meest aan elkaar verwant zijn?",a:"Hoe meer overeenkomst in DNA, hoe meer verwant",opts:["Hoe meer overeenkomst in DNA, hoe meer verwant","Hoe meer ze op elkaar lijken in uiterlijk","Hoe dichter ze bij elkaar wonen","Hoe meer zaden of sporen ze produceren"]},
+    {q:"Chimpansee-DNA verschilt 1,4% van het mens-DNA, gorilla 1,8%. Welke is het meest verwant aan de mens?",a:"Chimpansee",opts:["Chimpansee","Gorilla","Beide even verwant","Dit kun je niet uit DNA afleiden"]},
+    {q:"Wat is de DNA-sequentie?",a:"De volgorde van de basen (A, C, T, G) in het DNA",opts:["De volgorde van de basen (A, C, T, G) in het DNA","De hoeveelheid DNA in een cel","De structuur van de dubbele helix","Het verschil in DNA tussen soorten"]},
+    {q:"Zijn een paard en een ezel dezelfde soort?",a:"Nee: hun nakomelingen (muildieren) zijn vrijwel altijd onvruchtbaar",opts:["Nee: hun nakomelingen (muildieren) zijn vrijwel altijd onvruchtbaar","Ja: ze kunnen samen nakomelingen krijgen","Ja: ze lijken erg op elkaar","Nee: ze kunnen helemaal geen nakomelingen krijgen"]},
+    {q:"Wat is een DNA-sequentie?",a:"De basenvolgorde in het DNA",opts:["De basenvolgorde in het DNA","Het aantal chromosomen","De hoeveelheid eiwitten in een cel","De kleur van het DNA"]},
+    {q:"Hoe korter geleden de gemeenschappelijke voorouder van twee soorten leefde...",a:"...hoe meer verwant die soorten zijn",opts:["...hoe meer verwant die soorten zijn","...hoe minder verwant die soorten zijn","...hoe meer hun DNA verschilt","...hoe meer soorten er zijn"]},
+  ],
+  bs3:[
+    {q:"Op grond van welke twee kenmerken worden dieren in stammen ingedeeld?",a:"Symmetrie en skelet",opts:["Symmetrie en skelet","Kleur en grootte","Voortplanting en ademhaling","Leefgebied en voedsel"]},
+    {q:"Een zee-egel is...",a:"Veelzijdig symmetrisch",opts:["Veelzijdig symmetrisch","Tweezijdig symmetrisch","Niet symmetrisch","Enkelvoudig symmetrisch"]},
+    {q:"Een krokodil is...",a:"Tweezijdig symmetrisch",opts:["Tweezijdig symmetrisch","Veelzijdig symmetrisch","Niet symmetrisch","Onregelmatig symmetrisch"]},
+    {q:"Welke stam heeft een uitwendig skelet (pantser)?",a:"Geleedpotigen",opts:["Geleedpotigen","Gewervelden","Stekelhuidigen","Weekdieren"]},
+    {q:"Welke stam heeft een inwendig kalkskelet en is veelzijdig symmetrisch?",a:"Stekelhuidigen",opts:["Stekelhuidigen","Neteldieren","Gewervelden","Sponsdieren"]},
+    {q:"Welke stam is NIET symmetrisch?",a:"Sponsdieren",opts:["Sponsdieren","Weekdieren","Geleedpotigen","Stekelhuidigen"]},
+    {q:"Weekdieren hebben een...",a:"Schelp of huisje (uitwendig skelet)",opts:["Schelp of huisje (uitwendig skelet)","Inwendig kalkskelet","Uitwendig pantser","Wervelkolom"]},
+    {q:"Tot welke stam behoort een slak?",a:"Weekdieren",opts:["Weekdieren","Geleedpotigen","Sponsdieren","Gewervelden"]},
+    {q:"Tot welke stam behoort een lynx?",a:"Gewervelden",opts:["Gewervelden","Geleedpotigen","Stekelhuidigen","Weekdieren"]},
+    {q:"Sponsdieren zijn...",a:"Niet symmetrisch, inwendig skelet van hoornvezels",opts:["Niet symmetrisch, inwendig skelet van hoornvezels","Veelzijdig, uitwendig skelet","Tweezijdig, geen skelet","Niet symmetrisch, geen skelet"]},
+    {q:"Neteldieren zijn...",a:"Veelzijdig symmetrisch, geen skelet",opts:["Veelzijdig symmetrisch, geen skelet","Tweezijdig, uitwendig skelet","Niet symmetrisch, geen skelet","Veelzijdig, inwendig kalk"]},
+    {q:"Tot welke stam behoort een krab?",a:"Geleedpotigen",opts:["Geleedpotigen","Stekelhuidigen","Weekdieren","Gewervelden"]},
+  ],
+  bs4:[
+    {q:"Wat is het belangrijkste kenmerk van vaatplanten?",a:"Ze hebben vaten voor transport van stoffen",opts:["Ze hebben vaten voor transport van stoffen","Ze produceren altijd bloemen","Ze leven alleen op het land","Ze planten zich voort met sporen"]},
+    {q:"Hoe planten zaadplanten zich voort?",a:"Met zaden",opts:["Met zaden","Met sporen","Door deling","Door knopvorming"]},
+    {q:"Hoe planten sporenplanten zich voort?",a:"Met sporen",opts:["Met sporen","Met zaden","Door deling","Door knopvorming"]},
+    {q:"Hebben groenwieren wortels?",a:"Nee, ze halen voedingsstoffen uit het water",opts:["Nee, ze halen voedingsstoffen uit het water","Ja, maar alleen als ze op de bodem groeien","Ja, altijd","Soms, afhankelijk van de soort"]},
+    {q:"Zijn alle vaatplanten ook zaadplanten?",a:"Nee: varens zijn vaatplanten maar geen zaadplanten",opts:["Nee: varens zijn vaatplanten maar geen zaadplanten","Ja, alle vaatplanten zijn zaadplanten","Nee: groenwieren zijn ook vaatplanten","Ja, want ze hebben allemaal vaten"]},
+    {q:"Welke celkenmerken hebben groenwieren?",a:"Celkern + celwand + bladgroenkorrels",opts:["Celkern + celwand + bladgroenkorrels","Celkern alleen (geen celwand)","Celwand + bladgroenkorrels (geen celkern)","Alleen bladgroenkorrels"]},
+    {q:"Wat is het verschil tussen naaktzadigen en bedektzadigen?",a:"Naaktzadigen: zaden tussen kegels; bedektzadigen: zaden in vruchten",opts:["Naaktzadigen: zaden tussen kegels; bedektzadigen: zaden in vruchten","Naaktzadigen: geen bloemen; bedektzadigen: altijd grote bloemen","Naaktzadigen leven in water; bedektzadigen op het land","Naaktzadigen zijn kleiner dan bedektzadigen"]},
+    {q:"Is een varen een zaadplant of sporenplant?",a:"Sporenplant",opts:["Sporenplant","Zaadplant","Groenwier","Naaktzadige"]},
+    {q:"Zijn alle zaadplanten ook vaatplanten?",a:"Ja, alle zaadplanten zijn vaatplanten",opts:["Ja, alle zaadplanten zijn vaatplanten","Nee, sommige zaadplanten zijn groenwieren","Nee, sommige zaadplanten zijn sporenplanten","Nee, er zijn ook zaadplanten zonder vaten"]},
+    {q:"Waarom hebben groenwieren geen wortels nodig?",a:"Ze halen voedingsstoffen uit het omringende water",opts:["Ze halen voedingsstoffen uit het omringende water","Ze leven van fotosynthese alleen","Ze zijn te klein voor wortels","Ze groeien te snel"]},
+  ],
+  bs5:[
+    {q:"Welke celkenmerken hebben schimmels?",a:"Celkern + celwand, GEEN bladgroenkorrels",opts:["Celkern + celwand, GEEN bladgroenkorrels","Celkern alleen","Celwand alleen, GEEN celkern","Celkern + bladgroenkorrels, GEEN celwand"]},
+    {q:"Kunnen schimmels fotosynthese uitvoeren?",a:"Nee, ze hebben geen bladgroenkorrels",opts:["Nee, ze hebben geen bladgroenkorrels","Ja, meercellige schimmels wel","Ja, als ze groen zijn","Soms, in vochtige omstandigheden"]},
+    {q:"Hoe planten gisten (eencellige schimmels) zich voort?",a:"Door knopvorming",opts:["Door knopvorming","Door sporen","Door celdeling","Door zaden"]},
+    {q:"Hoe planten meercellige schimmels zich meestal voort?",a:"Door sporen",opts:["Door sporen","Door knopvorming","Door zaden","Door uitlopers"]},
+    {q:"Welk antibioticum wordt gemaakt van de penseelschimmel?",a:"Penicilline",opts:["Penicilline","Aspirine","Paracetamol","Amoxicilline"]},
+    {q:"Wat is een voorbeeld van een schimmelinfectie?",a:"Zwemmerseczeem (voetschimmel)",opts:["Zwemmerseczeem (voetschimmel)","Cholera","Longontsteking","Tuberculose"]},
+    {q:"Waar worden de sporen gevormd bij de penseelschimmel?",a:"Aan het uiteinde van omhooggroeiende schimmeldraden",opts:["Aan het uiteinde van omhooggroeiende schimmeldraden","In paddenstoelen","In de stam","Aan de basis van de schimmel"]},
+    {q:"Paddenstoelen zijn...",a:"Vruchtlichamen van meercellige schimmels (waar sporen worden gemaakt)",opts:["Vruchtlichamen van meercellige schimmels (waar sporen worden gemaakt)","Eencellige schimmels","Een apart koninkrijk","Planten zonder bladgroenkorrels"]},
+    {q:"Waarvoor wordt gist gebruikt bij voedselproductie?",a:"Brood, bier en wijn",opts:["Brood, bier en wijn","Kaas en yoghurt (zijn bacteriën)","Penicilline maken","Vlees conserveren"]},
+  ],
+  bs6:[
+    {q:"Welke celkenmerken hebben bacteriën?",a:"Celwand, GEEN celkern, GEEN bladgroenkorrels",opts:["Celwand, GEEN celkern, GEEN bladgroenkorrels","Celkern + celwand, GEEN bladgroenkorrels","Geen enkel kenmerk","Celkern alleen"]},
+    {q:"Hoe planten bacteriën zich voort?",a:"Door celdeling",opts:["Door celdeling","Door sporen","Door knopvorming","Door zaden"]},
+    {q:"Hoe snel kan een bacterie zich onder optimale omstandigheden delen?",a:"Elke 20 minuten",opts:["Elke 20 minuten","Elke uur","Elke dag","Elke week"]},
+    {q:"Bacteriën zijn prokaryoten. Wat betekent dit precies?",a:"Ze hebben GEEN celkern",opts:["Ze hebben GEEN celkern","Ze zijn altijd schadelijk","Ze hebben bladgroenkorrels","Ze hebben een celwand met celkern"]},
+    {q:"Waarmee worden bacteriële infectieziekten bestreden?",a:"Antibiotica",opts:["Antibiotica","Antivirale middelen","Insuline","Schimmeldodende middelen"]},
+    {q:"Wat is de functie van darmbacteriën?",a:"Helpen bij het verteren van voedsel",opts:["Helpen bij het verteren van voedsel","Fotosynthese uitvoeren","Energie opslaan","Zuurstof aanmaken"]},
+    {q:"Hoe beschermen huidbacteriën ons?",a:"Schadelijke bacteriën kunnen niet bij de huid komen",opts:["Schadelijke bacteriën kunnen niet bij de huid komen","Ze maken antibiotica aan","Ze vernietigen alle virussen","Ze houden de huid vochtig"]},
+    {q:"Wat is het nadeel van breedspectrum-antibiotica?",a:"Ze doden ook nuttige en onschadelijke bacteriën in je lichaam",opts:["Ze doden ook nuttige en onschadelijke bacteriën in je lichaam","Ze werken alleen tegen virussen","Ze zijn te duur","Ze worden snel afgebroken"]},
+    {q:"Waarvoor worden bacteriën gebruikt in de voedselindustrie?",a:"Yoghurt en zuurkool maken",opts:["Yoghurt en zuurkool maken","Brood en bier maken (dat zijn schimmels)","Penicilline produceren","Suiker aanmaken"]},
+  ],
+  es7:[
+    {q:"Welke klassen gewervelden zijn koudbloedig?",a:"Vissen, amfibieën en reptielen",opts:["Vissen, amfibieën en reptielen","Alleen vissen","Vogels en zoogdieren","Reptielen en vogels"]},
+    {q:"Waarmee is de huid van vogels bedekt?",a:"Veren",opts:["Veren","Haren","Droge schubben","Slijm"]},
+    {q:"Hoe planten zoogdieren zich voort?",a:"Levendbarend",opts:["Levendbarend","Eieren met kalkschaal","Eieren met leerachtige schaal","Eieren zonder schaal"]},
+    {q:"Welke gewervelden leggen eieren met een kalkschaal?",a:"Vogels",opts:["Vogels","Reptielen","Amfibieën","Vissen"]},
+    {q:"Waarmee halen amfibieën als volwassen dier adem?",a:"Met longen",opts:["Met longen","Alleen met kieuwen","Door de huid","Met longen én kieuwen tegelijk"]},
+    {q:"Waarmee is de huid van reptielen bedekt?",a:"Droge schubben",opts:["Droge schubben","Slijm","Veren","Haren"]},
+    {q:"Welke gewervelden zijn warmbloedig?",a:"Vogels en zoogdieren",opts:["Vogels en zoogdieren","Alleen zoogdieren","Reptielen en vogels","Vissen en amfibieën"]},
+    {q:"Waar leggen vissen hun eieren?",a:"In het water (eieren zonder schaal)",opts:["In het water (eieren zonder schaal)","Op het land (eieren met schaal)","Ze zijn levendbarend","In de grond"]},
+    {q:"Een salamander behoort tot welke klasse?",a:"Amfibieën",opts:["Amfibieën","Reptielen","Vissen","Zoogdieren"]},
+    {q:"Een walvis is een zoogdier, maar heeft één atypisch kenmerk. Welk?",a:"Walvissen hebben nauwelijks haren (geen vacht)",opts:["Walvissen hebben nauwelijks haren (geen vacht)","Walvissen leggen eieren","Walvissen zijn koudbloedig","Walvissen ademen met kieuwen"]},
+    {q:"Welke gewervelden leggen eieren met een leerachtige schaal?",a:"Reptielen",opts:["Reptielen","Vogels","Amfibieën","Vissen"]},
+    {q:"Waarmee is de huid van vissen bedekt?",a:"Schubben met slijm",opts:["Schubben met slijm","Droge schubben","Slijm","Veren"]},
+  ],
+  es8:[
+    {q:"Hoeveel poten hebben insecten?",a:"6 poten",opts:["6 poten","8 poten","10 poten","4 poten"]},
+    {q:"Hoeveel poten hebben spinachtigen?",a:"8 poten",opts:["8 poten","6 poten","10 poten","12 poten"]},
+    {q:"Hoeveel poten hebben kreeftachtigen?",a:"10 of meer poten",opts:["10 of meer poten","6 poten","8 poten","4 poten"]},
+    {q:"Welke kenmerken hebben ALLE geleedpotigen gemeenschappelijk?",a:"Gesegmenteerd lichaam, gelede poten, uitwendig skelet (pantser)",opts:["Gesegmenteerd lichaam, gelede poten, uitwendig skelet (pantser)","6 poten, vleugels, antennes","Ze leven allemaal in water","8 poten, inwendig skelet"]},
+    {q:"Uit welke drie delen bestaat het lichaam van een insect?",a:"Kop, borststuk en achterlijf",opts:["Kop, borststuk en achterlijf","Hoofd, romp en staart","Kop en achterlijf","Alleen achterlijf en kop"]},
+    {q:"Aan welk deel van het insectenlichaam zitten de poten en vleugels?",a:"Het borststuk",opts:["Het borststuk","De kop","Het achterlijf","Verspreid over het lichaam"]},
+    {q:"Waarom worden insecten ook 'zespotigen' genoemd?",a:"Ze hebben 6 poten",opts:["Ze hebben 6 poten","Ze hebben 6 vleugels","Ze bestaan uit 6 segmenten","Ze leven in 6 leefgebieden"]},
+    {q:"Welke groep geleedpotigen heeft aan elk segment poten?",a:"Veelpotigen (bijv. duizendpoot)",opts:["Veelpotigen (bijv. duizendpoot)","Insecten","Kreeftachtigen","Spinachtigen"]},
+    {q:"Hoeveel procent van alle diersoorten zijn geleedpotigen?",a:"Ongeveer 80%",opts:["Ongeveer 80%","Ongeveer 50%","Ongeveer 20%","Ongeveer 3%"]},
+    {q:"Een bij behoort tot welke groep geleedpotigen?",a:"Insecten (zespotigen)",opts:["Insecten (zespotigen)","Spinachtigen","Kreeftachtigen","Veelpotigen"]},
+    {q:"Een spin behoort tot welke groep geleedpotigen?",a:"Spinachtigen (gifkakigen)",opts:["Spinachtigen (gifkakigen)","Insecten","Kreeftachtigen","Veelpotigen"]},
+    {q:"Een pissebed behoort tot welke groep geleedpotigen?",a:"Kreeftachtigen",opts:["Kreeftachtigen","Insecten","Spinachtigen","Veelpotigen"]},
+  ],
+};
+
+function shuffle(arr){return [...arr].sort(()=>Math.random()-0.5);}
+
+function genQs(secId){
+  const pool=QUESTIONS[secId]||[];
+  return shuffle(pool).slice(0,10).map(q=>{
+    const opts=shuffle(q.opts);
+    return{q:q.q,opts,correct:opts.indexOf(q.a)};
+  });
+}
+
+function App(){
+  const[screen,setScreen]=useState("home"); // home|theory|practice|results
+  const[secId,setSecId]=useState(null);
+  const[theoryIdx,setTheoryIdx]=useState(0);
+  const[questions,setQuestions]=useState([]);
+  const[qIdx,setQIdx]=useState(0);
+  const[selected,setSelected]=useState(null);
+  const[score,setScore]=useState(0);
+  const[answers,setAnswers]=useState([]);
+  const[stats,setStats]=useState(()=>progress.getOverallStats());
+
+  const refreshStats=()=>setStats(progress.getOverallStats());
+
+  const openSection=(id,mode)=>{
+    setSecId(id);
+    setTheoryIdx(0);
+    if(mode==="theory"){
+      setScreen("theory");
+    } else {
+      const qs=genQs(id);
+      setQuestions(qs);
+      setQIdx(0);
+      setSelected(null);
+      setScore(0);
+      setAnswers([]);
+      setScreen("practice");
+    }
+  };
+
+  const nextTheory=()=>{
+    const cards=THEORY[secId]||[];
+    if(theoryIdx<cards.length-1){setTheoryIdx(theoryIdx+1);}
+    else{progress.markTheoryDone(secId);refreshStats();setScreen("home");}
+  };
+
+  const selectAnswer=(i)=>{
+    if(selected!==null)return;
+    setSelected(i);
+    const correct=questions[qIdx].correct;
+    const isOk=i===correct;
+    if(isOk)setScore(s=>s+1);
+    progress.recordAnswer(secId,isOk);
+    setAnswers(a=>[...a,{q:questions[qIdx].q,chosen:questions[qIdx].opts[i],correct:questions[qIdx].opts[correct],ok:isOk}]);
+  };
+
+  const nextQ=()=>{
+    if(qIdx<questions.length-1){setQIdx(q=>q+1);setSelected(null);}
+    else{refreshStats();setScreen("results");}
+  };
+
+  const pct=n=>Math.min(100,Math.round(n));
+  const pBar=(p,c,h)=>React.createElement("div",{style:{height:h||6,borderRadius:3,background:"rgba(255,255,255,0.06)",overflow:"hidden"}},
+    React.createElement("div",{style:{height:"100%",width:pct(p)+"%",background:c||COL,borderRadius:3,transition:"width 0.5s"}}));
+  const tag=(c,t)=>React.createElement("span",{style:{padding:"2px 8px",borderRadius:6,fontSize:10,fontWeight:700,background:c+"22",color:c}},t);
+
+  // ===== HOME =====
+  if(screen==="home") return React.createElement("div",{style:{minHeight:"100vh"}},
+    React.createElement("div",{style:{background:"rgba(0,0,0,0.3)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+bdr,padding:"14px 20px",display:"flex",justifyContent:"space-between",alignItems:"center",position:"sticky",top:0,zIndex:50}},
+      React.createElement("a",{href:"../../index.html",style:{fontSize:13,color:"#555",textDecoration:"none"}},"← Terug"),
+      React.createElement("div",{style:{fontSize:16,fontWeight:900,color:COL}},"🌿 Biologie"),
+      React.createElement("div",{style:{fontSize:12,color:"#555"}},"Thema 3 Ordening")),
+    React.createElement("div",{style:{maxWidth:640,margin:"0 auto",padding:"16px 14px 60px"}},
+      React.createElement("div",{style:{background:cBg,borderRadius:16,padding:18,border:"1px solid "+bdr,marginBottom:16,textAlign:"center"}},
+        React.createElement("div",{style:{display:"flex",justifyContent:"space-around",marginBottom:12}},
+          React.createElement("div",null,React.createElement("div",{style:{fontSize:28,fontWeight:900,color:COL}},stats.mastered+"/"+stats.total),React.createElement("div",{style:{fontSize:11,color:"#777"}},"beheerst")),
+          React.createElement("div",null,React.createElement("div",{style:{fontSize:28,fontWeight:900,color:"#4d96ff"}},stats.masteryPct+"%"),React.createElement("div",{style:{fontSize:11,color:"#777"}},"klaar")),
+          React.createElement("div",null,React.createElement("div",{style:{fontSize:28,fontWeight:900,color:"#ffd93d"}},stats.accuracy+"%"),React.createElement("div",{style:{fontSize:11,color:"#777"}},"correct"))),
+        pBar(stats.masteryPct,COL,8)),
+
+      SECTIONS.map(sec=>{
+        const st=progress.getSection(sec.id);
+        const mastered=progress.isMastered(sec.id);
+        const theoryDone=st&&st.theoryDone;
+        const spct=st&&st.total>0?Math.round(st.correct/st.total*100):0;
+        return React.createElement("div",{key:sec.id,style:{background:cBg,borderRadius:14,border:"1px solid "+(mastered?COL+"40":bdr),marginBottom:10,overflow:"hidden"}},
+          React.createElement("div",{style:{padding:"14px 16px"}},
+            React.createElement("div",{style:{display:"flex",alignItems:"center",gap:10,marginBottom:8}},
+              React.createElement("span",{style:{fontSize:22}},sec.icon),
+              React.createElement("div",{style:{flex:1}},
+                React.createElement("div",{style:{fontSize:14,fontWeight:700,color:mastered?"#6bcb77":"#ddd"}},sec.title),
+                React.createElement("div",{style:{fontSize:11,color:"#666"}},sec.desc)),
+              mastered?tag("#6bcb77","✓ BEHEERST"):st&&st.total>0?tag(COL,spct+"%"):tag("#555","niet gestart")),
+            st&&st.total>0?pBar(spct,mastered?"#6bcb77":COL,4):null),
+          React.createElement("div",{style:{display:"flex",borderTop:"1px solid "+bdr}},
+            React.createElement("button",{
+              style:{flex:1,padding:"10px 8px",border:"none",background:theoryDone?"rgba(107,203,119,0.08)":"rgba(255,255,255,0.03)",color:theoryDone?"#6bcb77":"#aaa",fontSize:12,fontWeight:700},
+              onClick:()=>openSection(sec.id,"theory")},
+              (theoryDone?"✓ ":"📖 ")+"Theorie"),
+            React.createElement("div",{style:{width:1,background:bdr}}),
+            React.createElement("button",{
+              style:{flex:1,padding:"10px 8px",border:"none",background:"rgba(255,255,255,0.03)",color:COL,fontSize:12,fontWeight:700},
+              onClick:()=>openSection(sec.id,"practice")},
+              "🎯 Oefenen")));
+      }),
+      React.createElement("button",{
+        style:{width:"100%",padding:12,borderRadius:10,border:"none",background:"rgba(255,255,255,0.03)",color:"#555",fontSize:12,fontWeight:600,marginTop:8},
+        onClick:()=>{if(confirm("Reset alle voortgang biologie?"))progress.reset();refreshStats();}},
+        "🔄 Reset voortgang")));
+
+  // ===== THEORY =====
+  if(screen==="theory"){
+    const cards=THEORY[secId]||[];
+    const card=cards[theoryIdx];
+    const sec=SECTIONS.find(s=>s.id===secId);
+    const isLast=theoryIdx===cards.length-1;
+    return React.createElement("div",{style:{minHeight:"100vh"},className:"fade-in"},
+      React.createElement("div",{style:{background:"rgba(0,0,0,0.3)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+bdr,padding:"14px 20px",display:"flex",justifyContent:"space-between",alignItems:"center",position:"sticky",top:0,zIndex:50}},
+        React.createElement("button",{style:{background:"none",border:"none",color:"#555",fontSize:13},onClick:()=>setScreen("home")},"← Terug"),
+        React.createElement("div",{style:{fontSize:14,fontWeight:700,color:COL}},sec&&sec.icon+" "+sec.title),
+        React.createElement("div",{style:{fontSize:12,color:"#555"}},(theoryIdx+1)+"/"+cards.length)),
+      React.createElement("div",{style:{maxWidth:640,margin:"0 auto",padding:"20px 14px"}},
+        React.createElement("div",{style:{background:cBg,borderRadius:16,padding:24,border:"1px solid "+COL+"30",marginBottom:16,minHeight:280}},
+          React.createElement("div",{style:{fontSize:18,fontWeight:800,color:COL,marginBottom:16}},card.title),
+          React.createElement("div",{style:{fontSize:14,lineHeight:1.8,color:"#ccc",whiteSpace:"pre-line"}},card.text)),
+        pBar((theoryIdx+1)/cards.length*100,COL,4),
+        React.createElement("button",{
+          style:{width:"100%",marginTop:16,padding:"14px",borderRadius:12,border:"none",background:COL,color:"#fff",fontSize:16,fontWeight:800},
+          onClick:nextTheory},
+          isLast?"✅ Klaar! Terug naar overzicht →":"Volgende →")));
+  }
+
+  // ===== PRACTICE =====
+  if(screen==="practice"&&questions.length>0){
+    const q=questions[qIdx];
+    const sec=SECTIONS.find(s=>s.id===secId);
+    return React.createElement("div",{style:{minHeight:"100vh"},className:"fade-in"},
+      React.createElement("div",{style:{background:"rgba(0,0,0,0.3)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+bdr,padding:"14px 20px",display:"flex",justifyContent:"space-between",alignItems:"center",position:"sticky",top:0,zIndex:50}},
+        React.createElement("button",{style:{background:"none",border:"none",color:"#555",fontSize:13},onClick:()=>setScreen("home")},"← Stop"),
+        React.createElement("div",{style:{fontSize:14,fontWeight:700,color:COL}},sec&&sec.icon+" "+sec.title),
+        React.createElement("div",{style:{fontSize:12,color:"#555"}},(qIdx+1)+"/"+questions.length)),
+      React.createElement("div",{style:{maxWidth:640,margin:"0 auto",padding:"20px 14px"}},
+        pBar((qIdx+1)/questions.length*100,COL,4),
+        React.createElement("div",{style:{background:cBg,borderRadius:16,padding:24,border:"1px solid "+bdr,margin:"16px 0"},className:"fade-in"},
+          React.createElement("div",{style:{fontSize:16,fontWeight:700,lineHeight:1.5,color:"#fff",marginBottom:20}},q.q)),
+        q.opts.map((opt,i)=>{
+          let bg="rgba(255,255,255,0.04)",col="#ccc",border=bdr;
+          if(selected!==null){
+            if(i===q.correct){bg="rgba(107,203,119,0.15)";col="#6bcb77";border="rgba(107,203,119,0.4)";}
+            else if(i===selected&&i!==q.correct){bg="rgba(255,107,107,0.15)";col="#ff6b6b";border="rgba(255,107,107,0.4)";}
+          } else if(selected===null){border=bdr;}
+          return React.createElement("button",{key:i,
+            style:{width:"100%",textAlign:"left",padding:"14px 16px",borderRadius:12,border:"1px solid "+border,background:bg,color:col,fontSize:14,fontWeight:600,marginBottom:8,transition:"all 0.2s"},
+            onClick:()=>selectAnswer(i)},
+            String.fromCharCode(65+i)+". "+opt);
+        }),
+        selected!==null&&React.createElement("button",{
+          style:{width:"100%",marginTop:8,padding:"14px",borderRadius:12,border:"none",background:COL,color:"#fff",fontSize:16,fontWeight:800},
+          onClick:nextQ},
+          qIdx<questions.length-1?"Volgende vraag →":"Bekijk resultaat →")));
+  }
+
+  // ===== RESULTS =====
+  if(screen==="results"){
+    const sec=SECTIONS.find(s=>s.id===secId);
+    const pct=Math.round(score/questions.length*100);
+    const mastered=progress.isMastered(secId);
+    return React.createElement("div",{style:{minHeight:"100vh"},className:"fade-in"},
+      React.createElement("div",{style:{background:"rgba(0,0,0,0.3)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+bdr,padding:"14px 20px",display:"flex",justifyContent:"space-between",alignItems:"center",position:"sticky",top:0,zIndex:50}},
+        React.createElement("button",{style:{background:"none",border:"none",color:"#555",fontSize:13},onClick:()=>setScreen("home")},"← Terug"),
+        React.createElement("div",{style:{fontSize:14,fontWeight:700,color:COL}},"Resultaat"),
+        React.createElement("div",null)),
+      React.createElement("div",{style:{maxWidth:640,margin:"0 auto",padding:"20px 14px"}},
+        React.createElement("div",{style:{background:cBg,borderRadius:16,padding:24,border:"1px solid "+(pct>=70?COL+"50":bdr),textAlign:"center",marginBottom:16}},
+          React.createElement("div",{style:{fontSize:48,marginBottom:8}},pct>=70?"🎉":"💪"),
+          React.createElement("div",{style:{fontSize:36,fontWeight:900,color:pct>=70?COL:"#ffd93d"}},score+"/"+questions.length),
+          React.createElement("div",{style:{fontSize:14,color:"#888",marginBottom:12}},pct+"% goed"),
+          mastered?React.createElement("div",{style:{background:COL+"20",border:"1px solid "+COL+"40",borderRadius:10,padding:"10px 16px",color:COL,fontWeight:700,fontSize:14}},"✓ Sectie beheerst! (≥5 vragen & ≥70%)"):React.createElement("div",{style:{fontSize:13,color:"#666"}},pct<70?"Nog even oefenen! Je hebt ≥70% nodig.":"Goed! Nog wat meer vragen nodig voor 'beheerst'.")),
+        React.createElement("div",{style:{marginBottom:16}},
+          answers.map((a,i)=>React.createElement("div",{key:i,style:{background:a.ok?"rgba(107,203,119,0.08)":"rgba(255,107,107,0.08)",border:"1px solid "+(a.ok?"rgba(107,203,119,0.2)":"rgba(255,107,107,0.2)"),borderRadius:10,padding:"10px 14px",marginBottom:6}},
+            React.createElement("div",{style:{fontSize:12,color:a.ok?"#6bcb77":"#ff6b6b",fontWeight:700,marginBottom:4}},a.ok?"✓ Goed":"✗ Fout"),
+            React.createElement("div",{style:{fontSize:13,color:"#ccc",marginBottom:2}},a.q),
+            !a.ok&&React.createElement("div",{style:{fontSize:12,color:"#6bcb77"}},"Juist: "+a.correct)))),
+        React.createElement("div",{style:{display:"flex",gap:8}},
+          React.createElement("button",{style:{flex:1,padding:14,borderRadius:12,border:"none",background:"rgba(255,255,255,0.06)",color:"#ccc",fontSize:14,fontWeight:700},onClick:()=>setScreen("home")},"← Overzicht"),
+          React.createElement("button",{style:{flex:1,padding:14,borderRadius:12,border:"none",background:COL,color:"#fff",fontSize:14,fontWeight:700},onClick:()=>openSection(secId,"practice")},"🔄 Opnieuw"))));
+  }
+
+  return null;
+}
+
+ReactDOM.render(React.createElement(App),document.getElementById("root"));
+</script>
+</body>
+</html>
