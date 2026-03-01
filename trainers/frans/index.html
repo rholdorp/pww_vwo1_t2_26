@@ -6,7 +6,7 @@
 <title>Frans Trainer – Chapitre 1/2/3</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🇫🇷</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-<style>*{box-sizing:border-box;margin:0;padding:0}body{background:linear-gradient(160deg,#0a0e1a,#111830 50%,#0c1020);font-family:'Nunito',sans-serif;color:#ddd;min-height:100vh}button{font-family:inherit;cursor:pointer}button:active{transform:scale(0.97)}.fade-in{animation:fadeIn 0.3s ease}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}input{font-family:inherit}</style>
+<style>*{box-sizing:border-box;margin:0;padding:0}body{background:linear-gradient(160deg,#0a0e1a,#111830 50%,#0c1020);font-family:'Nunito',sans-serif;color:#ddd;min-height:100vh}button{font-family:inherit;cursor:pointer}button:active{transform:scale(0.97)}.fade-in{animation:fadeIn 0.3s ease}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}input[type=text]{font-family:inherit;font-size:18px;padding:14px 16px;border-radius:12px;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);color:#fff;width:100%;outline:none;transition:border-color 0.2s}input[type=text]:focus{border-color:#9B59B680}input[type=text].correct{border-color:#6bcb77;background:rgba(107,203,119,0.1)}input[type=text].wrong{border-color:#ff6b6b;background:rgba(255,107,107,0.1)}</style>
 <script src="../../shared/progress.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
@@ -43,19 +43,25 @@ const AVOIR = [
   ["nous","avons","wij hebben"],["vous","avez","u hebt / jullie hebben"],["ils/elles","ont","zij hebben"]
 ];
 
-const BEZ = {
-  info: [
-    {nl:"mijn",m:"mon",f:"ma",p:"mes"},
-    {nl:"jouw",m:"ton",f:"ta",p:"tes"},
-    {nl:"zijn/haar",m:"son",f:"sa",p:"ses"},
-    {nl:"ons/onze",m:"notre",f:"notre",p:"nos"},
-    {nl:"jullie/uw",m:"votre",f:"votre",p:"vos"},
-    {nl:"hun",m:"leur",f:"leur",p:"leurs"}
-  ]
-};
+const BEZ_CASES = [
+  {zin:"___ livres sont dans l'armoire.",nl:"jouw",a:"tes"},
+  {zin:"___ maison est belle.",nl:"zijn/haar (vr.)",a:"sa"},
+  {zin:"___ notes sont très bonnes.",nl:"onze",a:"nos"},
+  {zin:"___ chien n'aime pas les biscuits.",nl:"hun (enk.)",a:"leur"},
+  {zin:"___ papa travaille beaucoup.",nl:"haar",a:"son"},
+  {zin:"___ chat est noir.",nl:"mijn (mann.)",a:"mon"},
+  {zin:"___ classe est grande.",nl:"onze",a:"notre"},
+  {zin:"___ enfants sont gentils.",nl:"hun (mv.)",a:"leurs"},
+  {zin:"___ mère est gentille.",nl:"jouw (vr.)",a:"ta"},
+  {zin:"___ livre est intéressant.",nl:"mijn",a:"mon"},
+  {zin:"___ amis sont sympas.",nl:"mijn (mv.)",a:"mes"},
+  {zin:"___ voiture est rouge.",nl:"zijn/haar (vr.)",a:"sa"},
+  {zin:"___ parents habitent à Paris.",nl:"jouw",a:"tes"},
+  {zin:"___ prof est sévère.",nl:"ons/onze",a:"notre"},
+  {zin:"___ stylos sont sur la table.",nl:"hun",a:"leurs"},
+];
 
 const VOC131 = [
-  // From pg 131 vocabulary list
   ["le dessin","het tekenen"],["le musée","het museum"],["le secret","het geheim"],["le rendez-vous","de afspraak"],
   ["il fait chaud","het is warm"],["riche","rijk"],["préféré(e)","lievelings-"],["enthousiaste","enthousiast"],
   ["terrible","vreselijk"],["pas mal","niet slecht"],["Qui est ton prof de français?","Wie is je leraar Frans?"],
@@ -80,98 +86,72 @@ const SECTIONS = [
   {id:"dtoets",title:"D-Toets Oefenen",icon:"📝",desc:"Mix van alle stof (toetsformat)"},
 ];
 
-// ===== QUESTION GENERATORS =====
-function genVerbQs(n=10) {
-  const pool = [...VERBS].sort(()=>Math.random()-0.5).slice(0,n);
-  return pool.map(([nl,fr])=>{
-    const wrongs = VERBS.filter(v=>v[1]!==fr).sort(()=>Math.random()-0.5).slice(0,3).map(v=>v[1]);
-    const opts = [fr,...wrongs].sort(()=>Math.random()-0.5);
-    return {q:"Vertaal: "+nl,o:opts,c:opts.indexOf(fr),secId:"werkwoorden"};
-  });
+// ===== NORMALIZE =====
+function normalize(s){
+  return s.toLowerCase().trim()
+    .replace(/[''\u0060]/g,"'")
+    .replace(/\s+/g," ")
+    .replace(/[.!?,;:]+$/,"");
 }
 
-function genEtreQs() {
-  const qs = ETRE.map(([subj,form,nl])=>{
-    const wrongs = ["suis","es","est","sommes","êtes","sont"].filter(f=>f!==form);
-    const picks = wrongs.sort(()=>Math.random()-0.5).slice(0,3);
-    const opts = [form,...picks].sort(()=>Math.random()-0.5);
-    return {q:subj+" _____ (être)\n"+nl,o:opts,c:opts.indexOf(form),secId:"etre"};
-  });
-  return qs.sort(()=>Math.random()-0.5);
+function checkAnswer(input, correctStr){
+  const inp = normalize(input);
+  if(!inp) return false;
+  // Allow multiple correct answers separated by /
+  const alts = correctStr.split("/").map(a=>normalize(a.trim()));
+  if(alts.some(a=>a===inp)) return true;
+  // Strip parentheticals from correct for lenient check: "lievelings-" matches "lievelings"
+  if(alts.some(a=>{
+    const base = normalize(a.replace(new RegExp("\\s*\\([^)]*\\)","g"),"").replace(/-$/,""));
+    return base && base === inp;
+  })) return true;
+  return false;
 }
 
-function genAvoirQs() {
-  const qs = AVOIR.map(([subj,form,nl])=>{
-    const wrongs = ["ai","as","a","avons","avez","ont"].filter(f=>f!==form);
-    const picks = wrongs.sort(()=>Math.random()-0.5).slice(0,3);
-    const opts = [form,...picks].sort(()=>Math.random()-0.5);
-    return {q:subj+" _____ (avoir)\n"+nl,o:opts,c:opts.indexOf(form),secId:"avoir"};
-  });
-  return qs.sort(()=>Math.random()-0.5);
+// ===== QUESTION GENERATORS (now return {q, a, secId}) =====
+function genVerbQs(n=10){
+  return [...VERBS].sort(()=>Math.random()-0.5).slice(0,n)
+    .map(([nl,fr])=>({q:"Vertaal naar het Frans:\n"+nl, a:fr, secId:"werkwoorden"}));
 }
 
-function genBezQs() {
-  const qs = [];
-  // Type 1: kies juiste vorm
-  const cases = [
-    {zin:"___ livres sont dans l'armoire.",nl:"jouw",answer:"tes",opts:["ton","ta","tes","son"]},
-    {zin:"___ maison est belle.",nl:"zijn/haar",answer:"sa",opts:["son","sa","ses","ma"]},
-    {zin:"___ notes sont très bonnes.",nl:"onze",answer:"nos",opts:["notre","nos","votre","vos"]},
-    {zin:"___ chien n'aime pas les biscuits.",nl:"hun",answer:"leur",opts:["leur","leurs","son","ses"]},
-    {zin:"___ papa travaille beaucoup.",nl:"haar",answer:"son",opts:["son","sa","ses","mon"]},
-    {zin:"___ chat est noir.",nl:"mijn",answer:"mon",opts:["mon","ma","mes","ton"]},
-    {zin:"___ classe est grande.",nl:"onze",answer:"notre",opts:["notre","nos","votre","mon"]},
-    {zin:"___ enfants sont gentils.",nl:"hun",answer:"leurs",opts:["leur","leurs","nos","ses"]},
-    {zin:"___ mère est gentille.",nl:"jouw",answer:"ta",opts:["ton","ta","tes","sa"]},
-    {zin:"___ livre est intéressant.",nl:"mijn",answer:"mon",opts:["mon","ma","mes","son"]},
+function genEtreQs(){
+  return [...ETRE].sort(()=>Math.random()-0.5)
+    .map(([subj,form,nl])=>({q:subj+" _____ (être)  –  "+nl, a:form, secId:"etre"}));
+}
+
+function genAvoirQs(){
+  return [...AVOIR].sort(()=>Math.random()-0.5)
+    .map(([subj,form,nl])=>({q:subj+" _____ (avoir)  –  "+nl, a:form, secId:"avoir"}));
+}
+
+function genBezQs(n=8){
+  return [...BEZ_CASES].sort(()=>Math.random()-0.5).slice(0,n)
+    .map(c=>({q:"("+c.nl+")  "+c.zin, a:c.a, secId:"bezittelijk"}));
+}
+
+function genVocQs(n=12){
+  return [...VOC131].sort(()=>Math.random()-0.5).slice(0,n)
+    .map(([fr,nl])=>{
+      if(Math.random()>0.5)
+        return {q:"Wat betekent:  "+fr, a:nl, secId:"vocabulaire"};
+      else
+        return {q:"Vertaal naar het Frans:  "+nl, a:fr, secId:"vocabulaire"};
+    });
+}
+
+function genDtoetsQs(){
+  const qs = [
+    ...genVerbQs(4),
+    ...genEtreQs().slice(0,3),
+    ...genAvoirQs().slice(0,3),
+    ...genBezQs(3),
+    ...genVocQs(5),
+    {q:"Hoe zeg je 'Het is warm' in het Frans?", a:"Il fait chaud", secId:"vocabulaire"},
+    {q:"Hoe zeg je 'iedereen' in het Frans?", a:"tout le monde", secId:"vocabulaire"},
+    {q:"Vul in:  Le contrôle est ___  (makkelijk)", a:"facile", secId:"vocabulaire"},
+    {q:"Vul in:  C'est ___ !  (vreselijk)", a:"terrible", secId:"vocabulaire"},
+    {q:"Hoe zeg je 'Wat is je lievelingsvak?' in het Frans?", a:"Quelle est ta matière préférée?", secId:"vocabulaire"},
   ];
-  cases.forEach(c=>{
-    const opts = c.opts.sort(()=>Math.random()-0.5);
-    qs.push({q:"("+c.nl+") "+c.zin,o:opts,c:opts.indexOf(c.answer),secId:"bezittelijk"});
-  });
-  return qs.sort(()=>Math.random()-0.5).slice(0,8);
-}
-
-function genVocQs(n=10) {
-  const pool = [...VOC131].sort(()=>Math.random()-0.5).slice(0,n);
-  return pool.map(([fr,nl])=>{
-    // Random direction
-    if (Math.random()>0.5) {
-      // FR -> NL
-      const wrongs = VOC131.filter(v=>v[1]!==nl).sort(()=>Math.random()-0.5).slice(0,3).map(v=>v[1]);
-      const opts = [nl,...wrongs].sort(()=>Math.random()-0.5);
-      return {q:"Wat betekent: "+fr+" ?",o:opts,c:opts.indexOf(nl),secId:"vocabulaire"};
-    } else {
-      // NL -> FR
-      const wrongs = VOC131.filter(v=>v[0]!==fr).sort(()=>Math.random()-0.5).slice(0,3).map(v=>v[0]);
-      const opts = [fr,...wrongs].sort(()=>Math.random()-0.5);
-      return {q:"Vertaal: "+nl,o:opts,c:opts.indexOf(fr),secId:"vocabulaire"};
-    }
-  });
-}
-
-function genDtoetsQs() {
-  // Mix of all types like the real D-toets
-  const qs = [];
-  // 3 verb questions
-  qs.push(...genVerbQs(3));
-  // 2 être
-  qs.push(...genEtreQs().slice(0,2));
-  // 2 avoir
-  qs.push(...genAvoirQs().slice(0,2));
-  // 3 bezittelijk
-  qs.push(...genBezQs().slice(0,3));
-  // 3 vocabulaire
-  qs.push(...genVocQs(3));
-  // Extra toets-style questions
-  qs.push(
-    {q:"Hoe zeg je 'De tekening is goed' in het Frans?",o:["Le dessin est bon.","La dessin est bon.","Le dessin est bien.","Le dessiner est bon."],c:0,secId:"vocabulaire"},
-    {q:"Kies het juiste woord: Le contrôle est ___",o:["donc","facile","chez","vrai"],c:1,secId:"vocabulaire"},
-    {q:"Kies het juiste woord: C'est ___?",o:["chez","vrai","donc","avant"],c:1,secId:"vocabulaire"},
-    {q:"Hoe zeg je 'Het is warm' in het Frans?",o:["Il fait chaud","Il est chaud","C'est chaud","Il a chaud"],c:0,secId:"vocabulaire"},
-    {q:"Hoe zeg je 'iedereen' in het Frans?",o:["tout le monde","tous les gens","chaque personne","les personnes"],c:0,secId:"vocabulaire"},
-    {q:"Hoe zeg je 'Het cijfer is slecht' in het Frans?",o:["La note est mauvaise.","Le note est mauvais.","La note est mal.","Le cifre est slecht."],c:0,secId:"vocabulaire"},
-  );
   return qs.sort(()=>Math.random()-0.5).slice(0,15);
 }
 
@@ -181,26 +161,26 @@ const THEORY = {
     {type:"explain",title:"25 werkwoorden",text:"Voor het proefwerk moet je **25 werkwoorden** kunnen vertalen van Nederlands naar Frans.\n\nDit zijn de werkwoorden uit Chapitre 1, 2 en 3. De meeste zijn **regelmatige -ER werkwoorden** (aimer, parler, habiter...) maar er zitten ook onregelmatige bij: **avoir** (hebben), **être** (zijn), **apprendre** (leren)."},
     {type:"explain",title:"-ER werkwoorden vervoegen",text:"De meeste werkwoorden eindigen op **-er**. Je vervoegt ze zo:\n\n**Stam** = werkwoord zonder -er\n**aimer** → stam = **aim-**\n\nj'aim**e**, tu aim**es**, il aim**e**\nnous aim**ons**, vous aim**ez**, ils aim**ent**\n\nLet op: je hoort de uitgangen -e, -es, -ent **niet** als je het woord uitspreekt!"},
     {type:"example",title:"Voorbeelden",text:"**habiter** (wonen): j'habite, tu habites, il habite\n**chercher** (zoeken): je cherche, tu cherches, il cherche\n**travailler** (werken): je travaille, tu travailles, il travaille\n\nHet patroon is altijd hetzelfde!"},
-    {type:"check",question:"Wat is de stam van 'regarder'?",options:["regard-","regarde-","regarder-","reg-"],correct:0},
+    {type:"check",question:"Wat is de stam van 'regarder'?",answer:"regard-",hint:"Haal -er weg van het werkwoord"},
   ],
   etre: [
     {type:"explain",title:"Être = zijn",text:"**Être** is een onregelmatig werkwoord. Je moet alle vormen uit je hoofd kennen:\n\nje **suis** = ik ben\ntu **es** = jij bent\nil/elle **est** = hij/zij is\non **est** = men is\nnous **sommes** = wij zijn\nvous **êtes** = u bent / jullie zijn\nils **sont** = zij zijn (mannelijk)\nelles **sont** = zij zijn (vrouwelijk)"},
     {type:"example",title:"Voorbeeldzinnen",text:"**Il est** élève. = Hij is leerling.\n**Nous sommes** en Sittard. = Wij zijn in Sittard.\n**Je suis** néerlandais. = Ik ben Nederlands.\n**Tu es** mon ami. = Jij bent mijn vriend.\n**Elles sont** françaises. = Zij zijn Frans (vrouwelijk)."},
-    {type:"check",question:"'Wij zijn' is in het Frans:",options:["nous êtes","nous sommes","nous sont","nous suis"],correct:1},
+    {type:"check",question:"'Wij zijn' is in het Frans: nous _____",answer:"sommes",hint:"Denk aan de nous-vorm van être"},
   ],
   avoir: [
     {type:"explain",title:"Avoir = hebben",text:"**Avoir** is ook een onregelmatig werkwoord:\n\nj'**ai** = ik heb\ntu **as** = jij hebt\nil/elle **a** = hij/zij heeft\non **a** = men heeft\nnous **avons** = wij hebben\nvous **avez** = u hebt / jullie hebben\nils/elles **ont** = zij hebben\n\nLet op: **j'ai** (niet *je ai*) — want er komt een klinker na je."},
-    {type:"check",question:"'Zij hebben' (ils) is in het Frans:",options:["ils avons","ils ont","ils avez","ils a"],correct:1},
+    {type:"check",question:"'Zij hebben' (ils/elles) is in het Frans: ils _____",answer:"ont",hint:"Denk aan de ils-vorm van avoir"},
   ],
   bezittelijk: [
     {type:"explain",title:"Bezittelijke voornaamwoorden",text:"In het Frans hangt het bezittelijk voornaamwoord af van het **geslacht** en **aantal** van het zelfstandig naamwoord (NIET van de bezitter!).\n\n| NL | mannelijk | vrouwelijk | meervoud |\n|---|---|---|---|\n| mijn | **mon** | **ma** | **mes** |\n| jouw | **ton** | **ta** | **tes** |\n| zijn/haar | **son** | **sa** | **ses** |\n| ons/onze | **notre** | **notre** | **nos** |\n| jullie/uw | **votre** | **votre** | **vos** |\n| hun | **leur** | **leur** | **leurs** |"},
     {type:"explain",title:"Wanneer welke vorm?",text:"**Mon livre** = mijn boek (le livre = mannelijk → mon)\n**Ma classe** = mijn klas (la classe = vrouwelijk → ma)\n**Mes amis** = mijn vrienden (meervoud → mes)\n\nBij **notre/votre/leur** is er geen verschil m/v:\n**Notre classe** = onze klas\n**Notre livre** = ons boek\n\nAlleen meervoud verandert: **nos, vos, leurs**"},
-    {type:"check",question:"'(hun) chien n'aime pas les biscuits' — welke vorm?",options:["leurs","leur","son","ses"],correct:1},
+    {type:"check",question:"'(hun mv.) ___ enfants sont gentils.'",answer:"leurs",hint:"hun + meervoud"},
   ],
   vocabulaire: [
     {type:"explain",title:"Woordjes pg 131",text:"Op pagina 131 staan alle **woordjes en zinnen** die je moet kennen voor het proefwerk. Dit zijn woorden uit Chapitre 3.\n\nTip: leer ze in **groepjes**:\n• Schoolvakken: la géographie, la gym, le dessin...\n• Meningen: bon/bonne, mauvais(e), difficile, facile...\n• Tijdswoorden: maintenant, aujourd'hui, parfois, avant...\n• Zinnetjes: 'Quelle est ta matière préférée?'"},
     {type:"example",title:"Belangrijke zinnen",text:"**Qui est ton prof de français?** = Wie is je leraar Frans?\n**Quelle est ta matière préférée?** = Wat is je lievelingsvak?\n**Ma matière préférée, c'est le français.** = Mijn lievelingsvak is Frans.\n**On s'amuse bien!** = We hebben lol!\n**Il fait chaud.** = Het is warm."},
-    {type:"check",question:"Wat betekent 'parfois'?",options:["altijd","nooit","soms","nu"],correct:2},
+    {type:"check",question:"Wat betekent 'parfois'?",answer:"soms",hint:"Niet altijd, niet nooit..."},
   ],
 };
 
@@ -212,8 +192,7 @@ function App(){
   const[questions,setQuestions]=useState([]);
   const[qIdx,setQIdx]=useState(0);
   const[score,setScore]=useState({correct:0,total:0});
-  const[answered,setAnswered]=useState(null);
-  const[quizMode,setQuizMode]=useState(null);
+  const[answered,setAnswered]=useState(null); // null | {ok, correct}
   const[,forceUpdate]=useState(0);
 
   const tag=(c,txt)=>React.createElement("span",{style:{display:"inline-block",padding:"2px 8px",borderRadius:"6px",fontSize:"10px",fontWeight:700,background:c+"20",color:c}},txt);
@@ -224,25 +203,27 @@ function App(){
 
   const startTheory=(secId)=>{setActiveSec(secId);setStep(0);setMode("theory")};
   const startPractice=(secId)=>{
-    setActiveSec(secId);
     let qs;
     switch(secId){
       case"werkwoorden":qs=genVerbQs(10);break;
       case"etre":qs=genEtreQs();break;
       case"avoir":qs=genAvoirQs();break;
-      case"bezittelijk":qs=genBezQs();break;
-      case"vocabulaire":qs=genVocQs(10);break;
+      case"bezittelijk":qs=genBezQs(10);break;
+      case"vocabulaire":qs=genVocQs(12);break;
       case"dtoets":qs=genDtoetsQs();break;
       default:qs=[];
     }
-    setQuestions(qs);setQIdx(0);setScore({correct:0,total:0});setAnswered(null);setQuizMode("practice");setMode("practice");
+    setActiveSec(secId);setQuestions(qs);setQIdx(0);setScore({correct:0,total:0});setAnswered(null);setMode("practice");
   };
 
-  const handleAnswer=(i)=>{
+  const handleAnswer=(input)=>{
     if(answered!==null)return;
-    const q=questions[qIdx];const correct=i===q.c;setAnswered(i);
-    progress.recordAnswer(q.secId||activeSec,correct);
-    setScore(s=>({correct:s.correct+(correct?1:0),total:s.total+1}));forceUpdate(n=>n+1);
+    const q=questions[qIdx];
+    const ok=checkAnswer(input,q.a);
+    setAnswered({ok,correct:q.a});
+    progress.recordAnswer(q.secId||activeSec,ok);
+    setScore(s=>({correct:s.correct+(ok?1:0),total:s.total+1}));
+    forceUpdate(n=>n+1);
   };
   const nextQ=()=>{if(qIdx+1<questions.length){setQIdx(qIdx+1);setAnswered(null)}else setMode("results")};
 
@@ -255,7 +236,6 @@ function App(){
           React.createElement("div",{style:{fontSize:"17px",fontWeight:900,color:COL}},"🇫🇷 Frans")),
         React.createElement("div",{style:{fontSize:"12px",color:"#666"}},"Chapitre 1/2/3")),
       React.createElement("div",{style:{maxWidth:"640px",margin:"0 auto",padding:"16px 14px 60px"}},
-        // Overall
         React.createElement("div",{style:{background:cBg,borderRadius:"16px",padding:"18px",border:"1px solid "+bdr,marginBottom:"16px",textAlign:"center"}},
           React.createElement("div",{style:{fontSize:"15px",fontWeight:800,marginBottom:"8px"}},"Voortgang Frans"),
           React.createElement("div",{style:{display:"flex",justifyContent:"space-around",marginBottom:"12px"}},
@@ -263,7 +243,6 @@ function App(){
             React.createElement("div",null,React.createElement("div",{style:{fontSize:"24px",fontWeight:900,color:"#fff"}},overall.mastered+"/"+SECTIONS.length),React.createElement("div",{style:{fontSize:"10px",color:"#777"}},"secties")),
             React.createElement("div",null,React.createElement("div",{style:{fontSize:"24px",fontWeight:900,color:overall.accuracy>=70?"#6bcb77":"#ffd93d"}},overall.accuracy+"%"),React.createElement("div",{style:{fontSize:"10px",color:"#777"}},"correct"))),
           pBar(overall.masteryPct,COL,"8px")),
-        // Sections
         SECTIONS.map(sec=>{
           const st=getSt(sec.id),hasTh=THEORY[sec.id];
           return React.createElement("div",{key:sec.id,style:{background:cBg,borderRadius:"16px",padding:"16px",border:"1px solid "+(st.mastered?"#6bcb7730":bdr),marginBottom:"10px"}},
@@ -279,7 +258,6 @@ function App(){
               hasTh&&React.createElement("button",{style:{flex:1,padding:"10px",borderRadius:"10px",border:"none",background:COL+"20",color:COL,fontSize:"13px",fontWeight:700},onClick:()=>startTheory(sec.id)},st.theoryDone?"📖 Herlezen":"📖 Theorie"),
               React.createElement("button",{style:{flex:1,padding:"10px",borderRadius:"10px",border:"none",background:"rgba(255,255,255,0.08)",color:"#fff",fontSize:"13px",fontWeight:700},onClick:()=>startPractice(sec.id)},sec.id==="dtoets"?"📝 D-Toets starten":"✏️ Oefenen")))
         }),
-        // Reset + back
         React.createElement("div",{style:{display:"flex",gap:"8px",marginTop:"16px"}},
           React.createElement("a",{href:"../../index.html",style:{flex:1,display:"block",padding:"10px",borderRadius:"10px",background:"rgba(255,255,255,0.03)",color:"#666",fontSize:"12px",fontWeight:600,textDecoration:"none",textAlign:"center"}},"← Terug"),
           React.createElement("button",{style:{padding:"10px 16px",borderRadius:"10px",border:"none",background:"rgba(255,255,255,0.03)",color:"#555",fontSize:"12px",fontWeight:600},onClick:()=>{if(confirm("Reset alle voortgang?")){progress.reset();forceUpdate(n=>n+1)}}},"🔄"))
@@ -339,17 +317,7 @@ function App(){
           React.createElement("span",{style:{fontSize:"13px",color:"#6bcb77"}},"✓ "+score.correct),
           React.createElement("span",{style:{fontSize:"13px",color:"#ff6b6b"}},"✕ "+(score.total-score.correct))),
         React.createElement("div",{key:qIdx,className:"fade-in"},
-          React.createElement("div",{style:{background:cBg,borderRadius:"16px",padding:"20px",border:"1px solid "+bdr,marginBottom:"16px"}},
-            React.createElement("div",{style:{fontSize:"16px",fontWeight:700,lineHeight:1.6,whiteSpace:"pre-line"}},q.q)),
-          q.o.map((opt,i)=>{
-            const isC=i===q.c,isSel=answered===i,show=answered!==null;
-            let bg=cBg,b2=bdr,col="#ccc";
-            if(show&&isC){bg="rgba(107,203,119,0.15)";b2="#6bcb7750";col="#6bcb77"}
-            else if(show&&isSel&&!isC){bg="rgba(255,107,107,0.15)";b2="#ff6b6b50";col="#ff6b6b"}
-            return React.createElement("button",{key:i,style:{width:"100%",padding:"14px 16px",borderRadius:"12px",border:"1px solid "+b2,background:bg,color:col,fontSize:"14px",fontWeight:600,textAlign:"left",marginBottom:"8px"},onClick:()=>handleAnswer(i)},
-              (show&&isC?"✅ ":show&&isSel?"❌ ":"")+opt)}),
-          answered!==null&&React.createElement("button",{style:{width:"100%",padding:"14px",borderRadius:"14px",border:"none",background:COL,color:"#fff",fontSize:"15px",fontWeight:800,marginTop:"8px"},onClick:nextQ},
-            qIdx+1<questions.length?"Volgende vraag →":"Bekijk resultaat"))));
+          React.createElement(TypeQuestion,{q,answered,onAnswer:handleAnswer,onNext:nextQ,isLast:qIdx+1>=questions.length,col:COL}))));
   }
 
   // ===== RESULTS =====
@@ -368,19 +336,72 @@ function App(){
   return null;
 }
 
+// ===== TYPE QUESTION COMPONENT =====
+function TypeQuestion({q, answered, onAnswer, onNext, isLast, col}){
+  const[input,setInput]=useState("");
+  const inputRef=useRef(null);
+
+  useEffect(()=>{setInput("");if(inputRef.current)inputRef.current.focus()},[q]);
+
+  const submit=()=>{if(!input.trim()||answered)return;onAnswer(input)};
+  const handleKey=(e)=>{if(e.key==="Enter")answered?onNext():submit()};
+
+  const cls=answered?(answered.ok?"correct":"wrong"):"";
+
+  return React.createElement("div",null,
+    React.createElement("div",{style:{background:cBg,borderRadius:"16px",padding:"20px",border:"1px solid "+bdr,marginBottom:"16px"}},
+      React.createElement("div",{style:{fontSize:"16px",fontWeight:700,lineHeight:1.6,whiteSpace:"pre-line",color:"#fff"}},q.q)),
+    React.createElement("input",{
+      ref:inputRef, type:"text", className:cls, value:input,
+      onChange:e=>setInput(e.target.value),
+      onKeyDown:handleKey,
+      placeholder:"Typ je antwoord...",
+      disabled:!!answered,
+      style:{marginBottom:"10px"}}),
+    answered&&React.createElement("div",{style:{borderRadius:"12px",padding:"14px 16px",marginBottom:"12px",background:answered.ok?"rgba(107,203,119,0.12)":"rgba(255,107,107,0.12)",border:"1px solid "+(answered.ok?"rgba(107,203,119,0.3)":"rgba(255,107,107,0.3)")}},
+      React.createElement("div",{style:{fontSize:"14px",fontWeight:700,color:answered.ok?"#6bcb77":"#ff6b6b",marginBottom:answered.ok?0:6}},answered.ok?"✓ Goed!":"✗ Fout"),
+      !answered.ok&&React.createElement("div",{style:{fontSize:"15px",color:"#fff",fontWeight:700}},answered.correct)),
+    !answered
+      ?React.createElement("button",{
+          style:{width:"100%",padding:"14px",borderRadius:"14px",border:"none",background:col,color:"#fff",fontSize:"15px",fontWeight:800},
+          onClick:submit},"Controleer →")
+      :React.createElement("button",{
+          style:{width:"100%",padding:"14px",borderRadius:"14px",border:"none",background:col,color:"#fff",fontSize:"15px",fontWeight:800},
+          onClick:onNext},
+          isLast?"Bekijk resultaat":"Volgende vraag →"));
+}
+
+// ===== THEORY CHECK (type-in) =====
 function ThCheck({step,secId}){
-  const[picked,setPicked]=useState(null);
-  const handle=(i)=>{if(picked!==null)return;setPicked(i);progress.recordAnswer(secId,i===step.correct)};
+  const[input,setInput]=useState("");
+  const[result,setResult]=useState(null);
+  const inputRef=useRef(null);
+  useEffect(()=>{if(inputRef.current)inputRef.current.focus()},[]);
+
+  const submit=()=>{
+    if(!input.trim()||result)return;
+    const ok=checkAnswer(input,step.answer);
+    setResult({ok,correct:step.answer});
+    progress.recordAnswer(secId,ok);
+  };
+  const handleKey=(e)=>{if(e.key==="Enter")submit()};
+  const cls=result?(result.ok?"correct":"wrong"):"";
+
   return React.createElement("div",{style:{background:"rgba(77,150,255,0.08)",borderRadius:"16px",padding:"20px",border:"1px solid rgba(77,150,255,0.2)"}},
     React.createElement("div",{style:{fontSize:"12px",color:"#4d96ff",fontWeight:700,marginBottom:"6px"}},"❓ CHECK"),
-    React.createElement("div",{style:{fontSize:"16px",fontWeight:700,marginBottom:"14px"}},step.question),
-    step.options.map((opt,i)=>{
-      const c=i===step.correct,s=picked===i,sh=picked!==null;
-      let bg=cBg,b=bdr,cl="#ccc";
-      if(sh&&c){bg="rgba(107,203,119,0.15)";b="#6bcb7750";cl="#6bcb77"}
-      else if(sh&&s&&!c){bg="rgba(255,107,107,0.15)";b="#ff6b6b50";cl="#ff6b6b"}
-      return React.createElement("button",{key:i,style:{width:"100%",padding:"12px 14px",borderRadius:"10px",border:"1px solid "+b,background:bg,color:cl,fontSize:"13px",fontWeight:600,textAlign:"left",marginBottom:"6px"},onClick:()=>handle(i)},
-        (sh&&c?"✅ ":sh&&s?"❌ ":"")+opt)}));
+    React.createElement("div",{style:{fontSize:"16px",fontWeight:700,marginBottom:"14px",whiteSpace:"pre-line"}},step.question),
+    React.createElement("input",{
+      ref:inputRef, type:"text", className:cls, value:input,
+      onChange:e=>setInput(e.target.value),
+      onKeyDown:handleKey,
+      placeholder:"Typ je antwoord...",
+      disabled:!!result,
+      style:{marginBottom:"10px"}}),
+    result&&React.createElement("div",{style:{padding:"10px 14px",borderRadius:10,marginBottom:10,background:result.ok?"rgba(107,203,119,0.1)":"rgba(255,107,107,0.1)",border:"1px solid "+(result.ok?"rgba(107,203,119,0.3)":"rgba(255,107,107,0.3)")}},
+      React.createElement("div",{style:{fontSize:"14px",fontWeight:700,color:result.ok?"#6bcb77":"#ff6b6b"}},result.ok?"✓ Correct!":"✗ Fout — juist antwoord: "+result.correct)),
+    !result&&React.createElement("button",{
+      style:{padding:"10px 16px",borderRadius:10,border:"none",background:"rgba(77,150,255,0.2)",color:"#4d96ff",fontSize:"13px",fontWeight:700},
+      onClick:submit},"Controleer"));
 }
 
 ReactDOM.render(React.createElement(App),document.getElementById("root"));
