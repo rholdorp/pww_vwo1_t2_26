@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Aardrijkskunde – H4 Natuurrampen in Japan</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌍</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>*{box-sizing:border-box;margin:0;padding:0}body{background:linear-gradient(160deg,#0a0e1a,#111830 50%,#0c1020);font-family:'Nunito',sans-serif;color:#ddd;min-height:100vh}button{font-family:inherit;cursor:pointer}button:active{transform:scale(0.97)}.fade-in{animation:fadeIn 0.3s ease}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}</style>
+<script src="../../shared/progress.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+</head>
+<body><div id="root"></div>
+<script type="text/babel">
+const{useState,useEffect,useCallback}=React;
+
+const progress=new TrainerProgress("aardrijkskunde_h4","Aardrijkskunde H4 Natuurrampen",{subject:"Aardrijkskunde",color:"#F1C40F",icon:"🌍"});
+
+const COL="#F1C40F";
+const bdr="rgba(255,255,255,0.06)",cBg="rgba(255,255,255,0.04)";
+
+const SECTIONS=[
+  {id:"par41",title:"Par 4.1: Ring van Vuur",icon:"🌋",desc:"Japan, tektonische platen, endogene krachten"},
+  {id:"par42",title:"Par 4.2: Oost-Japanse ramp",icon:"🌊",desc:"Tohoku 2011, tsunami, Fukushima"},
+  {id:"par43",title:"Par 4.3: Vulkaan de Aso",icon:"🔥",desc:"Caldera, wegduikende platen, uitbarsting"},
+  {id:"par44",title:"Par 4.4: Tyfoon Shanshan",icon:"🌀",desc:"Orkanen, kenmerken, klimaatverandering"},
+  {id:"par45",title:"Par 4.5: Omgaan met rampen",icon:"🛡️",desc:"Hazard management, waarschuwingssystemen"},
+  {id:"begrippen",title:"Begrippen",icon:"📚",desc:"Alle sleutelbegrippen van H4"},
+];
+
+const THEORY={
+  par41:[
+    {title:"Japan in de Ring van Vuur",text:"Japan ligt in Oost-Azië, in de **Ring van Vuur** — een gordel van vulkanen en aardbevingsgebieden rondom de Stille Oceaan.\n\n🌋 Bijna **10%** van alle actieve vulkanen ter wereld staat in Japan.\n\n⚡ Japan heeft meer aardbevingen dan elk ander land ter wereld. Bijna **dagelijks** aardbevingen met kracht 4 of hoger."},
+    {title:"Tektonische platen",text:"Japan ligt op het snijpunt van meerdere **tektonische platen**:\n\n• De grote **Pacifische plaat** duikt onder de kleinere platen (subductie)\n• Platen botsen of schuiven langs elkaar\n• Dit leidt tot: aardbevingen, tsunamis, vulkaanuitbarstingen\n\nDe krachten die van **binnenuit de aarde** komen heten **endogene krachten**."},
+    {title:"Gevolgen van plaatbewegingen",text:"Waar tektonische platen op elkaar botsen:\n\n🔴 **Aardbevingen** — door drukverschillen tussen platen\n🌊 **Tsunamis** — golf na zeebeving\n🌋 **Vulkanen** — magma stijgt op langs de plaatranden\n\nWaar platen van elkaar af bewegen: **riftvallei** (zeebodem)\nWaar platen langs elkaar schuiven: **breuklijnen**"},
+  ],
+  par42:[
+    {title:"De Tohoku-aardbeving (2011)",text:"Op **11 maart 2011** werd Japan getroffen door de zwaarste aardbeving ooit gemeten:\n\n📍 Origine: 32 km diep, 70 km voor de kust\n📏 Kracht: **9.0 op de schaal van Richter**\n⏱️ Duur: bijna 6 minuten\n\nTwee tektonische platen schoven **40-50 meter** door elkaar. Dit veroorzaakte enorme schade aan gebouwen: 430.000 beschadigd, **130.000 verwoest**."},
+    {title:"De tsunami",text:"De zeebeving veroorzaakte een enorme **tsunami**:\n\n🌊 Golfhoogte bij de Japanse kust: **circa 15 meter**\n💨 Snelheid over de oceaan: **800 km/u**\n🏘️ Overspoelde gebieden tot **10 km** landinwaarts\n\nGevolgen:\n• Meer dan **15.500 doden**\n• 170.000 gebouwen beschadigd of verwoest langs de kust\n• Hele steden weggespoeld"},
+    {title:"Fukushima",text:"De tsunami beschadigde de **kerncentrale van Fukushima**:\n\n⚡ Gebouwen vlogen 6 meter omhoog — niet hoog genoeg om de golf te keren\n☢️ **Radioactief materiaal** ontsnapte\n\nGevolgen:\n• Evacuatie van omliggende gebieden\n• In september 2024: radioactief afvalwater geloosd in de Stille Oceaan\n• Enorme discussie over veiligheid en acceptabele stralingsniveaus"},
+  ],
+  par43:[
+    {title:"Vulkanen door wegduikende platen",text:"Japan heeft de **meeste actieve vulkanen** ter wereld.\n\nHoe ontstaan ze?\n\n1. De **Pacifische plaat** duikt onder de **Euraziatische plaat** (**subductie**)\n2. Dieper in de aardmantel → hogere temperatuur\n3. Gesteente smelt → **magma** ontstaat\n4. Magma is lichter dan het omliggende gesteente en stijgt omhoog\n5. Magma doorbreekt de aardkorst → **vulkaan**"},
+    {title:"De caldera van de Aso",text:"De **vulkaan de Aso** op het eiland Kyushu is een van de meest actieve vulkanen.\n\n🗺️ De caldera heeft een doorsnede van **128 km** — een van de grootste ter wereld!\n\nEen **caldera** ontstaat wanneer:\n→ De magmakamer leeg raakt na een grote uitbarsting\n→ Het dak van de caldera instort\n\nBinnen de caldera ligt de **Nakadake**: de actieve vulkaan die regelmatig uitbarst."},
+    {title:"Uitbarsting 2016 & voortekenen",text:"In **2016** barstte de Nakadake uit:\n• Zware aardbevingen gingen vooraf\n• As en lava verspreidden zich over een groot gebied\n\n🌡️ **Voortekenen van een uitbarsting:**\n• Stijging van magma (meting via seismograaf)\n• Trillingen van de aardkorst\n• Verhitting van de grond boven de magmakamer\n• Verandering van de grondwaterstand\n\nBijzonder: Beppu op Kyushu heeft **warmwaterbronnen** (onsen) en zandbaden door vulkanische warmte."},
+  ],
+  par44:[
+    {title:"Tropische stormen en orkanen",text:"Tussen **mei en oktober** wordt Japan jaarlijks getroffen door tropische stormen.\n\n🌀 Japan krijgt gemiddeld **12 orkanen** per jaar.\n\nEen **orkan** = een tropische cycloon met windsnelheden van meer dan **119 km/u** (Beaufort 12 of hoger).\n\nTyfoon **Shanshan** trof Japan op **29 augustus 2024** met windsnelheden van meer dan 250 km/u. Meer dan 300.000 huizen zaten zonder stroom."},
+    {title:"Hoe ontstaan orkanen?",text:"Orkanen ontstaan boven **warme zeeën** (temperatuur hoger dan **26°C**):\n\n1. Warme, vochtige lucht stijgt op\n2. Lucht koelt af → wolken en neerslag\n3. Lage luchtdruk in het centrum → wind stroomt toe\n4. Door aardrotatie draait het systeem (cycloon)\n\n👁️ Het **oog van de orkaan**: het rustigste deel in het midden. Maar aan de rand van het oog: de **hevigste wind en neerslag**!"},
+    {title:"Schalen en klimaatverandering",text:"**Schalen:**\n• Schaal van **Beaufort**: kracht van de wind\n• Schaal van **Fujita-Simpson**: kracht van een orkaan\n\n**Orkanen en ontwikkelingsniveau:**\n• Hogere inkomenslanden: minder slachtoffers (betere infrastructuur, waarschuwingssystemen)\n• Lagere inkomenslanden: meer slachtoffers\n\n🌡️ **Klimaatverandering:**\nDoor opwarming worden zeeën warmer → orkanen worden **intenser** en mogelijk **vaker**."},
+  ],
+  par45:[
+    {title:"Endogene en exogene krachten",text:"Twee soorten krachten die rampen veroorzaken:\n\n🔴 **Endogene krachten** — van binnenuit de aarde\n• Aardbevingen\n• Vulkaanuitbarstingen\n• Tsunami's (door zeebevingen)\n\n💨 **Exogene krachten** — van buitenaf\n• Orkanen en tyfonen\n• Overstromingen\n• Zware neerslag\n\nJapan heeft te maken met BEIDE soorten!"},
+    {title:"Hazard management",text:"**Hazard management** = het geheel van maatregelen om rampen te voorkomen of te beheersen.\n\nVragen bij hazard management:\n• Welke gebieden zijn gevaarlijk? → **risicokaarten**\n• Welke maatregelen kunnen worden getroffen?\n• Hoe worden mensen gewaarschuwd?\n• Hoe kan de schade na een ramp het best worden beperkt?\n\nBijv.: hoogtemarkeringen voor tsunami-gevaar op gebouwen (4.1m sea level)"},
+    {title:"Waarschuwingssystemen",text:"Japan heeft geavanceerde systemen om te waarschuwen:\n\n🔵 **Tsunami waarschuwingssysteem**:\n→ Meetboeien in de oceaan meten drukveranderingen\n→ Detecteren een tsunami al ver van de kust\n\n📱 **Tsunami app**:\n→ Geeft direct een melding op je telefoon\n→ Berekent hoe gevaarlijk de situatie is\n\n📻 **Aardbevingswaarschuwing**: Japan stuurt via tv, radio en telefoon alarmberichten enkele seconden voor een aardbeving."},
+  ],
+  begrippen:[
+    {title:"Begrippen A-H",text:"**Aardbeving**: Schudden van een deel van de aardkorst door endogene krachten\n\n**Caldera**: Grote holte die ontstaat na instorting van een vulkaankrater\n\n**Epicentrum**: Het punt op het aardoppervlak recht boven het hypocentrum\n\n**Endogene kracht**: Krachten van binnenuit de aarde\n\n**Exogene kracht**: Krachten van buitenaf die op de aardkorst inwerken\n\n**Hazard management**: Maatregelen om rampen te voorkomen of te beheersen\n\n**Hypocentrum**: Het punt in de aardkorst waar de aardbeving begint"},
+    {title:"Begrippen M-V",text:"**Magmakamer**: Ruimte onder de aardkorst waar magma zich bevindt\n\n**Mantelconvectie**: Beweging van gesteente in de aardmantel door temperatuurverschillen — dit beweegt de tektonische platen!\n\n**Orkan**: Tropische cycloon met windsnelheid meer dan 119 km/u\n\n**Seismograaf**: Instrument dat trillingen in de aardkorst meet\n\n**Schildvulkaan**: Grote, platte vulkaan met flauwe hellingen\n\n**Subductie**: Het indrijven van één tektonische plaat onder een andere\n\n**Tektonische platen**: Grote stukken aardkorst die bewegen\n\n**Tsunami**: Grote golf veroorzaakt door een zeebeving\n\n**Tyfoon**: Tropische cycloon boven de Stille/Indische Oceaan\n\n**Vulkaanuitbarsting**: Explosie waarbij magma, gassen en/of as uit de aarde komt"},
+  ],
+};
+
+const QUESTIONS={
+  par41:[
+    {q:"Welk percentage van alle actieve vulkanen ter wereld staat in Japan?",a:"Ongeveer 10%",opts:["Ongeveer 10%","Ongeveer 25%","Ongeveer 5%","Meer dan 50%"]},
+    {q:"Hoe worden krachten die van binnenuit de aarde komen genoemd?",a:"Endogene krachten",opts:["Endogene krachten","Exogene krachten","Seismische krachten","Tektonische krachten"]},
+    {q:"Wat is subductie?",a:"Het indrijven van één tektonische plaat onder een andere",opts:["Het indrijven van één tektonische plaat onder een andere","Het uit elkaar bewegen van twee tektonische platen","Het langs elkaar schuiven van twee tektonische platen","Het botsen van twee tektonische platen"]},
+    {q:"Welke tektonische plaat duikt onder Japan?",a:"De Pacifische plaat",opts:["De Pacifische plaat","De Atlantische plaat","De Euraziatische plaat","De Afrikaanse plaat"]},
+    {q:"Wat is de Ring van Vuur?",a:"Een zone van vulkanische activiteit rondom de Stille Oceaan",opts:["Een zone van vulkanische activiteit rondom de Stille Oceaan","Een bergketen in Japan","Een naam voor alle actieve vulkanen in Azië","Een reeks van gebergten in de Stille Oceaan"]},
+    {q:"Hoe vaak heeft Japan aardbevingen met kracht 4 of hoger?",a:"Bijna dagelijks",opts:["Bijna dagelijks","Elke week","Gemiddeld één per maand","Een paar keer per jaar"]},
+    {q:"Welke drie verschijnselen treden op bij het botsen van tektonische platen?",a:"Aardbevingen, tsunami's en vulkaanuitbarstingen",opts:["Aardbevingen, tsunami's en vulkaanuitbarstingen","Orkanen, overstromingen en aardbevingen","Tornado's, tsunami's en aardbevingen","Vulkaanuitbarstingen, overstromingen en stormen"]},
+    {q:"Op welk continent grenst Japan aan de Euraziatische plaat?",a:"Azië",opts:["Azië","Europa","Noord-Amerika","Australië"]},
+    {q:"Waar bevindt Japan zich?",a:"Oost-Azië",opts:["Oost-Azië","Zuid-Azië","Zuidoost-Azië","Noord-Azië"]},
+  ],
+  par42:[
+    {q:"Op welke datum vond de Tohoku-aardbeving plaats?",a:"11 maart 2011",opts:["11 maart 2011","11 maart 2009","26 december 2004","17 januari 1995"]},
+    {q:"Welke kracht had de Tohoku-aardbeving op de schaal van Richter?",a:"9.0",opts:["9.0","7.5","8.3","6.8"]},
+    {q:"Op welke diepte ontstond de Tohoku-aardbeving?",a:"32 km",opts:["32 km","10 km","100 km","50 km"]},
+    {q:"Hoe hoog was de tsunamigolf bij de Japanse kust?",a:"Circa 15 meter",opts:["Circa 15 meter","Circa 5 meter","Circa 30 meter","Circa 50 meter"]},
+    {q:"Hoe snel bewoog de tsunami over de open oceaan?",a:"800 km/u",opts:["800 km/u","200 km/u","1.500 km/u","100 km/u"]},
+    {q:"Hoeveel gebouwen werden verwoest door de ramp?",a:"130.000",opts:["130.000","10.000","430.000","500.000"]},
+    {q:"Wat ging er fout bij de kerncentrale van Fukushima?",a:"Radioactief materiaal ontsnapte door de tsunami",opts:["Radioactief materiaal ontsnapte door de tsunami","De kerncentrale ontplofte door de aardbeving","De centrale overstroomde door hevige regen","Een brand veroorzaakte een kernsmelt"]},
+    {q:"Hoeveel kilometer landinwaarts overspoelde de tsunami?",a:"Tot 10 km",opts:["Tot 10 km","Tot 2 km","Tot 50 km","Tot 100 km"]},
+    {q:"Hoeveel mensen kwamen om bij de Oost-Japanse ramp?",a:"Meer dan 15.500",opts:["Meer dan 15.500","Meer dan 1.000","Meer dan 100.000","Meer dan 5.000"]},
+  ],
+  par43:[
+    {q:"Op welk eiland van Japan ligt de vulkaan de Aso?",a:"Kyushu",opts:["Kyushu","Honshu","Hokkaido","Shikoku"]},
+    {q:"Hoe groot is de caldera van de vulkaan de Aso?",a:"128 km in doorsnede",opts:["128 km in doorsnede","12 km in doorsnede","28 km in doorsnede","256 km in doorsnede"]},
+    {q:"Hoe ontstaat een caldera?",a:"De magmakamer raakt leeg en de vulkaankrater stort in",opts:["De magmakamer raakt leeg en de vulkaankrater stort in","Een grote explosie blaast de top van de vulkaan weg","Lava stroomt weg en laat een gat achter","Regenwater erogeert de top van de vulkaan"]},
+    {q:"Hoe heet de actieve vulkaan in de caldera van de Aso?",a:"Nakadake",opts:["Nakadake","Fuji","Aso-san","Sakurajima"]},
+    {q:"In welk jaar was er een grote uitbarsting van de Nakadake?",a:"2016",opts:["2016","2011","2019","2024"]},
+    {q:"Welke plaat duikt onder de Euraziatische plaat bij Japan?",a:"De Pacifische plaat",opts:["De Pacifische plaat","De Filipijnse plaat","De Noord-Amerikaanse plaat","De Arabische plaat"]},
+    {q:"Wat is een schildvulkaan?",a:"Een grote, platte vulkaan met flauwe hellingen",opts:["Een grote, platte vulkaan met flauwe hellingen","Een vulkaan met een steile conus","Een onderzeese vulkaan","Een uitgedoofde vulkaan"]},
+    {q:"Hoe heet een warmwaterbron in Japan?",a:"Onsen",opts:["Onsen","Caldera","Fumarole","Geyser"]},
+    {q:"Wat is een voorteken van een vulkaanuitbarsting?",a:"Verhitting van de grond boven de magmakamer",opts:["Verhitting van de grond boven de magmakamer","Zware regenval rondom de vulkaan","Plotseling sterke wind","Daling van de luchtvochtigheid"]},
+  ],
+  par44:[
+    {q:"Wat is de minimale windsnelheid voor een orkan?",a:"119 km/u (Beaufort 12)",opts:["119 km/u (Beaufort 12)","60 km/u (Beaufort 8)","200 km/u (Beaufort 15)","89 km/u (Beaufort 10)"]},
+    {q:"Op welke datum trof tyfoon Shanshan Japan?",a:"29 augustus 2024",opts:["29 augustus 2024","11 maart 2011","4 augustus 2024","15 september 2023"]},
+    {q:"Boven welk type oppervlak vormen orkanen?",a:"Warme zeeën (boven 26°C)",opts:["Warme zeeën (boven 26°C)","Koude poolgebieden","Warme landmassa's","Tropische regenwouden"]},
+    {q:"Welke schaal meet de kracht van een orkan?",a:"Schaal van Fujita-Simpson",opts:["Schaal van Fujita-Simpson","Schaal van Richter","Schaal van Beaufort","Schaal van Mercalli"]},
+    {q:"Welke schaal meet de kracht van wind?",a:"Schaal van Beaufort",opts:["Schaal van Beaufort","Schaal van Richter","Schaal van Fujita-Simpson","Schaal van Mercalli"]},
+    {q:"Wat is het oog van een orkaan?",a:"Het rustigste deel in het midden van de orkaan",opts:["Het rustigste deel in het midden van de orkaan","Het gevaarlijkste deel met de sterkste wind","De rand van de orkaan","De wolk die voorop rijdt"]},
+    {q:"Hoeveel orkanen treft Japan gemiddeld per jaar?",a:"12",opts:["12","30","5","50"]},
+    {q:"Waarom worden orkanen intenser door klimaatverandering?",a:"Warmere zeeën leveren meer energie voor orkanen",opts:["Warmere zeeën leveren meer energie voor orkanen","De aarde draait sneller door klimaatverandering","De atmosfeer wordt dunner","Er is meer luchtverontreiniging"]},
+    {q:"In welke periode worden orkanen en tyfonen in Japan verwacht?",a:"Mei tot oktober",opts:["Mei tot oktober","December tot februari","Maart tot mei","Oktober tot december"]},
+  ],
+  par45:[
+    {q:"Hoe heten krachten die van binnenuit de aarde komen?",a:"Endogene krachten",opts:["Endogene krachten","Exogene krachten","Seismische krachten","Vulkanische krachten"]},
+    {q:"Hoe heten krachten die van buitenaf op de aardkorst inwerken?",a:"Exogene krachten",opts:["Exogene krachten","Endogene krachten","Eruptieve krachten","Klimatologische krachten"]},
+    {q:"Wat is hazard management?",a:"Het geheel van maatregelen om rampen te voorkomen of te beheersen",opts:["Het geheel van maatregelen om rampen te voorkomen of te beheersen","Een kaart waarop gevaarlijke gebieden staan","Een instrument dat aardbevingen meet","Een systeem om tsunami's te detecteren"]},
+    {q:"Welk instrument meet trillingen in de aardkorst?",a:"Seismograaf",opts:["Seismograaf","Barometer","Thermometer","Hygrometer"]},
+    {q:"Hoe werkt het tsunami-waarschuwingssysteem in Japan?",a:"Meetboeien in de oceaan detecteren drukveranderingen",opts:["Meetboeien in de oceaan detecteren drukveranderingen","Satellieten fotograferen de oceaan","Computers voorspellen tsunamis op basis van de weersverwachting","Sensors op de zeebodem meten de watertemperatuur"]},
+    {q:"Welke informatie geven risicokaarten?",a:"Inzicht in gevaarlijke gebieden om rampen te beheersen",opts:["Inzicht in gevaarlijke gebieden om rampen te beheersen","De exacte sterkte van een aardbeving","De snelheid van een tsunami","De hoogte van een vulkaan"]},
+    {q:"Wat is een voorteken dat een aardbeving kan voorspellen?",a:"Het is moeilijk aardbevingen te voorspellen; seismografen meten trillingen",opts:["Het is moeilijk aardbevingen te voorspellen; seismografen meten trillingen","Verandering in de windrichting","Plotselinge stijging van de temperatuur","Sterke regen vlak voor de aardbeving"]},
+    {q:"Wat doen Japan's tsunami-borden op gebouwen?",a:"Ze geven de hoogte aan tot waar een tsunami kan reiken",opts:["Ze geven de hoogte aan tot waar een tsunami kan reiken","Ze markeren de evacuatieroute","Ze geven aan hoeveel mensen het gebouw in mag","Ze tonen de richting van de dichtstbijzijnde schuilplaats"]},
+  ],
+  begrippen:[
+    {q:"Wat is een aardbeving?",a:"Schudden van de aardkorst door endogene krachten",opts:["Schudden van de aardkorst door endogene krachten","Een grote golf veroorzaakt door een zeebeving","Een uitbarsting van een vulkaan","Beweging van tektonische platen"]},
+    {q:"Wat is een caldera?",a:"Grote holte die ontstaat na instorting van een vulkaankrater",opts:["Grote holte die ontstaat na instorting van een vulkaankrater","Een actieve vulkaan op een eiland","Een onderzeese bergketen","Een warmwaterbron"]},
+    {q:"Wat is het epicentrum?",a:"Het punt op het aardoppervlak recht boven het hypocentrum",opts:["Het punt op het aardoppervlak recht boven het hypocentrum","Het punt in de aardkorst waar de aardbeving begint","Het middelpunt van een caldera","De locatie van de seismograaf"]},
+    {q:"Wat is het hypocentrum?",a:"Het punt in de aardkorst waar de aardbeving begint",opts:["Het punt in de aardkorst waar de aardbeving begint","Het punt op het aardoppervlak van de aardbeving","De locatie van de seismograaf","Het middelpunt van de Ring van Vuur"]},
+    {q:"Wat is subductie?",a:"Het indrijven van één tektonische plaat onder een andere",opts:["Het indrijven van één tektonische plaat onder een andere","Het langs elkaar schuiven van twee platen","Het uit elkaar bewegen van platen","Het botsen en ophopen van twee platen"]},
+    {q:"Wat is een tsunami?",a:"Een grote golf veroorzaakt door een zeebeving",opts:["Een grote golf veroorzaakt door een zeebeving","Een tropische cycloon boven de Stille Oceaan","Een vulkaanuitbarsting onder water","Een aardbeving op grote diepte"]},
+    {q:"Wat is een tyfoon?",a:"Tropische cycloon boven de Stille of Indische Oceaan",opts:["Tropische cycloon boven de Stille of Indische Oceaan","Een grote aardbeving in Japan","Een vulkaanuitbarsting met veel lava","Een grote golf door een zeebeving"]},
+    {q:"Wat meet een seismograaf?",a:"Trillingen in de aardkorst",opts:["Trillingen in de aardkorst","De kracht van de wind","De temperatuur van magma","De hoogte van een tsunamigolf"]},
+    {q:"Wat is mantelconvectie?",a:"Beweging van gesteente in de aardmantel door temperatuurverschillen",opts:["Beweging van gesteente in de aardmantel door temperatuurverschillen","Het smelten van magma in de aardkern","Het indrijven van platen in de aardkorst","De afkoeling van de aardoppervlakte"]},
+    {q:"Wat is hazard management?",a:"Maatregelen om rampen te voorkomen of te beheersen",opts:["Maatregelen om rampen te voorkomen of te beheersen","Het meten van aardbevingen met een seismograaf","Het maken van kaarten van gevaarlijke gebieden","Het evacueren van mensen na een ramp"]},
+    {q:"Wat is een schildvulkaan?",a:"Grote platte vulkaan met flauwe hellingen",opts:["Grote platte vulkaan met flauwe hellingen","Steile, kegelvormige vulkaan","Vulkaan met caldera","Onderzeese vulkaan"]},
+  ],
+};
+
+function shuffle(a){return[...a].sort(()=>Math.random()-0.5)}
+function genQs(secId){
+  const pool=QUESTIONS[secId]||[];
+  return shuffle(pool).slice(0,10).map(q=>{
+    const opts=shuffle(q.opts);
+    return{q:q.q,opts,correct:opts.indexOf(q.a)};
+  });
+}
+function pBar(pct,col,h){
+  return React.createElement("div",{style:{background:"rgba(255,255,255,0.06)",borderRadius:"99px",height:h||"6px",overflow:"hidden"}},
+    React.createElement("div",{style:{width:pct+"%",height:"100%",background:col,borderRadius:"99px",transition:"width 0.4s ease"}}));
+}
+
+function App(){
+  const[mode,setMode]=useState("home");
+  const[activeSec,setActiveSec]=useState(null);
+  const[step,setStep]=useState(0);
+  const[questions,setQuestions]=useState([]);
+  const[qIdx,setQIdx]=useState(0);
+  const[selected,setSelected]=useState(null);
+  const[score,setScore]=useState({correct:0,total:0});
+  const[,forceUpdate]=useState(0);
+
+  function startTheory(secId){
+    setActiveSec(secId);setStep(0);setMode("theory");
+  }
+  function startPractice(secId){
+    setActiveSec(secId);
+    const qs=genQs(secId);
+    setQuestions(qs);setQIdx(0);setSelected(null);setScore({correct:0,total:0});setMode("practice");
+  }
+  function nextQ(){
+    if(qIdx+1>=questions.length){setMode("results");return;}
+    setQIdx(q=>q+1);setSelected(null);
+  }
+  function handleAnswer(idx){
+    if(selected!==null)return;
+    setSelected(idx);
+    const q=questions[qIdx];
+    const ok=idx===q.correct;
+    progress.recordAnswer(activeSec,ok);
+    setScore(s=>({correct:s.correct+(ok?1:0),total:s.total+1}));
+    forceUpdate(n=>n+1);
+  }
+
+  // ===== HOME =====
+  if(mode==="home"){
+    const stats=progress.getOverallStats();
+    return React.createElement("div",{style:{minHeight:"100vh"}},
+      React.createElement("div",{style:{background:"rgba(0,0,0,0.3)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+bdr,padding:"14px 20px",display:"flex",alignItems:"center",gap:"12px",position:"sticky",top:0,zIndex:50}},
+        React.createElement("a",{href:"../../index.html",style:{background:"none",border:"none",color:"#666",fontSize:"16px",textDecoration:"none"}},"←"),
+        React.createElement("div",{style:{flex:1}},
+          React.createElement("div",{style:{fontSize:"16px",fontWeight:800,color:COL}},"🌍 Aardrijkskunde"),
+          React.createElement("div",{style:{fontSize:"11px",color:"#666"}},"H4: Natuurrampen in Japan")),
+        React.createElement("div",{style:{fontSize:"12px",color:COL,fontWeight:700}},stats.mastered+"/"+stats.total+" ✓")),
+      React.createElement("div",{style:{maxWidth:"640px",margin:"0 auto",padding:"16px 14px 60px"}},
+        React.createElement("div",{style:{background:"rgba(241,196,15,0.06)",borderRadius:"16px",padding:"16px",border:"1px solid rgba(241,196,15,0.15)",marginBottom:"20px"}},
+          React.createElement("div",{style:{display:"flex",justifyContent:"space-between",marginBottom:"8px"}},
+            React.createElement("span",{style:{fontSize:"13px",fontWeight:700,color:COL}},"Totale voortgang"),
+            React.createElement("span",{style:{fontSize:"13px",color:COL,fontWeight:800}},stats.masteryPct+"%")),
+          pBar(stats.masteryPct,COL),
+          React.createElement("div",{style:{fontSize:"11px",color:"#666",marginTop:"6px"}},stats.mastered+" van "+stats.total+" secties gemeesterd (≥5 vragen, ≥70% goed)")),
+        React.createElement("div",{style:{fontSize:"12px",color:"#555",fontWeight:700,margin:"0 0 10px 4px"}},"📚 SECTIES — H4 Natuurrampen in Japan"),
+        SECTIONS.map(sec=>{
+          const sp=progress.getSection(sec.id);
+          const pct=sp.total>0?Math.round(sp.correct/sp.total*100):0;
+          const mastered=progress.isMastered(sec.id);
+          return React.createElement("div",{key:sec.id,style:{background:cBg,borderRadius:"14px",padding:"14px",border:"1px solid "+(mastered?"rgba(241,196,15,0.3)":bdr),marginBottom:"10px"}},
+            React.createElement("div",{style:{display:"flex",alignItems:"center",gap:"10px",marginBottom:"10px"}},
+              React.createElement("span",{style:{fontSize:"22px"}},sec.icon),
+              React.createElement("div",{style:{flex:1}},
+                React.createElement("div",{style:{fontSize:"14px",fontWeight:700,color:mastered?COL:"#ddd"}},sec.title),
+                React.createElement("div",{style:{fontSize:"11px",color:"#666"}},sec.desc)),
+              mastered&&React.createElement("span",{style:{fontSize:"12px",color:COL,fontWeight:800}},"✓")),
+            sp.total>0&&React.createElement("div",{style:{marginBottom:"8px"}},
+              pBar(pct,COL,"4px"),
+              React.createElement("div",{style:{fontSize:"10px",color:"#666",marginTop:"3px"}},sp.correct+" / "+sp.total+" goed ("+pct+"%)")),
+            React.createElement("div",{style:{display:"flex",gap:"8px"}},
+              React.createElement("button",{style:{flex:1,padding:"8px",borderRadius:"10px",border:"none",background:"rgba(255,255,255,0.06)",color:"#aaa",fontSize:"12px",fontWeight:700},onClick:()=>startTheory(sec.id)},"📖 Theorie"),
+              React.createElement("button",{style:{flex:1,padding:"8px",borderRadius:"10px",border:"none",background:COL,color:"#111",fontSize:"12px",fontWeight:800},onClick:()=>startPractice(sec.id)},"⚡ Oefenen")));
+        }),
+        React.createElement("div",{style:{display:"flex",gap:"8px",marginTop:"16px"}},
+          React.createElement("a",{href:"../../index.html",style:{flex:1,display:"block",padding:"10px",borderRadius:"10px",background:"rgba(255,255,255,0.03)",color:"#666",fontSize:"12px",fontWeight:600,textDecoration:"none",textAlign:"center"}},"← Terug"),
+          React.createElement("button",{style:{padding:"10px 16px",borderRadius:"10px",border:"none",background:"rgba(255,255,255,0.03)",color:"#555",fontSize:"12px",fontWeight:600},onClick:()=>{if(confirm("Reset alle voortgang?")){progress.reset();forceUpdate(n=>n+1)}}},"🔄")
+        )));
+  }
+
+  // ===== THEORY =====
+  if(mode==="theory"){
+    const steps=THEORY[activeSec];const sec=SECTIONS.find(s=>s.id===activeSec);
+    const cs=steps[step];const isLast=step===steps.length-1;
+    const renderText=(text)=>text.split("\n").map((line,i)=>{
+      const parts=line.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g);
+      return React.createElement("div",{key:i,style:{marginBottom:line===""?"8px":"4px"}},
+        parts.map((p,j)=>{
+          if(p.startsWith("**")&&p.endsWith("**"))return React.createElement("strong",{key:j,style:{color:"#fff"}},p.slice(2,-2));
+          if(p.startsWith("*")&&p.endsWith("*"))return React.createElement("em",{key:j,style:{color:COL}},p.slice(1,-1));
+          return React.createElement("span",{key:j},p);
+        }));
+    });
+
+    return React.createElement("div",{style:{minHeight:"100vh"}},
+      React.createElement("div",{style:{background:"rgba(0,0,0,0.3)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+bdr,padding:"14px 20px",display:"flex",justifyContent:"space-between",alignItems:"center",position:"sticky",top:0,zIndex:50}},
+        React.createElement("button",{style:{background:"none",border:"none",color:"#666",fontSize:"16px"},onClick:()=>setMode("home")},"✕"),
+        React.createElement("div",{style:{fontSize:"14px",fontWeight:700,color:COL}},sec.icon+" "+sec.title),
+        React.createElement("div",{style:{fontSize:"12px",color:"#666"}},(step+1)+"/"+steps.length)),
+      React.createElement("div",{style:{maxWidth:"640px",margin:"0 auto",padding:"20px 14px 60px"}},
+        pBar(((step+1)/steps.length)*100,COL,"4px"),
+        React.createElement("div",{key:step,className:"fade-in",style:{marginTop:"20px"}},
+          React.createElement("div",{style:{background:cBg,borderRadius:"16px",padding:"20px",border:"1px solid "+bdr}},
+            React.createElement("div",{style:{fontSize:"12px",color:COL,fontWeight:700,marginBottom:"6px"}},"📖 THEORIE"),
+            React.createElement("div",{style:{fontSize:"18px",fontWeight:800,marginBottom:"12px"}},cs.title),
+            React.createElement("div",{style:{fontSize:"14px",lineHeight:1.8,color:"#ccc"}},renderText(cs.text))),
+          React.createElement("div",{style:{display:"flex",gap:"8px",marginTop:"20px"}},
+            step>0&&React.createElement("button",{style:{flex:1,padding:"12px",borderRadius:"12px",border:"none",background:"rgba(255,255,255,0.06)",color:"#999",fontSize:"14px",fontWeight:700},onClick:()=>setStep(step-1)},"← Vorige"),
+            React.createElement("button",{style:{flex:2,padding:"12px",borderRadius:"12px",border:"none",background:COL,color:"#111",fontSize:"14px",fontWeight:800},onClick:()=>{
+              if(isLast){progress.markTheoryDone(activeSec);forceUpdate(n=>n+1);setMode("home")}else setStep(step+1)
+            }},isLast?"✅ Theorie afgerond!":"Volgende →"))
+        )));
+  }
+
+  // ===== PRACTICE =====
+  if(mode==="practice"){
+    const q=questions[qIdx];const sec=activeSec?SECTIONS.find(s=>s.id===activeSec):null;
+    return React.createElement("div",{style:{minHeight:"100vh"}},
+      React.createElement("div",{style:{background:"rgba(0,0,0,0.3)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+bdr,padding:"14px 20px",display:"flex",justifyContent:"space-between",alignItems:"center",position:"sticky",top:0,zIndex:50}},
+        React.createElement("button",{style:{background:"none",border:"none",color:"#666",fontSize:"16px"},onClick:()=>setMode("home")},"✕"),
+        React.createElement("div",{style:{fontSize:"14px",fontWeight:700,color:COL}},sec?sec.icon+" "+sec.title:"🌍 AK"),
+        React.createElement("div",{style:{fontSize:"12px",color:"#666"}},(qIdx+1)+"/"+questions.length)),
+      React.createElement("div",{style:{maxWidth:"640px",margin:"0 auto",padding:"20px 14px 60px"}},
+        pBar(((qIdx+1)/questions.length)*100,COL,"4px"),
+        React.createElement("div",{style:{display:"flex",justifyContent:"center",gap:"16px",marginTop:"12px",marginBottom:"16px"}},
+          React.createElement("span",{style:{fontSize:"13px",color:"#6bcb77"}},"✓ "+score.correct),
+          React.createElement("span",{style:{fontSize:"13px",color:"#ff6b6b"}},"✕ "+(score.total-score.correct))),
+        React.createElement("div",{key:qIdx,className:"fade-in"},
+          React.createElement("div",{style:{background:cBg,borderRadius:"16px",padding:"20px",border:"1px solid "+bdr,marginBottom:"16px"}},
+            React.createElement("div",{style:{fontSize:"16px",fontWeight:700,lineHeight:1.5,color:"#fff"}},q.q)),
+          q.opts.map((opt,i)=>{
+            let bg="rgba(255,255,255,0.04)",col2="#ddd",bd=bdr;
+            if(selected!==null){
+              if(i===q.correct){bg="rgba(107,203,119,0.15)";col2="#6bcb77";bd="rgba(107,203,119,0.4)";}
+              else if(i===selected){bg="rgba(255,107,107,0.12)";col2="#ff6b6b";bd="rgba(255,107,107,0.3)";}
+            }
+            return React.createElement("button",{key:i,style:{width:"100%",textAlign:"left",padding:"14px 16px",borderRadius:"12px",border:"1px solid "+bd,background:bg,color:col2,fontSize:"14px",fontWeight:600,marginBottom:"8px",display:"block"},onClick:()=>handleAnswer(i)},opt);
+          }),
+          selected!==null&&React.createElement("button",{style:{width:"100%",padding:"14px",borderRadius:"14px",border:"none",background:COL,color:"#111",fontSize:"15px",fontWeight:800,marginTop:"8px"},onClick:nextQ},
+            qIdx+1>=questions.length?"Bekijk resultaat":"Volgende vraag →"))));
+  }
+
+  // ===== RESULTS =====
+  if(mode==="results"){
+    const pct=score.total>0?Math.round(score.correct/score.total*100):0;const passed=pct>=70;
+    return React.createElement("div",{style:{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center"}},
+      React.createElement("div",{style:{maxWidth:"400px",padding:"20px",textAlign:"center"}},
+        React.createElement("div",{style:{fontSize:"64px",marginBottom:"16px"}},passed?"🎉":"💪"),
+        React.createElement("div",{style:{fontSize:"24px",fontWeight:900,color:passed?"#6bcb77":"#ffd93d",marginBottom:"8px"}},passed?"Goed gedaan!":"Nog even oefenen!"),
+        React.createElement("div",{style:{fontSize:"48px",fontWeight:900,color:passed?"#6bcb77":"#ffd93d",marginBottom:"8px"}},pct+"%"),
+        React.createElement("div",{style:{fontSize:"15px",color:"#999",marginBottom:"24px"}},score.correct+" van "+score.total+" correct"),
+        React.createElement("div",{style:{display:"flex",gap:"8px"}},
+          React.createElement("button",{style:{flex:1,padding:"12px",borderRadius:"12px",border:"none",background:"rgba(255,255,255,0.06)",color:"#999",fontSize:"14px",fontWeight:700},onClick:()=>setMode("home")},"← Terug"),
+          React.createElement("button",{style:{flex:1,padding:"12px",borderRadius:"12px",border:"none",background:COL,color:"#111",fontSize:"14px",fontWeight:800},onClick:()=>startPractice(activeSec)},"Opnieuw"))));
+  }
+  return null;
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
+</script>
+</body>
+</html>
