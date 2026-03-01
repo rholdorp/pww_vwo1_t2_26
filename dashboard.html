@@ -17,9 +17,36 @@ const{useState,useEffect}=React;
 const ST="stijn_studieplan_v4";
 const load=()=>{try{return JSON.parse(localStorage.getItem(ST))}catch{return null}};
 const save=s=>{try{localStorage.setItem(ST,JSON.stringify(s))}catch{}};
-const loadTrainer=()=>{try{return JSON.parse(localStorage.getItem("wiskunde_h6_v2"))}catch{return null}};
-
 const Cd={WISK:"#3498DB",NED:"#E67E22",FRAN:"#9B59B6",GESCH:"#E74C3C",BIO:"#27AE60",AK:"#F1C40F",TKHV:"#1ABC9C",ENG:"#E74C3C"};
+const TRAINER_META={
+  "Wiskunde":      {url:"trainers/wiskunde-h6/index.html",   key:"wiskunde_h6_v2",           fmt:"flat",n:6},
+  "Nederlands":    {url:"trainers/nederlands-1.3/index.html",key:"trainer_nederlands_1.3",    fmt:"std", n:4},
+  "Frans":         {url:"trainers/frans/index.html",          key:"trainer_frans_ch123",       fmt:"std", n:6},
+  "Engels":        {url:"trainers/engels/index.html",         key:"trainer_engels_u23",        fmt:"std", n:5},
+  "Biologie":      {url:"trainers/biologie/index.html",       key:"trainer_biologie_t3",       fmt:"std", n:8},
+  "Aardrijkskunde":{url:"trainers/aardrijkskunde/index.html", key:"trainer_aardrijkskunde_h4", fmt:"std", n:6},
+};
+function loadAllTrainerStats(){
+  const res={};
+  Object.entries(TRAINER_META).forEach(([subj,meta])=>{
+    try{
+      const raw=localStorage.getItem(meta.key);
+      if(!raw){res[subj]=null;return;}
+      const data=JSON.parse(raw);
+      if(!data){res[subj]=null;return;}
+      const secs=meta.fmt==="flat"?data:(data.sections||{});
+      let mastered=0,totC=0,totA=0;
+      Object.values(secs).forEach(s=>{
+        if(!s)return;
+        totA+=s.total||0;totC+=s.correct||0;
+        if((s.total||0)>=5&&s.total>0&&(s.correct/s.total)>=0.7)mastered++;
+      });
+      res[subj]={mastered,n:meta.n,pct:Math.round(mastered/meta.n*100),
+                 acc:totA>0?Math.round(totC/totA*100):0,started:totA>0};
+    }catch{res[subj]=null;}
+  });
+  return res;
+}
 const EXAMS=[{subject:"Wiskunde",date:"2026-03-12",color:Cd.WISK},{subject:"Nederlands",date:"2026-03-12",color:Cd.NED},{subject:"Frans",date:"2026-03-13",color:Cd.FRAN},{subject:"Geschiedenis",date:"2026-03-13",color:Cd.GESCH},{subject:"Engels",date:"2026-03-16",color:Cd.ENG},{subject:"Biologie",date:"2026-03-17",color:Cd.BIO},{subject:"Aardrijkskunde",date:"2026-03-18",color:Cd.AK},{subject:"Tekenen/HV",date:"2026-03-18",color:Cd.TKHV}];
 const PHASES=[
   {id:1,name:"Fase 1: Leren",range:"do 26 feb – wo 4 mrt",color:"#D35400",desc:"Alle stof voor het eerst doorwerken"},
@@ -161,9 +188,11 @@ const[ck,setCk]=useState(()=>load()||{});
 const[expDay,setExpDay]=useState(null);
 const[view,setView]=useState("plan");
 const[selPhase,setSelPhase]=useState(null);
-const[trainer,setTrainer]=useState(null);
+const[trSt,setTrSt]=useState(()=>loadAllTrainerStats());
 useEffect(()=>{save(ck)},[ck]);
-useEffect(()=>{setTrainer(loadTrainer())},[view]);
+useEffect(()=>{setTrSt(loadAllTrainerStats())},[view]);
+useEffect(()=>{const fn=()=>{if(document.visibilityState==="visible")setTrSt(loadAllTrainerStats());};document.addEventListener("visibilitychange",fn);return()=>document.removeEventListener("visibilitychange",fn);},[]);
+const getTr=subj=>trSt[subj]||null;
 
 const toggle=id=>setCk(c=>{const n={...c};if(n[id])delete n[id];else n[id]=Date.now();return n});
 const isC=id=>!!ck[id];
@@ -177,7 +206,7 @@ const subSt=subj=>{let t=0,d=0;DAYS.forEach(dy=>dy.tasks.forEach(tk=>{if(tk.subj
 const firstExam=new Date("2026-03-12");const now=new Date();
 const daysUntil=Math.max(0,Math.ceil((firstExam-now)/(1000*60*60*24)));
 const phaseSt=pid=>{let t=0,d=0;DAYS.filter(dy=>dy.phase===pid).forEach(dy=>dy.tasks.forEach(tk=>{t++;if(isC(tk.id))d++}));return{total:t,done:d,pct:t>0?Math.round(d/t*100):0}};
-const trainerSt=()=>{if(!trainer)return null;let m=0;["6.1","6.2","6.3","6.4","6.5","6.6"].forEach(s=>{const d=trainer[s];if(d&&d.total>=5&&d.correct/d.total>=0.7)m++});return{mastered:m,pct:Math.round(m/6*100)}};
+const trOverall=(()=>{let m=0,t=0;Object.entries(TRAINER_META).forEach(([s,meta])=>{t+=meta.n;const r=getTr(s);if(r)m+=r.mastered;});return{m,t,pct:t>0?Math.round(m/t*100):0};})();
 
 const bdr="rgba(255,255,255,0.06)",cBg="rgba(255,255,255,0.04)";
 const tag=(c,txt)=>React.createElement("span",{style:{display:"inline-block",padding:"2px 8px",borderRadius:"6px",fontSize:"10px",fontWeight:700,background:c+"20",color:c}},txt);
@@ -195,14 +224,10 @@ React.createElement("div",{style:{background:cBg,borderRadius:"16px",padding:"18
   React.createElement("div",{style:{display:"flex",justifyContent:"space-around",marginBottom:"12px"}},
     React.createElement("div",null,React.createElement("div",{style:{fontSize:"28px",fontWeight:900,color:"#4d96ff"}},daysUntil),React.createElement("div",{style:{fontSize:"11px",color:"#777"}},"dagen tot PW")),
     React.createElement("div",null,React.createElement("div",{style:{fontSize:"28px",fontWeight:900,color:totalPct===100?"#6bcb77":"#ffd93d"}},totalPct+"%"),React.createElement("div",{style:{fontSize:"11px",color:"#777"}},"voltooid")),
-    React.createElement("div",null,React.createElement("div",{style:{fontSize:"28px",fontWeight:900,color:"#ff6b6b"}},doneT+"/"+totalT),React.createElement("div",{style:{fontSize:"11px",color:"#777"}},"taken klaar"))),
+    React.createElement("div",null,React.createElement("div",{style:{fontSize:"28px",fontWeight:900,color:"#ff6b6b"}},doneT+"/"+totalT),React.createElement("div",{style:{fontSize:"11px",color:"#777"}},"taken klaar")),
+    React.createElement("div",null,React.createElement("div",{style:{fontSize:"28px",fontWeight:900,color:trOverall.pct>=70?"#6bcb77":"#4d96ff"}},trOverall.pct+"%"),React.createElement("div",{style:{fontSize:"11px",color:"#777"}},"trainer"))),
   pBar(totalPct,"linear-gradient(90deg,#4d96ff,#6bcb77)","8px")),
 
-// Trainer card
-(()=>{const ts=trainerSt();return React.createElement("div",{style:{background:cBg,borderRadius:"14px",padding:"14px 16px",border:"1px solid "+bdr,marginBottom:"12px",display:"flex",alignItems:"center",gap:"12px"}},
-  React.createElement("span",{style:{fontSize:"24px"}},"🧮"),
-  React.createElement("div",{style:{flex:1}},React.createElement("div",{style:{fontSize:"13px",fontWeight:700}},"Wiskunde H6 Trainer"),ts?React.createElement("div",null,React.createElement("div",{style:{fontSize:"11px",color:ts.mastered>=6?"#6bcb77":"#ffd93d"}},ts.mastered+"/6 beheerst"),pBar(ts.pct,Cd.WISK,"4px")):React.createElement("div",{style:{fontSize:"11px",color:"#777"}},"Open de Trainer-app om te oefenen")),
-  ts?tag(ts.mastered>=6?"#6bcb77":"#ffd93d",ts.pct+"%"):tag("#888","niet gestart"))})(),
 
 // Tabs
 React.createElement("div",{style:{display:"flex",gap:"4px",background:"rgba(255,255,255,0.04)",borderRadius:"12px",padding:"4px",marginBottom:"20px"}},
@@ -229,7 +254,7 @@ return React.createElement("div",{key:phase.id,style:{marginBottom:"16px"}},
     isExp&&day.tasks.map(task=>{const done=isC(task.id);return React.createElement("div",{key:task.id,style:{display:"flex",gap:"12px",alignItems:"center",padding:"10px 16px",borderTop:"1px solid rgba(255,255,255,0.04)",opacity:done?0.5:1,cursor:"pointer"},onClick:()=>toggle(task.id)},
       React.createElement("div",{style:{width:"22px",height:"22px",borderRadius:"6px",border:"2px solid "+(done?task.color:"rgba(255,255,255,0.15)"),background:done?task.color+"30":"transparent",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"12px",color:task.color,flexShrink:0}},done&&"✓"),
       React.createElement("div",{style:{flex:1}},
-        React.createElement("div",{style:{display:"flex",alignItems:"center",gap:"6px"}},React.createElement("span",{style:{fontSize:"11px",color:"#666",fontFamily:"monospace"}},task.time),tag(task.color,task.subject)),
+        React.createElement("div",{style:{display:"flex",alignItems:"center",gap:"6px",flexWrap:"wrap"}},React.createElement("span",{style:{fontSize:"11px",color:"#666",fontFamily:"monospace"}},task.time),tag(task.color,task.subject),TRAINER_META[task.subject]&&React.createElement("a",{href:TRAINER_META[task.subject].url,style:{display:"inline-flex",alignItems:"center",gap:"3px",fontSize:"10px",fontWeight:700,padding:"2px 7px",borderRadius:"6px",background:(getTr(task.subject)&&getTr(task.subject).pct>=70)?"rgba(107,203,119,0.15)":"rgba(255,255,255,0.06)",color:(getTr(task.subject)&&getTr(task.subject).pct>=70)?"#6bcb77":"#888",textDecoration:"none"},onClick:e=>e.stopPropagation()},"🎯",getTr(task.subject)?getTr(task.subject).pct+"%":"→")),
         React.createElement("div",{style:{fontSize:"13px",fontWeight:600,marginTop:"2px",color:done?"#666":"#ccc",textDecoration:done?"line-through":"none"}},task.activity)),
       React.createElement("span",{style:{fontSize:"11px",color:"#555"}},task.dur+" min"))}),
     isExp&&dayT===0&&day.exam&&React.createElement("div",{style:{padding:"16px",textAlign:"center"}},React.createElement("div",{style:{fontSize:"32px",marginBottom:"8px"}},"🎉"),React.createElement("div",{style:{fontSize:"15px",fontWeight:700,color:"#6bcb77"}},"Proefwerkweek voorbij!"),React.createElement("div",{style:{fontSize:"12px",color:"#777"}},"Goed gedaan, Stijn!")))}))}),
@@ -242,7 +267,16 @@ return React.createElement("div",{key:subj,style:{background:cBg,borderRadius:"1
     React.createElement("div",null,React.createElement("span",{style:{fontSize:"14px",fontWeight:800,color:st.pct===100?"#6bcb77":"#fff"}},st.done+"/"+st.total),React.createElement("span",{style:{fontSize:"11px",color:"#666",marginLeft:"6px"}},st.pct+"%"))),
   pBar(st.pct,c),
   exam&&React.createElement("div",{style:{fontSize:"11px",color:"#777",marginTop:"8px"}},"📝 PW: "+new Date(exam.date).toLocaleDateString("nl-NL",{weekday:"short",day:"numeric",month:"short"})),
-  subj==="Wiskunde"&&(()=>{const ts=trainerSt();return ts?React.createElement("div",{style:{fontSize:"11px",color:ts.mastered>=6?"#6bcb77":"#ffd93d",marginTop:"4px"}},"🧮 Trainer: "+ts.mastered+"/6 beheerst ("+ts.pct+"%)"):null})())}),
+  TRAINER_META[subj]&&React.createElement("div",{style:{marginTop:10,paddingTop:10,borderTop:"1px solid rgba(255,255,255,0.05)"}},
+    React.createElement("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}},
+      React.createElement("a",{href:TRAINER_META[subj].url,style:{fontSize:12,fontWeight:700,color:c,textDecoration:"none"}},"🎯 Trainer"),
+      getTr(subj)
+        ?React.createElement("div",{style:{display:"flex",gap:8,alignItems:"center"}},
+            React.createElement("span",{style:{fontSize:11,color:"#888"}},getTr(subj).acc+"%"),
+            React.createElement("span",{style:{fontSize:12,fontWeight:700,color:getTr(subj).mastered===getTr(subj).n?"#6bcb77":getTr(subj).mastered>0?"#ffd93d":"#888"}},getTr(subj).mastered+"/"+getTr(subj).n+" ✓"))
+        :React.createElement("span",{style:{fontSize:11,color:"#555"}},"niet gestart")),
+    pBar(getTr(subj)?getTr(subj).pct:0,getTr(subj)&&getTr(subj).mastered===getTr(subj).n?"#6bcb77":c,"4px")
+  )}),
 
 // ====== EXAMS VIEW ======
 view==="exams"&&React.createElement("div",null,
