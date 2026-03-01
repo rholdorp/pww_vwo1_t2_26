@@ -186,14 +186,14 @@ function App(){
         React.createElement("div",{style:{flex:1}},
           React.createElement("div",{style:{fontSize:"16px",fontWeight:800,color:COL}},"🌍 Aardrijkskunde"),
           React.createElement("div",{style:{fontSize:"11px",color:"#666"}},"H4: Natuurrampen in Japan")),
-        React.createElement("div",{style:{fontSize:"12px",color:COL,fontWeight:700}},stats.mastered+"/"+stats.totalSections+" ✓")),
+        React.createElement("div",{style:{fontSize:"12px",color:COL,fontWeight:700}},stats.mastered+"/"+SECTIONS.length+" ✓")),
       React.createElement("div",{style:{maxWidth:"640px",margin:"0 auto",padding:"16px 14px 60px"}},
         React.createElement("div",{style:{background:"rgba(241,196,15,0.06)",borderRadius:"16px",padding:"16px",border:"1px solid rgba(241,196,15,0.15)",marginBottom:"20px"}},
           React.createElement("div",{style:{display:"flex",justifyContent:"space-between",marginBottom:"8px"}},
             React.createElement("span",{style:{fontSize:"13px",fontWeight:700,color:COL}},"Totale voortgang"),
             React.createElement("span",{style:{fontSize:"13px",color:COL,fontWeight:800}},stats.masteryPct+"%")),
           pBar(stats.masteryPct,COL),
-          React.createElement("div",{style:{fontSize:"11px",color:"#666",marginTop:"6px"}},stats.mastered+" van "+stats.totalSections+" secties gemeesterd (≥5 vragen, ≥70% goed)")),
+          React.createElement("div",{style:{fontSize:"11px",color:"#666",marginTop:"6px"}},stats.mastered+" van "+SECTIONS.length+" secties gemeesterd (≥5 vragen, ≥70% goed)")),
         React.createElement("div",{style:{fontSize:"12px",color:"#555",fontWeight:700,margin:"0 0 10px 4px"}},"📚 SECTIES — H4 Natuurrampen in Japan"),
         SECTIONS.map(sec=>{
           const sp=progress.getSection(sec.id);

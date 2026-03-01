@@ -253,7 +253,7 @@ function App(){
     React.createElement("div",{style:{maxWidth:640,margin:"0 auto",padding:"16px 14px 60px"}},
       React.createElement("div",{style:{background:cBg,borderRadius:16,padding:18,border:"1px solid "+bdr,marginBottom:16,textAlign:"center"}},
         React.createElement("div",{style:{display:"flex",justifyContent:"space-around",marginBottom:12}},
-          React.createElement("div",null,React.createElement("div",{style:{fontSize:28,fontWeight:900,color:COL}},stats.mastered+"/"+stats.totalSections),React.createElement("div",{style:{fontSize:11,color:"#777"}},"beheerst")),
+          React.createElement("div",null,React.createElement("div",{style:{fontSize:28,fontWeight:900,color:COL}},stats.mastered+"/"+SECTIONS.length),React.createElement("div",{style:{fontSize:11,color:"#777"}},"beheerst")),
           React.createElement("div",null,React.createElement("div",{style:{fontSize:28,fontWeight:900,color:"#4d96ff"}},stats.masteryPct+"%"),React.createElement("div",{style:{fontSize:11,color:"#777"}},"klaar")),
           React.createElement("div",null,React.createElement("div",{style:{fontSize:28,fontWeight:900,color:"#ffd93d"}},stats.accuracy+"%"),React.createElement("div",{style:{fontSize:11,color:"#777"}},"correct"))),
         pBar(stats.masteryPct,COL,8)),
