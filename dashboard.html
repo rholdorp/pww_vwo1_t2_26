@@ -7,6 +7,9 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>*{box-sizing:border-box;margin:0;padding:0}body{background:linear-gradient(160deg,#0a0e1a,#111830 50%,#0c1020);font-family:'Nunito',sans-serif;color:#ddd;min-height:100vh}button{font-family:inherit}button:active{transform:scale(0.97)}</style>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="shared/firebase-config.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
@@ -16,7 +19,41 @@
 const{useState,useEffect}=React;
 const ST="stijn_studieplan_v4";
 const load=()=>{try{return JSON.parse(localStorage.getItem(ST))}catch{return null}};
-const save=s=>{try{localStorage.setItem(ST,JSON.stringify(s))}catch{}};
+const save=(s,user)=>{
+  try{localStorage.setItem(ST,JSON.stringify(s))}catch{}
+  if(window.FB) window.FB.syncToFirebase(window.FB.studiePlanRef(user),s,800);
+};
+async function fetchStudiePlan(user){
+  if(!window.FB)return null;
+  try{
+    const snap=await window.FB.db.ref("users/"+user+"/studieplan").once("value");
+    return snap.exists()?snap.val():null;
+  }catch{return null;}
+}
+async function fetchTrainerStats(user){
+  if(!window.FB)return loadAllTrainerStats();
+  try{
+    const snap=await window.FB.db.ref("users/"+user+"/trainers").once("value");
+    if(!snap.exists())return loadAllTrainerStats();
+    const fb=snap.val()||{};
+    const res={};
+    Object.entries(TRAINER_META).forEach(([subj,meta])=>{
+      const fbKey=meta.key.replace(/\./g,",");
+      const data=fb[fbKey];
+      if(!data){res[subj]=null;return;}
+      const secs=meta.fmt==="flat"?data:(data.sections||{});
+      let mastered=0,totC=0,totA=0;
+      Object.values(secs).forEach(s=>{
+        if(!s)return;
+        totA+=s.total||0;totC+=s.correct||0;
+        if((s.total||0)>=5&&s.total>0&&(s.correct/s.total)>=0.7)mastered++;
+      });
+      res[subj]={mastered,n:meta.n,pct:Math.round(mastered/meta.n*100),
+                 acc:totA>0?Math.round(totC/totA*100):0,started:totA>0};
+    });
+    return res;
+  }catch{return loadAllTrainerStats();}
+}
 const Cd={WISK:"#3498DB",NED:"#E67E22",FRAN:"#9B59B6",GESCH:"#E74C3C",BIO:"#27AE60",AK:"#F1C40F",TKHV:"#1ABC9C",ENG:"#E74C3C"};
 const TRAINER_META={
   "Wiskunde":      {url:"trainers/wiskunde-h6/index.html",   key:"wiskunde_h6_v2",           fmt:"flat",n:6},
@@ -189,10 +226,19 @@ const[expDay,setExpDay]=useState(null);
 const[view,setView]=useState("plan");
 const[selPhase,setSelPhase]=useState(null);
 const[trSt,setTrSt]=useState(()=>loadAllTrainerStats());
-useEffect(()=>{save(ck)},[ck]);
-useEffect(()=>{setTrSt(loadAllTrainerStats())},[view]);
-useEffect(()=>{const fn=()=>{if(document.visibilityState==="visible")setTrSt(loadAllTrainerStats());};document.addEventListener("visibilitychange",fn);return()=>document.removeEventListener("visibilitychange",fn);},[]);
+const[curUser,setCurUser]=useState(()=>window.FB?window.FB.getCurrentUser():"stijn");
+const[showPicker,setShowPicker]=useState(false);
+const[userInput,setUserInput]=useState("");
+useEffect(()=>{save(ck,curUser)},[ck]);
+useEffect(()=>{fetchStudiePlan(curUser).then(fb=>{if(fb)setCk(fb);})},[curUser]);
+useEffect(()=>{fetchTrainerStats(curUser).then(setTrSt)},[view,curUser]);
+useEffect(()=>{const fn=()=>{if(document.visibilityState==="visible")fetchTrainerStats(curUser).then(setTrSt);};document.addEventListener("visibilitychange",fn);return()=>document.removeEventListener("visibilitychange",fn);},[curUser]);
 const getTr=subj=>trSt[subj]||null;
+function switchUser(name){
+  const safe=window.FB?window.FB.setCurrentUser(name):name;
+  if(!safe)return;
+  setCurUser(safe);setShowPicker(false);setUserInput("");setCk(load()||{});
+}
 
 const toggle=id=>setCk(c=>{const n={...c};if(n[id])delete n[id];else n[id]=Date.now();return n});
 const isC=id=>!!ck[id];
@@ -216,8 +262,14 @@ return React.createElement("div",{style:{minHeight:"100vh"}},
 // Header
 React.createElement("div",{style:{background:"rgba(0,0,0,0.3)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+bdr,padding:"14px 20px",display:"flex",justifyContent:"space-between",alignItems:"center",position:"sticky",top:0,zIndex:50}},
   React.createElement("div",{style:{fontSize:"17px",fontWeight:900,background:"linear-gradient(90deg,#ff6b6b,#feca57,#48dbfb,#6bcb77)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}},"Studieplan Stijn"),
-  React.createElement("div",{style:{fontSize:"12px",color:"#666"}},"PW maart 2026")),
+  React.createElement("div",{style:{display:"flex",alignItems:"center",gap:"8px"}},
+    React.createElement("button",{style:{fontSize:"11px",color:"#4d96ff",background:"rgba(77,150,255,0.1)",border:"1px solid rgba(77,150,255,0.2)",borderRadius:"8px",padding:"3px 9px",cursor:"pointer",fontFamily:"inherit",fontWeight:700},onClick:()=>setShowPicker(v=>!v)},"👤 "+curUser),
+    React.createElement("span",{style:{fontSize:"12px",color:"#666"}},"PW maart 2026"))),
 
+showPicker&&React.createElement("div",{style:{position:"fixed",top:"56px",right:"14px",zIndex:100,background:"#1a2035",border:"1px solid rgba(255,255,255,0.12)",borderRadius:"12px",padding:"14px",width:"200px",boxShadow:"0 8px 32px rgba(0,0,0,0.5)"}},
+  React.createElement("div",{style:{fontSize:"11px",color:"#888",marginBottom:"8px"}},"Wissel van gebruiker:"),
+  React.createElement("button",{style:{display:"block",width:"100%",textAlign:"left",padding:"8px 10px",borderRadius:"8px",border:"none",cursor:"pointer",marginBottom:"4px",background:curUser==="stijn"?"rgba(77,150,255,0.15)":"transparent",color:curUser==="stijn"?"#4d96ff":"#ccc",fontSize:"13px",fontWeight:700},onClick:()=>switchUser("stijn")},(curUser==="stijn"?"✓ ":"")+"stijn"),
+  React.createElement("input",{style:{width:"100%",marginTop:"8px",padding:"7px 10px",borderRadius:"8px",border:"1px solid rgba(255,255,255,0.1)",background:"rgba(255,255,255,0.05)",color:"#fff",fontSize:"13px",fontFamily:"inherit"},placeholder:"andere naam...",value:userInput,onChange:e=>setUserInput(e.target.value),onKeyDown:e=>e.key==="Enter"&&userInput&&switchUser(userInput)})),
 React.createElement("div",{style:{maxWidth:"640px",margin:"0 auto",padding:"16px 14px 60px"}},
 // Hero stats
 React.createElement("div",{style:{background:cBg,borderRadius:"16px",padding:"18px",border:"1px solid "+bdr,marginBottom:"12px",textAlign:"center"}},

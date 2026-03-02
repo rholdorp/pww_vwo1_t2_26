@@ -14,6 +14,9 @@ button:active{transform:scale(0.97)}
 input::placeholder{color:#555}
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 </style>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="../../shared/firebase-config.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
@@ -28,7 +31,11 @@ const pick=a=>a[Math.floor(Math.random()*a.length)];
 
 const STORE_KEY="wiskunde_h6_v2";
 const loadState=()=>{try{return JSON.parse(localStorage.getItem(STORE_KEY))}catch{return null}};
-const saveState=s=>{try{localStorage.setItem(STORE_KEY,JSON.stringify(s))}catch{}};
+const saveState=s=>{
+  const withTs={...s,_lastUpdated:new Date().toISOString()};
+  try{localStorage.setItem(STORE_KEY,JSON.stringify(withTs))}catch{}
+  if(window.FB) window.FB.syncToFirebase(window.FB.trainerRef(STORE_KEY),withTs);
+};
 const defaultProgress=()=>({"6.1":{theoryDone:false,correct:0,total:0,bestStreak:0},"6.2":{theoryDone:false,correct:0,total:0,bestStreak:0},"6.3":{theoryDone:false,correct:0,total:0,bestStreak:0},"6.4":{theoryDone:false,correct:0,total:0,bestStreak:0},"6.5":{theoryDone:false,correct:0,total:0,bestStreak:0},"6.6":{theoryDone:false,correct:0,total:0,bestStreak:0}});
 
 const SECTIONS=[
@@ -147,6 +154,12 @@ function g66(lv){
 // ========== APP ==========
 function App(){
   const[progress,setProgress]=useState(()=>loadState()||defaultProgress());
+  useEffect(()=>{
+    if(!window.FB)return;
+    window.FB.pullFromFirebase(window.FB.trainerRef(STORE_KEY),STORE_KEY,fresh=>{
+      setProgress(fresh);
+    });
+  },[]);
   const[screen,setScreen]=useState("home");
   const[section,setSection]=useState(null);
   const[level,setLevel]=useState(1);

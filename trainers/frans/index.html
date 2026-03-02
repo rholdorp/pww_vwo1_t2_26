@@ -7,6 +7,9 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🇫🇷</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>*{box-sizing:border-box;margin:0;padding:0}body{background:linear-gradient(160deg,#0a0e1a,#111830 50%,#0c1020);font-family:'Nunito',sans-serif;color:#ddd;min-height:100vh}button{font-family:inherit;cursor:pointer}button:active{transform:scale(0.97)}.fade-in{animation:fadeIn 0.3s ease}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}input[type=text]{font-family:inherit;font-size:18px;padding:14px 16px;border-radius:12px;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);color:#fff;width:100%;outline:none;transition:border-color 0.2s}input[type=text]:focus{border-color:#9B59B680}input[type=text].correct{border-color:#6bcb77;background:rgba(107,203,119,0.1)}input[type=text].wrong{border-color:#ff6b6b;background:rgba(255,107,107,0.1)}</style>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="../../shared/firebase-config.js"></script>
 <script src="../../shared/progress.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
@@ -186,6 +189,8 @@ const THEORY = {
 
 // ===== MAIN APP =====
 function App(){
+  const[version,setVersion]=useState(0);
+  useEffect(()=>{progress.onUpdate(()=>setVersion(v=>v+1));},[]);
   const[mode,setMode]=useState("home");
   const[activeSec,setActiveSec]=useState(null);
   const[step,setStep]=useState(0);

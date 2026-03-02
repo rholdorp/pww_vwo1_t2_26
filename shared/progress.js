@@ -23,6 +23,7 @@ class TrainerProgress {
     this.color = opts.color || "#4d96ff";
     this.icon = opts.icon || "📚";
     this._load();
+    this._pullFromFirebase();
   }
 
   _load() {
@@ -44,7 +45,19 @@ class TrainerProgress {
     this.data.lastUpdated = new Date().toISOString();
     this.data.meta = { displayName: this.displayName, subject: this.subject, color: this.color, icon: this.icon };
     try { localStorage.setItem(this.key, JSON.stringify(this.data)); } catch {}
+    if(window.FB) window.FB.syncToFirebase(window.FB.trainerRef(this.key),this.data);
   }
+
+  _pullFromFirebase(){
+    if(!window.FB)return;
+    const self=this;
+    window.FB.pullFromFirebase(window.FB.trainerRef(self.key),self.key,()=>{
+      self._load();
+      if(typeof self._onUpdate==="function")self._onUpdate();
+    });
+  }
+
+  onUpdate(fn){this._onUpdate=fn;}
 
   // Get section data
   getSection(sectionId) {
