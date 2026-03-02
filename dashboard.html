@@ -328,7 +328,7 @@ return React.createElement("div",{key:subj,style:{background:cBg,borderRadius:"1
             React.createElement("span",{style:{fontSize:12,fontWeight:700,color:getTr(subj).mastered===getTr(subj).n?"#6bcb77":getTr(subj).mastered>0?"#ffd93d":"#888"}},getTr(subj).mastered+"/"+getTr(subj).n+" ✓"))
         :React.createElement("span",{style:{fontSize:11,color:"#555"}},"niet gestart")),
     pBar(getTr(subj)?getTr(subj).pct:0,getTr(subj)&&getTr(subj).mastered===getTr(subj).n?"#6bcb77":c,"4px")
-  )}),
+  ))}),
 
 // ====== EXAMS VIEW ======
 view==="exams"&&React.createElement("div",null,
