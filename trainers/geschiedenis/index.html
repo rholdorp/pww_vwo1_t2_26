@@ -153,6 +153,8 @@ function App(){
   const[score,setScore]=useState(0);
   const[answers,setAnswers]=useState([]);
   const[stats,setStats]=useState(()=>progress.getOverallStats());
+  const[dashTaskId,setDashTaskId]=useState(null);
+  const[dashDate,setDashDate]=useState(null);
 
   const refreshStats=()=>setStats(progress.getOverallStats());
 
@@ -161,6 +163,9 @@ function App(){
     const h=window.location.hash;if(!h)return;
     const p=new URLSearchParams(h.slice(1));
     const sec=p.get("section"),m=p.get("mode");
+    const tid=p.get("taskId"),dd=p.get("date");
+    if(tid)setDashTaskId(tid);
+    if(dd)setDashDate(dd);
     if(sec&&SECTIONS.find(s=>s.id===sec)){
       openSection(sec,m==="theory"?"theory":"practice");
     }
@@ -212,7 +217,7 @@ function App(){
   // ===== HOME =====
   if(screen==="home") return React.createElement("div",{style:{minHeight:"100vh"}},
     React.createElement("div",{style:{background:"rgba(0,0,0,0.3)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+bdr,padding:"14px 20px",display:"flex",justifyContent:"space-between",alignItems:"center",position:"sticky",top:0,zIndex:50}},
-      React.createElement("a",{href:"../../index.html",style:{fontSize:13,color:"#555",textDecoration:"none"}},"\u2190 Terug"),
+      dashDate?React.createElement("a",{href:"../../dashboard.html#day="+dashDate,style:{fontSize:13,color:"#4d96ff",textDecoration:"none",fontWeight:700}},"\u2190 Planning"):React.createElement("a",{href:"../../index.html",style:{fontSize:13,color:"#555",textDecoration:"none"}},"\u2190 Terug"),
       React.createElement("div",{style:{fontSize:16,fontWeight:900,color:COL}},"\u{1F3DB}\uFE0F Geschiedenis"),
       React.createElement("div",{style:{fontSize:12,color:"#555"}},"H4 Het Romeinse Rijk")),
     React.createElement("div",{style:{maxWidth:640,margin:"0 auto",padding:"16px 14px 60px"}},
@@ -327,6 +332,7 @@ function App(){
             React.createElement("div",{style:{fontSize:12,color:a.ok?"#6bcb77":"#ff6b6b",fontWeight:700,marginBottom:4}},a.ok?"\u2713 Goed":"\u2717 Fout"),
             React.createElement("div",{style:{fontSize:13,color:"#ccc",marginBottom:2}},a.q),
             !a.ok&&React.createElement("div",{style:{fontSize:12,color:"#6bcb77"}},"Juist: "+a.correct)))),
+        dashTaskId&&pct>=80&&React.createElement("a",{href:"../../dashboard.html#checkoff="+dashTaskId+"&day="+(dashDate||""),style:{display:"block",width:"100%",padding:14,borderRadius:12,border:"2px solid #6bcb77",background:"rgba(107,203,119,0.12)",color:"#6bcb77",fontSize:14,fontWeight:800,textAlign:"center",textDecoration:"none",marginBottom:8}},"\u2713 Afvinken & terug naar planning"),
         React.createElement("div",{style:{display:"flex",gap:8}},
           React.createElement("button",{style:{flex:1,padding:14,borderRadius:12,border:"none",background:"rgba(255,255,255,0.06)",color:"#ccc",fontSize:14,fontWeight:700},onClick:()=>setScreen("home")},"\u2190 Overzicht"),
           React.createElement("button",{style:{flex:1,padding:14,borderRadius:12,border:"none",background:COL,color:"#fff",fontSize:14,fontWeight:700},onClick:()=>openSection(secId,"practice")},"\u{1F504} Opnieuw"))));

@@ -102,7 +102,7 @@ const TRAINER_META={
   "Nederlands":    {url:"trainers/nederlands-1.3/index.html",key:"trainer_nederlands_1.3",    fmt:"std", n:4},
   "Frans":         {url:"trainers/frans/index.html",          key:"trainer_frans_ch123",       fmt:"std", n:6},
   "Engels":        {url:"trainers/engels/index.html",         key:"trainer_engels_u23",        fmt:"std", n:5},
-  "Geschiedenis":  {url:"trainers/geschiedenis/index.html",   key:"geschiedenis_h4",           fmt:"std", n:3},
+  "Geschiedenis":  {url:"trainers/geschiedenis/index.html",   key:"trainer_geschiedenis_h4",   fmt:"std", n:3},
   "Biologie":      {url:"trainers/biologie/index.html",       key:"trainer_biologie_t3",       fmt:"std", n:8},
   "Aardrijkskunde":{url:"trainers/aardrijkskunde/index.html", key:"trainer_aardrijkskunde_h4", fmt:"std", n:6},
 };
@@ -278,6 +278,24 @@ useEffect(()=>{save(ck,curUser)},[ck]);
 useEffect(()=>{fetchStudiePlan(curUser).then(fb=>{if(fb)setCk(fb);})},[curUser]);
 useEffect(()=>{fetchTrainerStats(curUser).then(setTrSt)},[view,curUser]);
 useEffect(()=>{const fn=()=>{if(document.visibilityState==="visible")fetchTrainerStats(curUser).then(setTrSt);};document.addEventListener("visibilitychange",fn);return()=>document.removeEventListener("visibilitychange",fn);},[curUser]);
+// Hash reader: #day=, #checkoff=
+useEffect(()=>{
+  const h=window.location.hash;if(!h)return;
+  const p=new URLSearchParams(h.slice(1));
+  const dayParam=p.get("day"),checkoff=p.get("checkoff");
+  if(checkoff){
+    // Auto check-off task and refresh trainer stats
+    setCk(c=>{const n={...c};if(!n[checkoff])n[checkoff]=Date.now();return n});
+    fetchTrainerStats(curUser).then(setTrSt);
+    showToast("✅ Taak "+checkoff+" afgevinkt!");
+  }
+  if(dayParam){
+    // Expand the matching day and its phase
+    const day=DAYS.find(d=>d.date===dayParam);
+    if(day){setExpDay(dayParam);setSelPhase(day.phase);setView("plan");}
+  }
+  window.location.hash="";
+},[]);
 const getTr=subj=>trSt[subj]||null;
 function switchUser(name){
   const safe=window.FB?window.FB.setCurrentUser(name):name;
@@ -298,8 +316,14 @@ const secMastered=(taskId)=>{
 const deepLink=(taskId)=>{
   const m=TS[taskId];if(!m||!m.secs||m.secs.length===0)return null;
   const meta=TRAINER_META[m.subj];if(!meta)return null;
-  if(m.secs.length===1)return meta.url+"#section="+m.secs[0]+"&mode=practice";
-  return meta.url+"#sections="+m.secs.join(",");
+  // Find first non-mastered section
+  const tr=getTr(m.subj);
+  let sec=m.secs[0];
+  if(tr&&tr.secData){
+    const notMastered=m.secs.find(s=>!tr.secData[s]||!tr.secData[s].mastered);
+    if(notMastered)sec=notMastered;
+  }
+  return meta.url+"#section="+sec+"&mode=practice&taskId="+taskId+"&date="+today;
 };
 const tryToggle=(id)=>{
   const sm=secMastered(id);
@@ -375,12 +399,14 @@ return React.createElement("div",{key:phase.id,style:{marginBottom:"16px"}},
             dayT===0&&tag("#6bcb77","🎉 KLAAR!")))),
       React.createElement("div",{style:{fontSize:"12px",color:"#555"}},isExp?"▲":"▼")),
     isExp&&day.tasks.map(task=>{const done=isC(task.id),sm=secMastered(task.id),locked=!sm.free&&!sm.all&&!done,dl=deepLink(task.id),tr=getTr(task.subject),trLink=dl||(TRAINER_META[task.subject]?TRAINER_META[task.subject].url:null);
-    return React.createElement("div",{key:task.id,style:{display:"flex",gap:"12px",alignItems:"flex-start",padding:"10px 16px",borderTop:"1px solid rgba(255,255,255,0.04)",opacity:done?0.5:1,cursor:"pointer"},onClick:()=>tryToggle(task.id)},
-      React.createElement("div",{style:{width:"22px",height:"22px",borderRadius:"6px",border:"2px solid "+(done?task.color:locked?"rgba(255,255,255,0.08)":"rgba(255,255,255,0.15)"),background:done?task.color+"30":locked?"rgba(255,255,255,0.02)":"transparent",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"12px",color:done?task.color:locked?"#555":task.color,flexShrink:0,marginTop:"2px"}},done?"✓":locked?"🔒":""),
+    return React.createElement("div",{key:task.id,style:{display:"flex",gap:"12px",alignItems:"flex-start",padding:"10px 16px",borderTop:"1px solid rgba(255,255,255,0.04)",opacity:done?0.5:1}},
+      React.createElement("div",{style:{width:"22px",height:"22px",borderRadius:"6px",border:"2px solid "+(done?task.color:locked?"rgba(255,255,255,0.08)":"rgba(255,255,255,0.15)"),background:done?task.color+"30":locked?"rgba(255,255,255,0.02)":"transparent",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"12px",color:done?task.color:locked?"#555":task.color,flexShrink:0,marginTop:"2px",cursor:"pointer"},onClick:()=>tryToggle(task.id)},done?"✓":locked?"🔒":""),
       React.createElement("div",{style:{flex:1}},
-        React.createElement("div",{style:{display:"flex",alignItems:"center",gap:"6px",flexWrap:"wrap"}},React.createElement("span",{style:{fontSize:"11px",color:"#666",fontFamily:"monospace"}},task.time),tag(task.color,task.subject),trLink&&React.createElement("a",{href:trLink,style:{display:"inline-flex",alignItems:"center",gap:"3px",fontSize:"10px",fontWeight:700,padding:"2px 7px",borderRadius:"6px",background:(tr&&tr.pct>=80)?"rgba(107,203,119,0.15)":"rgba(255,255,255,0.06)",color:(tr&&tr.pct>=80)?"#6bcb77":"#888",textDecoration:"none"},onClick:e=>e.stopPropagation()},"🎯",tr?tr.pct+"%":"→")),
-        React.createElement("div",{style:{fontSize:"13px",fontWeight:600,marginTop:"2px",color:done?"#666":"#ccc",textDecoration:done?"line-through":"none"}},task.activity),
-        !sm.free&&TS[task.id]&&TS[task.id].secs.length>0&&React.createElement("div",{style:{display:"flex",gap:"3px",marginTop:"4px",flexWrap:"wrap"}},TS[task.id].secs.map(sid=>{const sd=tr&&tr.secData&&tr.secData[sid];const m=sd&&sd.mastered;return React.createElement("span",{key:sid,style:{fontSize:"9px",padding:"1px 5px",borderRadius:"4px",fontWeight:700,background:m?"rgba(107,203,119,0.15)":"rgba(255,255,255,0.05)",color:m?"#6bcb77":"#666"}},sid+(m?" ✓":""))}))),
+        React.createElement("div",{style:{display:"flex",alignItems:"center",gap:"6px",flexWrap:"wrap"}},React.createElement("span",{style:{fontSize:"11px",color:"#666",fontFamily:"monospace"}},task.time),tag(task.color,task.subject)),
+        trLink?React.createElement("a",{href:trLink,style:{display:"block",fontSize:"13px",fontWeight:600,marginTop:"2px",color:done?"#666":"#ccc",textDecoration:done?"line-through":"none"}},task.activity):React.createElement("div",{style:{fontSize:"13px",fontWeight:600,marginTop:"2px",color:done?"#666":"#ccc",textDecoration:done?"line-through":"none"}},task.activity),
+        React.createElement("div",{style:{display:"flex",gap:"4px",marginTop:"4px",flexWrap:"wrap",alignItems:"center"}},
+          trLink&&React.createElement("a",{href:trLink,style:{display:"inline-flex",alignItems:"center",gap:"3px",fontSize:"10px",fontWeight:700,padding:"3px 8px",borderRadius:"6px",border:"1px solid "+(tr&&tr.pct>=80?"rgba(107,203,119,0.3)":task.color+"30"),background:(tr&&tr.pct>=80)?"rgba(107,203,119,0.12)":task.color+"10",color:(tr&&tr.pct>=80)?"#6bcb77":task.color,textDecoration:"none"}},"🎯 Trainer",tr?" "+tr.pct+"%":" →"),
+          !sm.free&&TS[task.id]&&TS[task.id].secs.length>0&&TS[task.id].secs.map(sid=>{const sd=tr&&tr.secData&&tr.secData[sid];const m=sd&&sd.mastered;const sPct=sd&&sd.total>0?sd.pct:null;const dotCol=m?"#6bcb77":sPct!==null?(sPct>=60?"#ffd93d":"#ff6b6b"):"#555";return React.createElement("span",{key:sid,style:{fontSize:"9px",padding:"1px 5px",borderRadius:"4px",fontWeight:700,background:m?"rgba(107,203,119,0.15)":sPct!==null?"rgba(255,255,255,0.06)":"rgba(255,255,255,0.03)",color:m?"#6bcb77":sPct!==null?dotCol:"#555",display:"inline-flex",alignItems:"center",gap:"2px"}},React.createElement("span",{style:{width:"5px",height:"5px",borderRadius:"50%",background:dotCol,display:"inline-block"}}),sid+(sPct!==null?" "+sPct+"%":"")+(m?" ✓":""))}))),
       React.createElement("span",{style:{fontSize:"11px",color:"#555",marginTop:"2px"}},task.dur+" min"))}),
     isExp&&dayT===0&&day.exam&&React.createElement("div",{style:{padding:"16px",textAlign:"center"}},React.createElement("div",{style:{fontSize:"32px",marginBottom:"8px"}},"🎉"),React.createElement("div",{style:{fontSize:"15px",fontWeight:700,color:"#6bcb77"}},"Proefwerkweek voorbij!"),React.createElement("div",{style:{fontSize:"12px",color:"#777"}},"Goed gedaan, Stijn!")))}))}),
 
