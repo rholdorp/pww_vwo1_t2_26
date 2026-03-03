@@ -62,6 +62,55 @@ const BEZ_CASES = [
   {zin:"___ parents habitent à Paris.",nl:"jouw",a:"tes"},
   {zin:"___ prof est sévère.",nl:"ons/onze",a:"notre"},
   {zin:"___ stylos sont sur la table.",nl:"hun",a:"leurs"},
+  // Extra: vrouwelijk
+  {zin:"___ soeur est petite.",nl:"mijn (vr.)",a:"ma"},
+  {zin:"___ école est grande.",nl:"jouw (vr.)",a:"ta"},
+  {zin:"___ chambre est bleue.",nl:"zijn/haar (vr.)",a:"sa"},
+  // Extra: klinker-begin (mon/ton/son i.p.v. ma/ta/sa)
+  {zin:"___ amie habite à Maastricht.",nl:"mijn (vr. + klinker)",a:"mon"},
+  {zin:"___ école est très moderne.",nl:"zijn/haar (vr. + klinker)",a:"son"},
+  {zin:"___ histoire est intéressante.",nl:"jouw (vr. + klinker)",a:"ton"},
+  // Extra: meervoud
+  {zin:"___ cahiers sont dans le sac.",nl:"jullie/uw",a:"vos"},
+  {zin:"___ professeurs sont sympas.",nl:"onze",a:"nos"},
+  {zin:"___ frères jouent au foot.",nl:"zijn/haar (mv.)",a:"ses"},
+  {zin:"___ copines arrivent demain.",nl:"mijn (mv.)",a:"mes"},
+  {zin:"___ résultats sont bons.",nl:"jullie/uw (mv.)",a:"vos"},
+];
+
+// B3: Verb conjugation in context
+const VERB_CONTEXT = [
+  {zin:"Nous ___ la télévision le soir.",nl:"kijken naar",a:"regardons",verb:"regarder"},
+  {zin:"Tu ___ du piano.",nl:"speelt",a:"joues",verb:"jouer"},
+  {zin:"Ils ___ au parc.",nl:"komen aan",a:"arrivent",verb:"arriver"},
+  {zin:"Je ___ à Sittard.",nl:"woon",a:"habite",verb:"habiter"},
+  {zin:"Vous ___ le bus.",nl:"zoeken",a:"cherchez",verb:"chercher"},
+  {zin:"Elle ___ la musique.",nl:"houdt van",a:"aime",verb:"aimer"},
+  {zin:"Nous ___ français en classe.",nl:"praten",a:"parlons",verb:"parler"},
+  {zin:"Tu ___ avec ta carte.",nl:"betaalt",a:"paies/payes",verb:"payer"},
+  {zin:"Il ___ une fête.",nl:"organiseert",a:"organise",verb:"organiser"},
+  {zin:"Elles ___ le chocolat.",nl:"hebben een hekel aan",a:"détestent",verb:"détester"},
+  {zin:"Je ___ un cadeau.",nl:"koop",a:"achète",verb:"acheter"},
+  {zin:"Nous ___ beaucoup.",nl:"werken",a:"travaillons",verb:"travailler"},
+  {zin:"Tu ___ les maths.",nl:"leert",a:"apprends",verb:"apprendre"},
+  {zin:"Ils ___ à la maison.",nl:"gaan naar huis",a:"rentrent",verb:"rentrer"},
+  {zin:"On ___ les vacances!",nl:"begint",a:"commence",verb:"commencer"},
+];
+
+// B4: Être vs Avoir discrimination
+const ETRE_AVOIR_MIX = [
+  {zin:"Je ___ fatigué.",nl:"ik ben moe",a:"suis",verb:"être",reden:"toestand"},
+  {zin:"Nous ___ un chien.",nl:"wij hebben een hond",a:"avons",verb:"avoir",reden:"bezit"},
+  {zin:"Tu ___ content?",nl:"jij bent blij",a:"es",verb:"être",reden:"toestand"},
+  {zin:"Il ___ 12 ans.",nl:"hij is 12 jaar (= heeft)",a:"a",verb:"avoir",reden:"leeftijd"},
+  {zin:"Elles ___ françaises.",nl:"zij zijn Frans",a:"sont",verb:"être",reden:"nationaliteit"},
+  {zin:"Vous ___ deux frères.",nl:"jullie hebben twee broers",a:"avez",verb:"avoir",reden:"bezit"},
+  {zin:"On ___ en classe.",nl:"men is in de klas",a:"est",verb:"être",reden:"locatie"},
+  {zin:"J' ___ faim.",nl:"ik heb honger",a:"ai",verb:"avoir",reden:"honger/dorst"},
+  {zin:"Nous ___ néerlandais.",nl:"wij zijn Nederlands",a:"sommes",verb:"être",reden:"nationaliteit"},
+  {zin:"Tu ___ un nouveau sac?",nl:"jij hebt een nieuwe tas",a:"as",verb:"avoir",reden:"bezit"},
+  {zin:"Ils ___ très grands.",nl:"zij zijn heel groot",a:"sont",verb:"être",reden:"eigenschap"},
+  {zin:"Elle ___ mal à la tête.",nl:"zij heeft hoofdpijn",a:"a",verb:"avoir",reden:"pijn"},
 ];
 
 const VOC131 = [
@@ -142,13 +191,25 @@ function genVocQs(n=12){
     });
 }
 
+function genVerbContextQs(n=8){
+  return [...VERB_CONTEXT].sort(()=>Math.random()-0.5).slice(0,n)
+    .map(c=>({q:"Vul de juiste vorm in ("+c.verb+"):\n"+c.zin+"\n("+c.nl+")", a:c.a, secId:"werkwoorden"}));
+}
+
+function genEtreAvoirMixQs(n=8){
+  return [...ETRE_AVOIR_MIX].sort(()=>Math.random()-0.5).slice(0,n)
+    .map(c=>({q:"Vul in met être of avoir:\n"+c.zin+"\n("+c.nl+")", a:c.a, secId:c.verb==="être"?"etre":"avoir"}));
+}
+
 function genDtoetsQs(){
   const qs = [
-    ...genVerbQs(4),
-    ...genEtreQs().slice(0,3),
-    ...genAvoirQs().slice(0,3),
+    ...genVerbQs(3),
+    ...genVerbContextQs(2),
+    ...genEtreQs().slice(0,2),
+    ...genAvoirQs().slice(0,2),
+    ...genEtreAvoirMixQs(2),
     ...genBezQs(3),
-    ...genVocQs(5),
+    ...genVocQs(4),
     {q:"Hoe zeg je 'Het is warm' in het Frans?", a:"Il fait chaud", secId:"vocabulaire"},
     {q:"Hoe zeg je 'iedereen' in het Frans?", a:"tout le monde", secId:"vocabulaire"},
     {q:"Vul in:  Le contrôle est ___  (makkelijk)", a:"facile", secId:"vocabulaire"},
@@ -198,6 +259,7 @@ function App(){
   const[qIdx,setQIdx]=useState(0);
   const[score,setScore]=useState({correct:0,total:0});
   const[answered,setAnswered]=useState(null); // null | {ok, correct}
+  const[wrongAnswers,setWrongAnswers]=useState([]);
   const[,forceUpdate]=useState(0);
 
   const tag=(c,txt)=>React.createElement("span",{style:{display:"inline-block",padding:"2px 8px",borderRadius:"6px",fontSize:"10px",fontWeight:700,background:c+"20",color:c}},txt);
@@ -207,18 +269,29 @@ function App(){
   const overall=progress.getOverallStats();
 
   const startTheory=(secId)=>{setActiveSec(secId);setStep(0);setMode("theory")};
+  // Deep link support
+  useEffect(()=>{
+    const h=window.location.hash;if(!h)return;
+    const p=new URLSearchParams(h.slice(1));
+    const sec=p.get("section"),m=p.get("mode");
+    if(sec&&SECTIONS.find(s=>s.id===sec)){
+      if(m==="practice")setTimeout(()=>startPractice(sec),100);
+      else if(m==="theory")startTheory(sec);
+    }
+    window.location.hash="";
+  },[]);
   const startPractice=(secId)=>{
     let qs;
     switch(secId){
-      case"werkwoorden":qs=genVerbQs(10);break;
-      case"etre":qs=genEtreQs();break;
-      case"avoir":qs=genAvoirQs();break;
+      case"werkwoorden":qs=[...genVerbQs(7),...genVerbContextQs(5)].sort(()=>Math.random()-0.5).slice(0,10);break;
+      case"etre":qs=[...genEtreQs(),...genEtreAvoirMixQs(4).filter(q=>q.secId==="etre")].sort(()=>Math.random()-0.5);break;
+      case"avoir":qs=[...genAvoirQs(),...genEtreAvoirMixQs(4).filter(q=>q.secId==="avoir")].sort(()=>Math.random()-0.5);break;
       case"bezittelijk":qs=genBezQs(10);break;
       case"vocabulaire":qs=genVocQs(12);break;
       case"dtoets":qs=genDtoetsQs();break;
       default:qs=[];
     }
-    setActiveSec(secId);setQuestions(qs);setQIdx(0);setScore({correct:0,total:0});setAnswered(null);setMode("practice");
+    setActiveSec(secId);setQuestions(qs);setQIdx(0);setScore({correct:0,total:0});setAnswered(null);setWrongAnswers([]);setMode("practice");
   };
 
   const handleAnswer=(input)=>{
@@ -226,6 +299,7 @@ function App(){
     const q=questions[qIdx];
     const ok=checkAnswer(input,q.a);
     setAnswered({ok,correct:q.a});
+    if(!ok)setWrongAnswers(w=>[...w,{q:q.q,chosen:input,correct:q.a}]);
     progress.recordAnswer(q.secId||activeSec,ok);
     setScore(s=>({correct:s.correct+(ok?1:0),total:s.total+1}));
     forceUpdate(n=>n+1);
@@ -257,8 +331,9 @@ function App(){
                 React.createElement("div",null,
                   React.createElement("div",{style:{fontSize:"14px",fontWeight:700}},sec.title),
                   React.createElement("div",{style:{fontSize:"11px",color:"#777"}},sec.desc," · ",st.total," vragen",st.total>0?" ("+st.pct+"%)":""))),
-              st.mastered?tag("#6bcb77","✓ Beheerst"):st.total>=5?tag("#ff6b6b",st.pct+"%"):tag("#888","nog niet")),
+              st.mastered?tag("#6bcb77","✓ Beheerst"):st.total>=8?tag("#ff6b6b",st.pct+"%"):tag("#888","nog niet")),
             st.total>0&&pBar(st.pct,st.mastered?"#6bcb77":COL,"4px"),
+            st.bestStreak>=3&&React.createElement("span",{style:{display:"inline-block",padding:"2px 8px",borderRadius:"6px",fontSize:"11px",fontWeight:700,background:"#ffd93d20",color:"#ffd93d",marginTop:"6px"}},"🔥 "+st.bestStreak+"x"),
             React.createElement("div",{style:{display:"flex",gap:"8px",marginTop:"10px"}},
               hasTh&&React.createElement("button",{style:{flex:1,padding:"10px",borderRadius:"10px",border:"none",background:COL+"20",color:COL,fontSize:"13px",fontWeight:700},onClick:()=>startTheory(sec.id)},st.theoryDone?"📖 Herlezen":"📖 Theorie"),
               React.createElement("button",{style:{flex:1,padding:"10px",borderRadius:"10px",border:"none",background:"rgba(255,255,255,0.08)",color:"#fff",fontSize:"13px",fontWeight:700},onClick:()=>startPractice(sec.id)},sec.id==="dtoets"?"📝 D-Toets starten":"✏️ Oefenen")))
@@ -327,17 +402,24 @@ function App(){
 
   // ===== RESULTS =====
   if(mode==="results"){
-    const pct=score.total>0?Math.round(score.correct/score.total*100):0;const passed=pct>=70;
+    const pct=score.total>0?Math.round(score.correct/score.total*100):0;const passed=pct>=80;
     return React.createElement("div",{style:{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center"}},
       React.createElement("div",{style:{maxWidth:"400px",padding:"20px",textAlign:"center"}},
         React.createElement("div",{style:{fontSize:"64px",marginBottom:"16px"}},passed?"🎉":"💪"),
         React.createElement("div",{style:{fontSize:"24px",fontWeight:900,color:passed?"#6bcb77":"#ffd93d",marginBottom:"8px"}},passed?"Très bien!":"Continue!"),
         React.createElement("div",{style:{fontSize:"48px",fontWeight:900,color:passed?"#6bcb77":"#ffd93d",marginBottom:"8px"}},pct+"%"),
         React.createElement("div",{style:{fontSize:"15px",color:"#999",marginBottom:"24px"}},score.correct+" van "+score.total+" correct"),
+        wrongAnswers.length>0&&React.createElement("div",{style:{textAlign:"left",marginBottom:"16px"}},
+          React.createElement("div",{style:{fontSize:"14px",fontWeight:700,color:"#ff6b6b",marginBottom:"8px"}},"❌ Foute antwoorden:"),
+          wrongAnswers.map((w,i)=>React.createElement("div",{key:i,style:{background:"rgba(255,107,107,0.08)",border:"1px solid rgba(255,107,107,0.2)",borderRadius:"10px",padding:"10px 14px",marginBottom:"6px"}},
+            React.createElement("div",{style:{fontSize:"13px",color:"#ccc"}},w.q),
+            React.createElement("div",{style:{fontSize:"12px",color:"#ff6b6b",marginTop:"2px"}},"Jouw antwoord: "+w.chosen),
+            React.createElement("div",{style:{fontSize:"12px",color:"#6bcb77",marginTop:"2px"}},"Goed: "+w.correct)))),
         React.createElement("div",{style:{display:"flex",gap:"8px"}},
           React.createElement("button",{style:{flex:1,padding:"12px",borderRadius:"12px",border:"none",background:"rgba(255,255,255,0.06)",color:"#999",fontSize:"14px",fontWeight:700},onClick:()=>setMode("home")},"← Terug"),
           React.createElement("button",{style:{flex:1,padding:"12px",borderRadius:"12px",border:"none",background:COL,color:"#fff",fontSize:"14px",fontWeight:800},onClick:()=>startPractice(activeSec)},"Opnieuw"))));
   }
+
   return null;
 }
 

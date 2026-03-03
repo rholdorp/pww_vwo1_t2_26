@@ -42,19 +42,61 @@ async function fetchTrainerStats(user){
       const data=fb[fbKey];
       if(!data){res[subj]=null;return;}
       const secs=meta.fmt==="flat"?data:(data.sections||{});
-      let mastered=0,totC=0,totA=0;
-      Object.values(secs).forEach(s=>{
+      let mastered=0,totC=0,totA=0;const secData={};
+      Object.entries(secs).forEach(([sid,s])=>{
         if(!s)return;
         totA+=s.total||0;totC+=s.correct||0;
-        if((s.total||0)>=5&&s.total>0&&(s.correct/s.total)>=0.7)mastered++;
+        const m=(s.total||0)>=8&&s.total>0&&(s.correct/s.total)>=0.8;
+        if(m)mastered++;
+        secData[sid]={correct:s.correct||0,total:s.total||0,pct:s.total>0?Math.round((s.correct||0)/s.total*100):0,mastered:m};
       });
       res[subj]={mastered,n:meta.n,pct:Math.round(mastered/meta.n*100),
-                 acc:totA>0?Math.round(totC/totA*100):0,started:totA>0};
+                 acc:totA>0?Math.round(totC/totA*100):0,started:totA>0,secData};
     });
     return res;
   }catch{return loadAllTrainerStats();}
 }
-const Cd={WISK:"#3498DB",NED:"#E67E22",FRAN:"#9B59B6",GESCH:"#E74C3C",BIO:"#27AE60",AK:"#F1C40F",TKHV:"#1ABC9C",ENG:"#E74C3C"};
+const Cd={WISK:"#3498DB",NED:"#E67E22",FRAN:"#9B59B6",GESCH:"#E74C3C",BIO:"#27AE60",AK:"#F1C40F",TKHV:"#1ABC9C",ENG:"#E91E63"};
+// Task-to-section mapping for conditional checkboxes & deep links
+const TS={
+// Fase 1
+"f1-1a":{subj:"Wiskunde",secs:["5.1","5.2","5.3"]},"f1-1b":{subj:"Nederlands",secs:[]},"f1-1c":{subj:"Frans",secs:["vocabulaire"]},
+"f1-2a":{subj:"Wiskunde",secs:["5.4","5.5","5.6"]},"f1-2b":{subj:"Nederlands",secs:[]},"f1-2c":{subj:"Geschiedenis",secs:["p41"]},
+"f1-3a":{subj:"Frans",secs:["vocabulaire"]},"f1-3b":{subj:"Geschiedenis",secs:["p42"]},"f1-3c":{subj:"Biologie",secs:["bs1","bs2"]},
+"f1-4a":{subj:"Wiskunde",secs:["6.1","6.2","6.3"]},"f1-4b":{subj:"Aardrijkskunde",secs:["par41"]},"f1-4c":{subj:"Nederlands",secs:[]},
+"f1-5a":{subj:"Wiskunde",secs:["6.4","6.5","6.6"]},"f1-5b":{subj:"Frans",secs:["avoir","etre"]},"f1-5c":{subj:"Biologie",secs:["bs3","bs4"]},
+"f1-6a":{subj:"Geschiedenis",secs:["p43"]},"f1-6b":{subj:"Nederlands",secs:[]},
+"f1-7a":{subj:"Frans",secs:["werkwoorden","bezittelijk"]},"f1-7b":{subj:"Aardrijkskunde",secs:["par42"]},"f1-7c":{subj:"Biologie",secs:["bs5","bs6"]},
+// Fase 2
+"f2-1a":{subj:"Wiskunde",secs:["5.1","5.2","5.3","5.4","5.5","5.6"]},"f2-1b":{subj:"Nederlands",secs:[]},"f2-1c":{subj:"Aardrijkskunde",secs:["par43"]},
+"f2-2a":{subj:"Wiskunde",secs:["6.1","6.2","6.3","6.4","6.5","6.6"]},"f2-2b":{subj:"Frans",secs:["werkwoorden","etre","avoir","bezittelijk","vocabulaire","dtoets"]},"f2-2c":{subj:"Aardrijkskunde",secs:["par44","par45"]},
+"f2-3a":{subj:"Biologie",secs:["es7","es8"]},"f2-3b":{subj:"Tekenen/HV",secs:[]},"f2-3c":{subj:"Geschiedenis",secs:["p41","p42","p43"]},
+"f2-4a":{subj:"Nederlands",secs:[]},"f2-4b":{subj:"Wiskunde",secs:["5.1","5.2","5.3","5.4","5.5","5.6","6.1","6.2","6.3","6.4","6.5","6.6"]},
+"f2-4c":{subj:"Frans",secs:["werkwoorden","etre","avoir","bezittelijk","vocabulaire","dtoets"]},
+"f2-4d":{subj:"Engels",secs:["unit2","unit3"]},"f2-4e":{subj:"Engels",secs:["pastbe","pastreg"]},
+// Fase 3
+"f3-1a":{subj:"Wiskunde",secs:["5.1","5.2","5.3","5.4","5.5","5.6","6.1","6.2","6.3","6.4","6.5","6.6"]},
+"f3-1b":{subj:"Nederlands",secs:[]},"f3-1c":{subj:"Geschiedenis",secs:["p41","p42","p43"]},
+"f3-1d":{subj:"Biologie",secs:["bs1","bs2","bs3","bs4"]},"f3-1e":{subj:"Aardrijkskunde",secs:["par41","par42","par43","par44","par45","begrippen"]},
+"f3-2a":{subj:"Wiskunde",secs:["5.1","5.2","5.3","5.4","5.5","5.6","6.1","6.2","6.3","6.4","6.5","6.6"]},
+"f3-2b":{subj:"Frans",secs:["werkwoorden","etre","avoir","bezittelijk","vocabulaire","dtoets"]},
+"f3-2c":{subj:"Engels",secs:["unit2","unit3","pastbe","pastreg","mix"]},"f3-2d":{subj:"Biologie",secs:["bs5","bs6","es7","es8"]},"f3-2e":{subj:"Tekenen/HV",secs:[]},
+// Fase 4
+"f4-1a":{subj:"Wiskunde",secs:["5.1","5.2","5.3","5.4","5.5","5.6","6.1","6.2","6.3","6.4","6.5","6.6"]},
+"f4-1b":{subj:"Nederlands",secs:[]},"f4-1c":{subj:"Frans",secs:["werkwoorden","etre","avoir","bezittelijk","vocabulaire","dtoets"]},
+"f4-1d":{subj:"Engels",secs:["unit2","unit3","pastbe","pastreg","mix"]},
+// Fase 5
+"f5-1a":{subj:"Frans",secs:["werkwoorden","etre","avoir","bezittelijk","vocabulaire","dtoets"]},"f5-1b":{subj:"Geschiedenis",secs:["p41","p42","p43"]},
+"f5-2a":{subj:"Biologie",secs:["bs1","bs2","bs3","bs4","bs5","bs6","es7","es8"]},"f5-2b":{subj:"Aardrijkskunde",secs:["par41","par42","par43","par44","par45","begrippen"]},"f5-2c":{subj:"Tekenen/HV",secs:[]},
+"f5-3a":{subj:"Biologie",secs:["bs1","bs2","bs3"]},"f5-3b":{subj:"Aardrijkskunde",secs:["par41","par42"]},"f5-3c":{subj:"Tekenen/HV",secs:[]},
+"f5-3d":{subj:"Biologie",secs:["bs4","bs5","bs6"]},"f5-3e":{subj:"Aardrijkskunde",secs:["par43","par44","par45"]},"f5-3f":{subj:"Tekenen/HV",secs:[]},
+"f5-3g":{subj:"Biologie",secs:["es7","es8"]},
+"f5-4a":{subj:"Biologie",secs:["bs1","bs2","bs3","bs4","bs5","bs6","es7","es8"]},"f5-4b":{subj:"Aardrijkskunde",secs:["par41","par42","par43","par44","par45","begrippen"]},"f5-4c":{subj:"Tekenen/HV",secs:[]},
+"f5-4d":{subj:"Biologie",secs:["bs1","bs2","bs3","bs4","bs5","bs6","es7","es8"]},"f5-4e":{subj:"Aardrijkskunde",secs:["par41","par42","par43","par44","par45","begrippen"]},"f5-4f":{subj:"Tekenen/HV",secs:[]},
+"f5-4g":{subj:"Engels",secs:["unit2","unit3"]},"f5-4h":{subj:"Engels",secs:["pastbe","pastreg"]},
+"f5-5a":{subj:"Biologie",secs:["bs1","bs2","bs3","bs4","bs5","bs6","es7","es8"]},"f5-5b":{subj:"Aardrijkskunde",secs:["par41","par42","par43","par44","par45","begrippen"]},"f5-5c":{subj:"Tekenen/HV",secs:[]},
+"f5-6a":{subj:"Aardrijkskunde",secs:["par41","par42","par43","par44","par45","begrippen"]},"f5-6b":{subj:"Tekenen/HV",secs:[]}
+};
 const TRAINER_META={
   "Wiskunde":      {url:"trainers/wiskunde-h6/index.html",   key:"wiskunde_h5h6",            fmt:"flat",n:12},
   "Nederlands":    {url:"trainers/nederlands-1.3/index.html",key:"trainer_nederlands_1.3",    fmt:"std", n:4},
@@ -73,14 +115,16 @@ function loadAllTrainerStats(){
       const data=JSON.parse(raw);
       if(!data){res[subj]=null;return;}
       const secs=meta.fmt==="flat"?data:(data.sections||{});
-      let mastered=0,totC=0,totA=0;
-      Object.values(secs).forEach(s=>{
+      let mastered=0,totC=0,totA=0;const secData={};
+      Object.entries(secs).forEach(([sid,s])=>{
         if(!s)return;
         totA+=s.total||0;totC+=s.correct||0;
-        if((s.total||0)>=5&&s.total>0&&(s.correct/s.total)>=0.7)mastered++;
+        const m=(s.total||0)>=8&&s.total>0&&(s.correct/s.total)>=0.8;
+        if(m)mastered++;
+        secData[sid]={correct:s.correct||0,total:s.total||0,pct:s.total>0?Math.round((s.correct||0)/s.total*100):0,mastered:m};
       });
       res[subj]={mastered,n:meta.n,pct:Math.round(mastered/meta.n*100),
-                 acc:totA>0?Math.round(totC/totA*100):0,started:totA>0};
+                 acc:totA>0?Math.round(totC/totA*100):0,started:totA>0,secData};
     }catch{res[subj]=null;}
   });
   return res;
@@ -241,12 +285,36 @@ function switchUser(name){
   setCurUser(safe);setShowPicker(false);setUserInput("");setCk(load()||{});
 }
 
+const[toast,setToast]=useState(null);
+const showToast=msg=>{setToast(msg);setTimeout(()=>setToast(null),3000)};
+// Check if all mapped sections for a task are mastered
+const secMastered=(taskId)=>{
+  const m=TS[taskId];if(!m||!m.secs||m.secs.length===0)return{free:true,all:true,missing:[]};
+  const tr=getTr(m.subj);if(!tr||!tr.secData)return{free:false,all:false,missing:m.secs};
+  const missing=m.secs.filter(s=>!tr.secData[s]||!tr.secData[s].mastered);
+  return{free:false,all:missing.length===0,missing};
+};
+// Build deep link URL for a task
+const deepLink=(taskId)=>{
+  const m=TS[taskId];if(!m||!m.secs||m.secs.length===0)return null;
+  const meta=TRAINER_META[m.subj];if(!meta)return null;
+  if(m.secs.length===1)return meta.url+"#section="+m.secs[0]+"&mode=practice";
+  return meta.url+"#sections="+m.secs.join(",");
+};
+const tryToggle=(id)=>{
+  const sm=secMastered(id);
+  if(sm.free||sm.all||isC(id)){toggle(id);return;}
+  showToast("🔒 Haal eerst 80% op: "+sm.missing.join(", "));
+};
 const toggle=id=>setCk(c=>{const n={...c};if(n[id])delete n[id];else n[id]=Date.now();return n});
 const isC=id=>!!ck[id];
 const totalT=DAYS.reduce((s,d)=>s+d.tasks.length,0);
 const doneT=DAYS.reduce((s,d)=>s+d.tasks.filter(t=>isC(t.id)).length,0);
 const totalPct=totalT>0?Math.round(doneT/totalT*100):0;
 const today=new Date().toISOString().slice(0,10);
+// On-track indicator
+const expectedDone=DAYS.filter(d=>d.date<=today).reduce((s,d)=>s+d.tasks.length,0);
+const trackDiff=doneT-expectedDone;
 const subjects=["Wiskunde","Nederlands","Frans","Geschiedenis","Engels","Biologie","Aardrijkskunde","Tekenen/HV"];
 const subCol={Wiskunde:Cd.WISK,Nederlands:Cd.NED,Frans:Cd.FRAN,Geschiedenis:Cd.GESCH,Engels:Cd.ENG,Biologie:Cd.BIO,Aardrijkskunde:Cd.AK,"Tekenen/HV":Cd.TKHV};
 const subSt=subj=>{let t=0,d=0;DAYS.forEach(dy=>dy.tasks.forEach(tk=>{if(tk.subject===subj){t++;if(isC(tk.id))d++}}));return{total:t,done:d,pct:t>0?Math.round(d/t*100):0}};
@@ -278,10 +346,12 @@ React.createElement("div",{style:{background:cBg,borderRadius:"16px",padding:"18
     React.createElement("div",null,React.createElement("div",{style:{fontSize:"28px",fontWeight:900,color:"#4d96ff"}},daysUntil),React.createElement("div",{style:{fontSize:"11px",color:"#777"}},"dagen tot PW")),
     React.createElement("div",null,React.createElement("div",{style:{fontSize:"28px",fontWeight:900,color:totalPct===100?"#6bcb77":"#ffd93d"}},totalPct+"%"),React.createElement("div",{style:{fontSize:"11px",color:"#777"}},"voltooid")),
     React.createElement("div",null,React.createElement("div",{style:{fontSize:"28px",fontWeight:900,color:"#ff6b6b"}},doneT+"/"+totalT),React.createElement("div",{style:{fontSize:"11px",color:"#777"}},"taken klaar")),
-    React.createElement("div",null,React.createElement("div",{style:{fontSize:"28px",fontWeight:900,color:trOverall.pct>=70?"#6bcb77":"#4d96ff"}},trOverall.pct+"%"),React.createElement("div",{style:{fontSize:"11px",color:"#777"}},"trainer"))),
-  pBar(totalPct,"linear-gradient(90deg,#4d96ff,#6bcb77)","8px")),
+    React.createElement("div",null,React.createElement("div",{style:{fontSize:"28px",fontWeight:900,color:trOverall.pct>=80?"#6bcb77":"#4d96ff"}},trOverall.pct+"%"),React.createElement("div",{style:{fontSize:"11px",color:"#777"}},"trainer"))),
+  pBar(totalPct,"linear-gradient(90deg,#4d96ff,#6bcb77)","8px"),
+  React.createElement("div",{style:{marginTop:"10px",fontSize:"13px",fontWeight:700,color:trackDiff>=0?(trackDiff===0?"#6bcb77":"#4d96ff"):"#ff6b6b"}},trackDiff>0?trackDiff+" taken voor! 🚀":trackDiff===0?"Op schema ✓":Math.abs(trackDiff)+" taken achter")),
 
-
+// Toast
+toast&&React.createElement("div",{style:{position:"fixed",bottom:"20px",left:"50%",transform:"translateX(-50%)",background:"rgba(30,30,50,0.95)",color:"#fff",padding:"12px 20px",borderRadius:"12px",fontSize:"13px",fontWeight:700,zIndex:200,border:"1px solid rgba(255,255,255,0.1)",boxShadow:"0 4px 20px rgba(0,0,0,0.5)",maxWidth:"340px",textAlign:"center"}},toast),
 // Tabs
 React.createElement("div",{style:{display:"flex",gap:"4px",background:"rgba(255,255,255,0.04)",borderRadius:"12px",padding:"4px",marginBottom:"20px"}},
   ["plan","subjects","exams","info"].map((v,i)=>React.createElement("button",{key:v,style:{flex:1,padding:"8px 4px",borderRadius:"10px",border:"none",background:view===v?"rgba(255,255,255,0.1)":"transparent",color:view===v?"#fff":"#666",fontSize:"12px",fontWeight:700,cursor:"pointer",textAlign:"center"},onClick:()=>setView(v)},["📋 Plan","📊 Vakken","📝 PW","📅 Info"][i]))),
@@ -304,12 +374,14 @@ return React.createElement("div",{key:phase.id,style:{marginBottom:"16px"}},
             day.exam&&day.exam.map(e=>React.createElement("span",{key:e},tag("#ff6b6b","📝 PW "+e))),
             dayT===0&&tag("#6bcb77","🎉 KLAAR!")))),
       React.createElement("div",{style:{fontSize:"12px",color:"#555"}},isExp?"▲":"▼")),
-    isExp&&day.tasks.map(task=>{const done=isC(task.id);return React.createElement("div",{key:task.id,style:{display:"flex",gap:"12px",alignItems:"center",padding:"10px 16px",borderTop:"1px solid rgba(255,255,255,0.04)",opacity:done?0.5:1,cursor:"pointer"},onClick:()=>toggle(task.id)},
-      React.createElement("div",{style:{width:"22px",height:"22px",borderRadius:"6px",border:"2px solid "+(done?task.color:"rgba(255,255,255,0.15)"),background:done?task.color+"30":"transparent",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"12px",color:task.color,flexShrink:0}},done&&"✓"),
+    isExp&&day.tasks.map(task=>{const done=isC(task.id),sm=secMastered(task.id),locked=!sm.free&&!sm.all&&!done,dl=deepLink(task.id),tr=getTr(task.subject),trLink=dl||(TRAINER_META[task.subject]?TRAINER_META[task.subject].url:null);
+    return React.createElement("div",{key:task.id,style:{display:"flex",gap:"12px",alignItems:"flex-start",padding:"10px 16px",borderTop:"1px solid rgba(255,255,255,0.04)",opacity:done?0.5:1,cursor:"pointer"},onClick:()=>tryToggle(task.id)},
+      React.createElement("div",{style:{width:"22px",height:"22px",borderRadius:"6px",border:"2px solid "+(done?task.color:locked?"rgba(255,255,255,0.08)":"rgba(255,255,255,0.15)"),background:done?task.color+"30":locked?"rgba(255,255,255,0.02)":"transparent",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"12px",color:done?task.color:locked?"#555":task.color,flexShrink:0,marginTop:"2px"}},done?"✓":locked?"🔒":""),
       React.createElement("div",{style:{flex:1}},
-        React.createElement("div",{style:{display:"flex",alignItems:"center",gap:"6px",flexWrap:"wrap"}},React.createElement("span",{style:{fontSize:"11px",color:"#666",fontFamily:"monospace"}},task.time),tag(task.color,task.subject),TRAINER_META[task.subject]&&React.createElement("a",{href:TRAINER_META[task.subject].url,style:{display:"inline-flex",alignItems:"center",gap:"3px",fontSize:"10px",fontWeight:700,padding:"2px 7px",borderRadius:"6px",background:(getTr(task.subject)&&getTr(task.subject).pct>=70)?"rgba(107,203,119,0.15)":"rgba(255,255,255,0.06)",color:(getTr(task.subject)&&getTr(task.subject).pct>=70)?"#6bcb77":"#888",textDecoration:"none"},onClick:e=>e.stopPropagation()},"🎯",getTr(task.subject)?getTr(task.subject).pct+"%":"→")),
-        React.createElement("div",{style:{fontSize:"13px",fontWeight:600,marginTop:"2px",color:done?"#666":"#ccc",textDecoration:done?"line-through":"none"}},task.activity)),
-      React.createElement("span",{style:{fontSize:"11px",color:"#555"}},task.dur+" min"))}),
+        React.createElement("div",{style:{display:"flex",alignItems:"center",gap:"6px",flexWrap:"wrap"}},React.createElement("span",{style:{fontSize:"11px",color:"#666",fontFamily:"monospace"}},task.time),tag(task.color,task.subject),trLink&&React.createElement("a",{href:trLink,style:{display:"inline-flex",alignItems:"center",gap:"3px",fontSize:"10px",fontWeight:700,padding:"2px 7px",borderRadius:"6px",background:(tr&&tr.pct>=80)?"rgba(107,203,119,0.15)":"rgba(255,255,255,0.06)",color:(tr&&tr.pct>=80)?"#6bcb77":"#888",textDecoration:"none"},onClick:e=>e.stopPropagation()},"🎯",tr?tr.pct+"%":"→")),
+        React.createElement("div",{style:{fontSize:"13px",fontWeight:600,marginTop:"2px",color:done?"#666":"#ccc",textDecoration:done?"line-through":"none"}},task.activity),
+        !sm.free&&TS[task.id]&&TS[task.id].secs.length>0&&React.createElement("div",{style:{display:"flex",gap:"3px",marginTop:"4px",flexWrap:"wrap"}},TS[task.id].secs.map(sid=>{const sd=tr&&tr.secData&&tr.secData[sid];const m=sd&&sd.mastered;return React.createElement("span",{key:sid,style:{fontSize:"9px",padding:"1px 5px",borderRadius:"4px",fontWeight:700,background:m?"rgba(107,203,119,0.15)":"rgba(255,255,255,0.05)",color:m?"#6bcb77":"#666"}},sid+(m?" ✓":""))}))),
+      React.createElement("span",{style:{fontSize:"11px",color:"#555",marginTop:"2px"}},task.dur+" min"))}),
     isExp&&dayT===0&&day.exam&&React.createElement("div",{style:{padding:"16px",textAlign:"center"}},React.createElement("div",{style:{fontSize:"32px",marginBottom:"8px"}},"🎉"),React.createElement("div",{style:{fontSize:"15px",fontWeight:700,color:"#6bcb77"}},"Proefwerkweek voorbij!"),React.createElement("div",{style:{fontSize:"12px",color:"#777"}},"Goed gedaan, Stijn!")))}))}),
 
 // ====== SUBJECTS VIEW ======

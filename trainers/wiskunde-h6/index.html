@@ -337,39 +337,42 @@ function g56(lv){
 }
 
 function g61(lv){
-  if(lv===1){const t=rand(1,3);if(t===1){const n=pick([3,4,5,6,7,8,9,10,11,12]);return{q:`Bereken: ${n}²`,a:n*n,h:`${n}² = ${n}×${n} = ${n*n}`}}if(t===2){const n=pick([4,9,16,25,36,49,64,81,100,121,144]);const r=Math.round(Math.sqrt(n));return{q:`Bereken: √${n}`,a:r,h:`√${n} = ${r}`}}const n=pick([2,3,4,5,6,7]);return{q:`Bereken: (−${n})²`,a:n*n,h:`(−${n})² = ${n*n}\nMin × min = plus!`}}
-  if(lv===2){const t=rand(1,3);if(t===1){const n=pick([2,3,4,5,6,7,8]);return{q:`Bereken: −${n}²`,a:-(n*n),h:`−${n}² = −${n*n}\nMin gaat NIET mee!`}}if(t===2){const a=pick([2,3,4,5]),b=pick([2,3,4]);return{q:`Bereken: ${a} · ${b}²`,a:a*b*b,h:`${b}² = ${b*b}, dan ${a}·${b*b} = ${a*b*b}`}}const a=pick([2,3,4]),b=pick([2,3,5]);return{q:`Bereken: ${a}² + ${b}²`,a:a*a+b*b,h:`${a*a} + ${b*b} = ${a*a+b*b}`}}
-  const t=rand(1,2);if(t===1){const a=pick([3,4,5]),b=pick([2,3,4]),c=pick([2,3]);const r=-(a*a)+c*b*b;return{q:`Bereken: −${a}² + ${c}·${b}²`,a:r,h:`−${a*a} + ${c}·${b*b} = −${a*a}+${c*b*b} = ${r}`}}
-  const a=pick([5,6,7,8]),sq=pick([4,9,16,25,36]),rt=Math.round(Math.sqrt(sq));return{q:`Bereken: ${a}² − √${sq}`,a:a*a-rt,h:`${a*a} − ${rt} = ${a*a-rt}`};
+  if(lv===1){const t=rand(1,5);if(t===1){const n=pick([3,4,5,6,7,8,9,10,11,12]);return{q:`Bereken: ${n}²`,a:n*n,h:`${n}² = ${n}×${n} = ${n*n}`}}if(t===2){const n=pick([4,9,16,25,36,49,64,81,100,121,144]);const r=Math.round(Math.sqrt(n));return{q:`Bereken: √${n}`,a:r,h:`√${n} = ${r}`}}if(t===3){const n=pick([2,3,4,5,6,7]);return{q:`Bereken: (−${n})²`,a:n*n,h:`(−${n})² = ${n*n}\nMin × min = plus!`}}if(t===4){const n=pick([3,4,5,6,7,8,9]);return{q:`Bereken: (${n}+1)²`,a:(n+1)*(n+1),h:`(${n+1})² = ${(n+1)*(n+1)}`}}const n=pick([2,3,4,5]);return{q:`Bereken: ${n}² + 1`,a:n*n+1,h:`${n*n} + 1 = ${n*n+1}`}}
+  if(lv===2){const t=rand(1,5);if(t===1){const n=pick([2,3,4,5,6,7,8]);return{q:`Bereken: −${n}²`,a:-(n*n),h:`−${n}² = −${n*n}\nMin gaat NIET mee!`}}if(t===2){const a=pick([2,3,4,5]),b=pick([2,3,4]);return{q:`Bereken: ${a} · ${b}²`,a:a*b*b,h:`${b}² = ${b*b}, dan ${a}·${b*b} = ${a*b*b}`}}if(t===3){const a=pick([2,3,4]),b=pick([2,3,5]);return{q:`Bereken: ${a}² + ${b}²`,a:a*a+b*b,h:`${a*a} + ${b*b} = ${a*a+b*b}`}}if(t===4){const n=pick([4,9,16,25,36,49,64,81]);const r=Math.round(Math.sqrt(n));return{q:`(√${n})² = ?`,a:n,h:`(√${n})² = ${n}\nWortel en kwadraat heffen op!`}}const n=pick([5,7,10,13,15,20]);return{q:`Is √${n} een geheel getal?`,a:Number.isInteger(Math.sqrt(n))?"Ja":"Nee",t:"choice",o:["Ja","Nee"],h:`√${n} = ${Math.sqrt(n).toFixed(2)}... → ${Number.isInteger(Math.sqrt(n))?"ja":"nee"}`}}
+  const t=rand(1,4);if(t===1){const a=pick([3,4,5]),b=pick([2,3,4]),c=pick([2,3]);const r=-(a*a)+c*b*b;return{q:`Bereken: −${a}² + ${c}·${b}²`,a:r,h:`−${a*a} + ${c}·${b*b} = −${a*a}+${c*b*b} = ${r}`}}
+  if(t===2){const a=pick([5,6,7,8]),sq=pick([4,9,16,25,36]),rt=Math.round(Math.sqrt(sq));return{q:`Bereken: ${a}² − √${sq}`,a:a*a-rt,h:`${a*a} − ${rt} = ${a*a-rt}`}}
+  if(t===3){const vals=[{v:3,s:"3²"},{v:8,s:"√64"},{v:4,s:"(−2)²"}];const sorted=[...vals].sort((a,b)=>a.v-b.v);return{q:`Rangschik van klein naar groot:\n${vals.map(v=>v.s).join(", ")}`,a:sorted.map(v=>v.s).join(", "),t:"text",h:vals.map(v=>v.s+"="+v.v).join(", ")}}
+  const n=pick([5,6,7,8,9]);return{q:`Een vierkant heeft zijde ${n} cm.\nBereken de oppervlakte.`,a:n*n,h:`${n}² = ${n*n} cm²`};
 }
 
 function g62(lv){
-  if(lv===1){const a=pick([1,2,3]),c=pick([1,3,5]),x=pick([2,3,4]);const y=a*x*x+c;return{q:`y = ${a===1?"":a}x² + ${c}\nBereken y voor x = ${x}`,a:y,h:`y = ${a===1?"":a+"·"}${x*x} + ${c} = ${y}`}}
-  if(lv===2){const t=rand(1,2);if(t===1){const a=pick([-1,-2,-3]),c=pick([5,7,10]),x=pick([2,3,4]);return{q:`y = ${a}x² + ${c}\nBereken y voor x = ${x}`,a:a*x*x+c,h:`y = ${a}·${x*x}+${c} = ${a*x*x+c}`}}const p=pick([2,3,4,5]),x=pick([0,1,6,7,8]);return{q:`y = (x−${p})²\nBereken y voor x = ${x}`,a:(x-p)*(x-p),h:`(${x}−${p})² = (${x-p})² = ${(x-p)*(x-p)}`}}
-  const a=pick([-2,-3,2,3]),p=pick([1,3]),c=pick([7,10]),x=pick([-2,4,5]);const y=a*(x-p)*(x-p)+c;return{q:`y = ${a}(x−${p})² + ${c}\nBereken y voor x = ${x}`,a:y,h:`${a}·(${x-p})²+${c} = ${a}·${(x-p)*(x-p)}+${c} = ${y}`};
+  if(lv===1){const t=rand(1,4);if(t===1){const a=pick([1,2,3]),c=pick([1,3,5]),x=pick([2,3,4]);const y=a*x*x+c;return{q:`y = ${a===1?"":a}x² + ${c}\nBereken y voor x = ${x}`,a:y,h:`y = ${a===1?"":a+"·"}${x*x} + ${c} = ${y}`}}if(t===2){const a=pick([2,3,4]),x=pick([2,3,5]);return{q:`y = ${a}x²\nBereken y voor x = ${x}`,a:a*x*x,h:`y = ${a}·${x*x} = ${a*x*x}`}}if(t===3){const c=pick([3,5,7]),x=pick([-2,-3,2,3]);return{q:`y = x² + ${c}\nBereken y voor x = ${x}`,a:x*x+c,h:`y = ${x*x} + ${c} = ${x*x+c}`}}const c=pick([2,4,6]),x=pick([1,2,3]);return{q:`y = x² − ${c}\nBereken y voor x = ${x}`,a:x*x-c,h:`y = ${x*x} − ${c} = ${x*x-c}`}}
+  if(lv===2){const t=rand(1,5);if(t===1){const a=pick([-1,-2,-3]),c=pick([5,7,10]),x=pick([2,3,4]);return{q:`y = ${a}x² + ${c}\nBereken y voor x = ${x}`,a:a*x*x+c,h:`y = ${a}·${x*x}+${c} = ${a*x*x+c}`}}if(t===2){const p=pick([2,3,4,5]),x=pick([0,1,6,7,8]);return{q:`y = (x−${p})²\nBereken y voor x = ${x}`,a:(x-p)*(x-p),h:`(${x}−${p})² = (${x-p})² = ${(x-p)*(x-p)}`}}if(t===3){const c=pick([3,5,7]),x=0;return{q:`y = x² − ${c}\nBereken y voor x = 0`,a:-c,h:`y = 0 − ${c} = −${c}`}}if(t===4){const p=pick([2,3,4]);return{q:`y = (x−${p})²\nBereken y voor x = ${p}`,a:0,h:`(${p}−${p})² = 0² = 0`}}const a=pick([2,3]),c=pick([-4,-2,3,5]),x=pick([-1,-2,3]);return{q:`y = ${a}x² + ${c>0?c:("("+c+")")}\nBereken y voor x = ${x}`,a:a*x*x+c,h:`y = ${a}·${x*x}${c>=0?"+"+c:c} = ${a*x*x+c}`}}
+  const t=rand(1,3);if(t===1){const a=pick([-2,-3,2,3]),p=pick([1,3]),c=pick([7,10]),x=pick([-2,4,5]);const y=a*(x-p)*(x-p)+c;return{q:`y = ${a}(x−${p})² + ${c}\nBereken y voor x = ${x}`,a:y,h:`${a}·(${x-p})²+${c} = ${a}·${(x-p)*(x-p)}+${c} = ${y}`}}if(t===2){const a=pick([1,2]),b=pick([2,3]),c=pick([-1,1,4]),x=pick([2,3,-1]);const y=a*x*x+b*x+c;return{q:`y = ${a===1?"":a}x² + ${b}x + ${c}\nBereken y voor x = ${x}`,a:y,h:`y = ${a*x*x} + ${b*x} + ${c} = ${y}`}}const c=pick([4,9,16,25]);const x1=Math.round(Math.sqrt(c)),x2=-x1;return{q:`y = x² − ${c}\nSnijdt deze parabool de x-as? (y=0)`,a:"Ja",t:"choice",o:["Ja","Nee"],h:`x² = ${c} → x = ±${x1}`};
 }
 
 function g63(lv){
-  if(lv<=2){const isQ=rand(0,1);if(isQ){const a=pick([1,-1,2]),c=pick([-3,0,4]);const aS=a===1?"":a===-1?"−":""+a;return{q:`Is y = ${aS}x²${c>0?" + "+c:c<0?" − "+Math.abs(c):""} lineair of kwadratisch?`,a:"kwadratisch",t:"choice",o:["lineair","kwadratisch"],h:"Er staat x² → kwadratisch!"}}const m=pick([-2,1,3]),b=pick([-2,0,4]);return{q:`Is y = ${m===1?"":m===-1?"−":""+m}x${b>0?" + "+b:b<0?" − "+Math.abs(b):""} lineair of kwadratisch?`,a:"lineair",t:"choice",o:["lineair","kwadratisch"],h:"Geen x² → lineair!"}}
-  const a=pick([1,-1]),c=pick([-3,0,2,4]),x=pick([-3,-2,-1,0,1,2,3]);return{q:`y = ${a===-1?"−":""}x²${c>0?" + "+c:c<0?" − "+Math.abs(c):""}\nBereken y voor x = ${x}`,a:a*x*x+c,h:`y = ${a===-1?"−":""}${x*x}${c>0?"+"+c:c<0?"−"+Math.abs(c):""} = ${a*x*x+c}`};
+  if(lv===1){const t=rand(1,4);if(t===1){const isQ=rand(0,1);if(isQ){const a=pick([1,-1,2]),c=pick([-3,0,4]);const aS=a===1?"":a===-1?"−":""+a;return{q:`Is y = ${aS}x²${c>0?" + "+c:c<0?" − "+Math.abs(c):""} lineair of kwadratisch?`,a:"kwadratisch",t:"choice",o:["lineair","kwadratisch"],h:"Er staat x² → kwadratisch!"}}const m=pick([-2,1,3]),b=pick([-2,0,4]);return{q:`Is y = ${m===1?"":m===-1?"−":""+m}x${b>0?" + "+b:b<0?" − "+Math.abs(b):""} lineair of kwadratisch?`,a:"lineair",t:"choice",o:["lineair","kwadratisch"],h:"Geen x² → lineair!"}}if(t===2){return{q:"y = −x² geeft een parabool die...",a:"Naar beneden opent",t:"choice",o:["Naar beneden opent","Naar boven opent","Een rechte lijn is","Een cirkel is"],h:"Min voor x² → parabool opent omlaag"}}if(t===3){return{q:"De grafiek van y = x² is een...",a:"Parabool (U-vorm)",t:"choice",o:["Parabool (U-vorm)","Rechte lijn","Cirkel","Zigzag"],h:"x² → parabool"}}return{q:"Welke grafiek hoort bij y = x²?",a:"Een dalparabool (U-vorm omhoog)",t:"choice",o:["Een dalparabool (U-vorm omhoog)","Een bergparabool (omlaag)","Een rechte lijn","Een V-vorm"],h:"y = x² → dalparabool"}}
+  if(lv===2){const t=rand(1,5);if(t===1){const c=pick([2,3,5]);return{q:`Waar snijdt y = x² + ${c} de y-as?`,a:c,h:`y-as → x=0 → y = 0+${c} = ${c}`}}if(t===2){const c=pick([-3,0,2,4]),vals=[-2,-1,0,1,2];const ys=vals.map(x=>x*x+c);return{q:`y = x²${c>0?" + "+c:c<0?" − "+Math.abs(c):""}\nVul in: y(−2)=${ys[0]}, y(0)=${ys[2]}, y(2)=?`,a:ys[4],h:`y(2) = 4${c>=0?"+"+c:c} = ${ys[4]}`}}if(t===3){const c=pick([1,3,5]);return{q:`Wat is de top (laagste punt) van y = x² + ${c}?`,a:`(0, ${c})`,t:"text",h:`Top bij x=0: y = ${c} → (0,${c})`}}if(t===4){const a=pick([1,-1]),c=pick([-3,0,2,4]),x=pick([-3,-2,-1,0,1,2,3]);return{q:`y = ${a===-1?"−":""}x²${c>0?" + "+c:c<0?" − "+Math.abs(c):""}\nBereken y voor x = ${x}`,a:a*x*x+c,h:`y = ${a===-1?"−":""}${x*x}${c>0?"+"+c:c<0?"−"+Math.abs(c):""} = ${a*x*x+c}`}}return{q:"Een parabool is symmetrisch.\ny = x² bij x=3 geeft y=9.\nWat is y bij x=−3?",a:9,h:"Symmetrie: y(3)=y(−3)=9"}}
+  const t=rand(1,4);if(t===1){const c=pick([4,9,16]);const r=Math.round(Math.sqrt(c));return{q:`Snijdt y = x² − ${c} de x-as?\nZo ja, waar?`,a:`x = ${r} en x = −${r}`,t:"text",h:`x²=${c} → x=±${r}`}}if(t===2){const a=pick([1,2]),b=pick([2,3]),c=pick([0,1,3]);const xv=3;const y1=a*xv*xv,y2=b*xv+c;return{q:`Bij x=3: y=x² geeft ${y1}, y=${b}x+${c} geeft ${y2}.\nWelke is groter?`,a:y1>y2?"y = x²":"y = "+b+"x+"+c,t:"choice",o:["y = x²","y = "+b+"x+"+c],h:`${y1} vs ${y2}`}}if(t===3){const a=pick([1,2]),c=pick([0,1,-2]);const xs=[-2,-1,0,1,2];const ys=xs.map(x=>a*x*x+c);return{q:`Welke formule past bij deze tabel?\nx: ${xs.join(", ")}\ny: ${ys.join(", ")}`,a:`y = ${a===1?"":""+a}x²${c>0?"+"+c:c<0?""+c:""}`,t:"text",h:"Patroon: kwadratisch"}}const a=pick([1,-1]),c=pick([-2,0,3]);const x=pick([-2,-1,0,1,2]);return{q:`y = ${a===-1?"−":""}x²${c>0?" + "+c:c<0?" − "+Math.abs(c):""}\nBereken y voor x = ${x}`,a:a*x*x+c,h:`y = ${a*x*x+c}`};
 }
 
 function g64(lv){
-  if(lv===1){const t=rand(1,2);if(t===1){const a=pick([2,3,4,5]),b=pick([2,3,4,6,7]),v1=pick(["a","p","x"]),v2=pick(["b","q","y"]);const vs=[v1,v2].sort().join("");return{q:`Herleid: ${a}${v1} · ${b}${v2}`,a:`${a*b}${vs}`,t:"text",h:`${a}×${b}=${a*b} → ${a*b}${vs}`}}const a=pick([3,5,7,8,9]),b=pick([2,3,4,5]),v=pick(["a","x","p"]);return{q:`Herleid: ${a}${v} + ${b}${v}`,a:`${a+b}${v}`,t:"text",h:`${a+b}${v}`}}
-  if(lv===2){const a=pick([2,3,5]),b=pick([4,6,8]),c=pick([1,2,3]),d=pick([2,3,5]);return{q:`Herleid: ${a}a + ${b}b + ${c}a + ${d}b`,a:`${a+c}a+${b+d}b`,t:"text",h:`a:${a}+${c}=${a+c}, b:${b}+${d}=${b+d}`}}
-  const a=pick([3,5,8]),b=pick([2,4,6]),c=pick([2,3]),d=pick([1,5]);return{q:`Herleid: ${a}a + ${b}b + ${c}a + ${d}`,a:`${a+c}a+${b}b+${d}`,t:"text",h:`a:${a+c}a, b:${b}b, getal:${d}`};
+  if(lv===1){const t=rand(1,3);if(t===1){const a=pick([2,3,4,5]),b=pick([2,3,4,6,7]),v1=pick(["a","p","x"]),v2=pick(["b","q","y"]);const vs=[v1,v2].sort().join("");return{q:`Herleid: ${a}${v1} · ${b}${v2}`,a:`${a*b}${vs}`,t:"text",h:`${a}×${b}=${a*b} → ${a*b}${vs}`}}if(t===2){const a=pick([3,5,7,8,9]),b=pick([2,3,4,5]),v=pick(["a","x","p"]);return{q:`Herleid: ${a}${v} + ${b}${v}`,a:`${a+b}${v}`,t:"text",h:`${a+b}${v}`}}const v=pick(["a","x","p"]);return{q:`Herleid: ${v} · ${v}`,a:`${v}²`,t:"text",h:`${v}·${v} = ${v}²`}}
+  if(lv===2){const t=rand(1,3);if(t===1){const a=pick([2,3,5]),b=pick([4,6,8]),c=pick([1,2,3]),d=pick([2,3,5]);return{q:`Herleid: ${a}a + ${b}b + ${c}a + ${d}b`,a:`${a+c}a+${b+d}b`,t:"text",h:`a:${a}+${c}=${a+c}, b:${b}+${d}=${b+d}`}}if(t===2){const a=pick([3,4]),b=pick([-2,-3]),c=pick([4,5]);return{q:`Herleid: ${a}a · ${b}b · ${c}c`,a:`${a*b*c}abc`,t:"text",h:`${a}·${b}·${c}=${a*b*c} → ${a*b*c}abc`}}const a=pick([2,3,5]),b=pick([4,6]),c=pick([1,3]);return{q:`Herleid: ${a}x + ${b}x − ${c}x`,a:`${a+b-c}x`,t:"text",h:`${a}+${b}−${c}=${a+b-c}`}}
+  const t=rand(1,2);if(t===1){const a=pick([3,5,8]),b=pick([2,4,6]),c=pick([2,3]),d=pick([1,5]);return{q:`Herleid: ${a}a + ${b}b + ${c}a + ${d}`,a:`${a+c}a+${b}b+${d}`,t:"text",h:`a:${a+c}a, b:${b}b, getal:${d}`}}const terms=["3a","5b","2a","7b","4a"];return{q:`Welke zijn gelijksoortige termen?\n${terms.join(", ")}`,a:"3a, 2a, 4a en 5b, 7b",t:"text",h:"Gelijksoortig = zelfde letter"};
 }
 
 function g65(lv){
-  if(lv===1){const a=pick([8,10,12,15]),b=pick([3,4,5,7]),v=pick(["a","x","p","n"]);return{q:`Herleid: ${a}${v} − ${b}${v}`,a:`${a-b}${v}`,t:"text",h:`${a-b}${v}`}}
-  if(lv===2){const t=rand(1,2);if(t===1){const a=pick([3,5,7]),b=pick([4,6,8]),v=pick(["a","x"]);return{q:`Herleid: −${a}${v} − ${b}${v}`,a:`${-(a+b)}${v}`,t:"text",h:`−${a+b}${v}`}}const a=pick([5,7,9]),b=pick([3,6,8]),c=pick([2,4]),d=pick([1,3,5]);const rx=a-c,ry=b-d;return{q:`Herleid: ${a}x + ${b}y − ${c}x − ${d}y`,a:`${rx}x${ry>0?"+":""}${ry}y`,t:"text",h:`x:${rx}, y:${ry}`}}
-  const a=pick([2,3]),b=pick([7,8]),c=pick([5,6,7]),d=pick([3,4,5]);const ra=a-c,rb=b-d;return{q:`Herleid: ${a}a + ${b}b − ${c}a − ${d}b`,a:`${ra}a${rb>=0?"+":""}${rb}b`,t:"text",h:`a:${ra}, b:${rb}`};
+  if(lv===1){const t=rand(1,2);if(t===1){const a=pick([8,10,12,15]),b=pick([3,4,5,7]),v=pick(["a","x","p","n"]);return{q:`Herleid: ${a}${v} − ${b}${v}`,a:`${a-b}${v}`,t:"text",h:`${a-b}${v}`}}const a=pick([3,5,7]),b=pick([4,6,8]),v=pick(["x","a"]);return{q:`Herleid: −${a}${v} + ${b}${v}`,a:`${b-a}${v}`,t:"text",h:`${b-a}${v}`}}
+  if(lv===2){const t=rand(1,3);if(t===1){const a=pick([3,5,7]),b=pick([4,6,8]),v=pick(["a","x"]);return{q:`Herleid: −${a}${v} − ${b}${v}`,a:`${-(a+b)}${v}`,t:"text",h:`−${a+b}${v}`}}if(t===2){const a=pick([5,7,9]),b=pick([3,6,8]),c=pick([2,4]),d=pick([1,3,5]);const rx=a-c,ry=b-d;return{q:`Herleid: ${a}x + ${b}y − ${c}x − ${d}y`,a:`${rx}x${ry>0?"+":""}${ry}y`,t:"text",h:`x:${rx}, y:${ry}`}}const a=pick([4,7]),b=pick([7,9]),v=pick(["a","x"]);return{q:`Herleid: ${a}${v} − ${b}${v}`,a:`${a-b}${v}`,t:"text",h:`${a-b}${v}`}}
+  const t=rand(1,3);if(t===1){const a=pick([2,3]),b=pick([7,8]),c=pick([5,6,7]),d=pick([3,4,5]);const ra=a-c,rb=b-d;return{q:`Herleid: ${a}a + ${b}b − ${c}a − ${d}b`,a:`${ra}a${rb>=0?"+":""}${rb}b`,t:"text",h:`a:${ra}, b:${rb}`}}if(t===2){const a=pick([-2,3]),b=pick([5,4]),c=pick([-3,-5]),d=pick([2,3]),e=pick([-4,7]);return{q:`Herleid: ${a}x + ${b}y ${c}x + ${d}y − ${Math.abs(e)}`,a:`${a+c}x+${b+d}y${e>=0?"+"+e:e}`,t:"text",h:`x:${a+c}, y:${b+d}, getal:${e}`}}const a=pick([5,7]),b=pick([3,4]),v=pick(["a","x"]);return{q:`5${v} − 3${v} = 2${v}. Waar of niet waar?`,a:"Waar",t:"choice",o:["Waar","Niet waar"],h:`5${v} − 3${v} = 2${v} ✓`};
 }
 
 function g66(lv){
-  if(lv===1){const m=pick([2,3,4,5,6]),d=pick([2,3,4]),v=pick(["a","x","p"]);return{q:`Vereenvoudig: ${m*d}${v} / ${d}${v}`,a:`${m}`,t:"text",h:`${m*d}${v}/${d}${v} = ${m}`}}
-  if(lv===2){const t=rand(1,2);if(t===1){const a=pick([5,7,9]),b=pick([2,3,4]),v1=pick(["a","x"]),v2=pick(["b","y"]);return{q:`Herleid: ${a}${v1}/${v2} + ${b}${v1}/${v2}`,a:`${a+b}${v1}/${v2}`,t:"text",h:`${a+b}${v1}/${v2}`}}const m=pick([3,4,5,6]),d=pick([2,3,4]),v1=pick(["a","x"]),v2=pick(["b","y"]);return{q:`Vereenvoudig: ${m*d}${v1}${v2} / ${d}${v1}`,a:`${m}${v2}`,t:"text",h:`${m}${v2}`}}
-  const a=pick([8,10,12]),b=pick([3,5,7]),v1="a",v2="b";return{q:`Herleid: ${a}${v1}/${v2} − ${b}${v1}/${v2}`,a:`${a-b}${v1}/${v2}`,t:"text",h:`${a-b}${v1}/${v2}`};
+  if(lv===1){const t=rand(1,2);if(t===1){const m=pick([2,3,4,5,6]),d=pick([2,3,4]),v=pick(["a","x","p"]);return{q:`Vereenvoudig: ${m*d}${v} / ${d}${v}`,a:`${m}`,t:"text",h:`${m*d}${v}/${d}${v} = ${m}`}}const n=pick([2,4,6,8]),d=pick([2,4]),v1=pick(["a","b"]),v2=pick(["b","a"]);return{q:`Vereenvoudig: ${n}${v1}${v2} / ${d}${v2}`,a:`${n/d}${v1}`,t:"text",h:`${n}/${d}=${n/d}, ${v2} weg → ${n/d}${v1}`}}
+  if(lv===2){const t=rand(1,3);if(t===1){const a=pick([5,7,9]),b=pick([2,3,4]),v1=pick(["a","x"]),v2=pick(["b","y"]);return{q:`Herleid: ${a}${v1}/${v2} + ${b}${v1}/${v2}`,a:`${a+b}${v1}/${v2}`,t:"text",h:`${a+b}${v1}/${v2}`}}if(t===2){const m=pick([3,4,5,6]),d=pick([2,3,4]),v1=pick(["a","x"]),v2=pick(["b","y"]);return{q:`Vereenvoudig: ${m*d}${v1}${v2} / ${d}${v1}`,a:`${m}${v2}`,t:"text",h:`${m}${v2}`}}const v=pick(["a","x"]);return{q:`Herleid: ${v}/3 + ${v}/3`,a:`2${v}/3`,t:"text",h:`Zelfde noemer: 1${v}+1${v}=2${v}, noemer 3`}}
+  const t=rand(1,3);if(t===1){const a=pick([8,10,12]),b=pick([3,5,7]),v1="a",v2="b";return{q:`Herleid: ${a}${v1}/${v2} − ${b}${v1}/${v2}`,a:`${a-b}${v1}/${v2}`,t:"text",h:`${a-b}${v1}/${v2}`}}if(t===2){const n=pick([6,9,12]),d=pick([3]),v=pick(["x","a"]);return{q:`Vereenvoudig: ${n}${v}² / ${d}${v}`,a:`${n/d}${v}`,t:"text",h:`${n}/${d}=${n/d}, ${v}²/${v}=${v} → ${n/d}${v}`}}const v=pick(["a","x"]);return{q:`Herleid: 2${v}/3 + ${v}/6`,a:`5${v}/6`,t:"text",h:`4${v}/6 + ${v}/6 = 5${v}/6`};
 }
 
 // ========== APP ==========
@@ -394,20 +397,58 @@ function App(){
   const[correct,setCorrect]=useState(false);
   const[qNum,setQNum]=useState(0);
   const[session,setSession]=useState({c:0,t:0});
+  const[wrongAnswers,setWrongAnswers]=useState([]);
   const[streak,setStreak]=useState(0);
   const[animKey,setAnimKey]=useState(0);
+  // Proeftoets state
+  const[ptQuestions,setPtQuestions]=useState([]);
+  const[ptIndex,setPtIndex]=useState(0);
+  const[ptAnswers,setPtAnswers]=useState([]);
+  const[ptTimer,setPtTimer]=useState(null);
+  const[ptTimeLeft,setPtTimeLeft]=useState(0);
+  const[ptUseTimer,setPtUseTimer]=useState(false);
+  const timerRef=useRef(null);
 
   useEffect(()=>{saveState(progress)},[progress]);
 
   const updateProg=(sid,ok)=>setProgress(p=>({...p,[sid]:{...p[sid],correct:p[sid].correct+(ok?1:0),total:p[sid].total+1,bestStreak:Math.max(p[sid].bestStreak,ok?streak+1:streak)}}));
   const markTheory=sid=>setProgress(p=>({...p,[sid]:{...p[sid],theoryDone:true}}));
   const getPct=sid=>{const s=progress[sid];return s.total>0?Math.round(s.correct/s.total*100):0};
-  const isMastered=sid=>{const s=progress[sid];return s.total>=5&&getPct(sid)>=70};
+  const isMastered=sid=>{const s=progress[sid];return s.total>=8&&getPct(sid)>=80};
   const totalMastered=SECTIONS.filter(s=>isMastered(s.id)).length;
 
   const startTheory=sid=>{setSection(sid);setTheoryStep(0);setTheoryAnswer("");setTheoryChecked(false);setScreen("theory")};
-  const startQuiz=(sid,lv)=>{setSection(sid);setLevel(lv);setQNum(0);setSession({c:0,t:0});setStreak(0);setScreen("quiz");loadQ(sid,lv)};
+  const startQuiz=(sid,lv)=>{setSection(sid);setLevel(lv);setQNum(0);setSession({c:0,t:0});setWrongAnswers([]);setStreak(0);setScreen("quiz");loadQ(sid,lv)};
   const loadQ=(sec,lv)=>{setQuestion(genQ(sec||section,lv||level));setAnswer("");setChecked(false);setQNum(n=>n+1);setAnimKey(k=>k+1)};
+
+  // Proeftoets
+  const startProeftoets=(useTimer)=>{
+    if(timerRef.current)clearInterval(timerRef.current);
+    const qs=SECTIONS.map(sec=>{const lv=rand(1,3);const q=genQ(sec.id,lv);return{...q,sectionId:sec.id,sectionName:sec.name,lv}});
+    setPtQuestions(qs);setPtIndex(0);setPtAnswers([]);setPtUseTimer(useTimer);
+    setQuestion(qs[0]);setAnswer("");setChecked(false);setAnimKey(k=>k+1);
+    if(useTimer){setPtTimeLeft(20*60);timerRef.current=setInterval(()=>setPtTimeLeft(t=>{if(t<=1){clearInterval(timerRef.current);return 0}return t-1}),1000)}
+    else{setPtTimeLeft(0)}
+    setScreen("proeftoets");
+  };
+  const checkPt=()=>{if(!question)return;let ok=false;if(question.t==="choice")ok=answer===question.a;else if(question.t==="text")ok=answer.replace(/\s/g,"").toLowerCase()===String(question.a).replace(/\s/g,"").toLowerCase();else ok=parseFloat(answer.replace(",","."))=== question.a;setCorrect(ok);setChecked(true);const cur=ptQuestions[ptIndex];setPtAnswers(a=>[...a,{sectionId:cur.sectionId,sectionName:cur.sectionName,q:question.q,chosen:answer,correctAns:String(question.a),ok}]);updateProg(cur.sectionId,ok)};
+  const nextPt=()=>{if(ptIndex>=ptQuestions.length-1){if(timerRef.current)clearInterval(timerRef.current);setScreen("pt-results")}else{const ni=ptIndex+1;setPtIndex(ni);setQuestion(ptQuestions[ni]);setAnswer("");setChecked(false);setAnimKey(k=>k+1)}};
+  // Cleanup timer on unmount
+  useEffect(()=>()=>{if(timerRef.current)clearInterval(timerRef.current)},[]);
+  // Auto-submit when timer runs out
+  useEffect(()=>{if(ptTimeLeft===0&&ptUseTimer&&screen==="proeftoets"&&ptQuestions.length>0){if(timerRef.current)clearInterval(timerRef.current);setScreen("pt-results")}},[ptTimeLeft]);
+
+  // Deep link support
+  useEffect(()=>{
+    const h=window.location.hash;if(!h)return;
+    const p=new URLSearchParams(h.slice(1));
+    const sec=p.get("section"),mode=p.get("mode");
+    if(sec&&SECTIONS.find(s=>s.id===sec)){
+      if(mode==="practice")startQuiz(sec,1);
+      else if(mode==="theory")startTheory(sec);
+    }
+    window.location.hash="";
+  },[]);
 
   const theorySteps=section?THEORY[section]||[]:[];
   const curStep=theorySteps[theoryStep];
@@ -415,7 +456,7 @@ function App(){
   const checkTheory=()=>{if(!curStep)return;let ok=false;if(curStep.type2==="choice")ok=theoryAnswer===String(curStep.answer);else if(curStep.type2==="text")ok=theoryAnswer.replace(/\s/g,"").toLowerCase()===String(curStep.answer).replace(/\s/g,"").toLowerCase();else ok=parseFloat(theoryAnswer.replace(",","."))=== curStep.answer;setTheoryCorrect(ok);setTheoryChecked(true)};
   const nextTheory=()=>{if(theoryStep<theorySteps.length-1){setTheoryStep(s=>s+1);setTheoryAnswer("");setTheoryChecked(false)}else{markTheory(section);setScreen("home")}};
 
-  const checkQuiz=()=>{if(!question)return;let ok=false;if(question.t==="choice")ok=answer===question.a;else if(question.t==="text")ok=answer.replace(/\s/g,"").toLowerCase()===String(question.a).replace(/\s/g,"").toLowerCase();else ok=parseFloat(answer.replace(",","."))=== question.a;setCorrect(ok);setChecked(true);setStreak(s=>ok?s+1:0);setSession(s=>({c:s.c+(ok?1:0),t:s.t+1}));updateProg(section,ok)};
+  const checkQuiz=()=>{if(!question)return;let ok=false;if(question.t==="choice")ok=answer===question.a;else if(question.t==="text")ok=answer.replace(/\s/g,"").toLowerCase()===String(question.a).replace(/\s/g,"").toLowerCase();else ok=parseFloat(answer.replace(",","."))=== question.a;setCorrect(ok);setChecked(true);if(!ok)setWrongAnswers(w=>[...w,{q:question.q,chosen:answer,correct:String(question.a)}]);setStreak(s=>ok?s+1:0);setSession(s=>({c:s.c+(ok?1:0),t:s.t+1}));updateProg(section,ok)};
   const nextQuiz=()=>{if(session.t>=10)setScreen("results");else loadQ(section,level)};
 
   const fmtBold=text=>{const parts=text.split(/(\*\*[^*]+\*\*)/g);return parts.map((p,i)=>p.startsWith("**")&&p.endsWith("**")?React.createElement("strong",{key:i,style:{color:"#fff",fontWeight:800}},p.slice(2,-2)):React.createElement("span",{key:i},p))};
@@ -437,7 +478,7 @@ function App(){
         // Overall progress card
         React.createElement("div",{style:{background:cBg,borderRadius:"16px",padding:"18px",border:"1px solid "+bdr,marginBottom:"24px",textAlign:"center"}},
           React.createElement("div",{style:{fontSize:"28px",fontWeight:900,color:totalMastered===SECTIONS.length?"#6bcb77":"#fff"}},totalMastered+"/"+SECTIONS.length+" beheerst"),
-          React.createElement("div",{style:{fontSize:"13px",color:"#777",marginTop:"4px"}},totalMastered===SECTIONS.length?"🎉 Alles beheerst! Klaar voor de toets!":"Min. 5 opgaven met ≥70% goed per paragraaf"),
+          React.createElement("div",{style:{fontSize:"13px",color:"#777",marginTop:"4px"}},totalMastered===SECTIONS.length?"🎉 Alles beheerst! Klaar voor de toets!":"Min. 8 opgaven met ≥80% goed per paragraaf"),
           React.createElement("div",{style:{display:"flex",gap:"6px",justifyContent:"center",marginTop:"12px"}},
             SECTIONS.map(s=>React.createElement("div",{key:s.id,style:{width:"32px",height:"32px",borderRadius:"8px",background:isMastered(s.id)?s.color+"30":"rgba(255,255,255,0.05)",border:"2px solid "+(isMastered(s.id)?s.color:"rgba(255,255,255,0.08)"),display:"flex",alignItems:"center",justifyContent:"center",fontSize:"14px",color:isMastered(s.id)?s.color:"#555"}},isMastered(s.id)?"✓":s.id.split(".")[1]))
           )
@@ -455,7 +496,7 @@ function App(){
           ),
           React.createElement("div",{style:{display:"flex",gap:"6px",flexWrap:"wrap",marginTop:"10px"}},
             React.createElement("span",{style:{display:"inline-block",padding:"2px 8px",borderRadius:"6px",fontSize:"11px",fontWeight:700,background:(p.theoryDone?"#6bcb77":"#888")+"20",color:p.theoryDone?"#6bcb77":"#888"}},p.theoryDone?"✓ Theorie":"○ Theorie"),
-            React.createElement("span",{style:{display:"inline-block",padding:"2px 8px",borderRadius:"6px",fontSize:"11px",fontWeight:700,background:(pct>=70&&p.total>=5?"#6bcb77":"#888")+"20",color:pct>=70&&p.total>=5?"#6bcb77":"#888"}},p.total>0?p.correct+"/"+p.total+" ("+pct+"%)":"Nog niet geoefend"),
+            React.createElement("span",{style:{display:"inline-block",padding:"2px 8px",borderRadius:"6px",fontSize:"11px",fontWeight:700,background:(pct>=80&&p.total>=8?"#6bcb77":"#888")+"20",color:pct>=80&&p.total>=8?"#6bcb77":"#888"}},p.total>0?p.correct+"/"+p.total+" ("+pct+"%)":"Nog niet geoefend"),
             p.bestStreak>=3&&React.createElement("span",{style:{display:"inline-block",padding:"2px 8px",borderRadius:"6px",fontSize:"11px",fontWeight:700,background:"#ffd93d20",color:"#ffd93d"}},"🔥 "+p.bestStreak+"x")
           ),
           p.total>0&&React.createElement("div",{style:{height:"4px",borderRadius:"2px",background:"rgba(255,255,255,0.08)",marginTop:"8px",position:"relative",overflow:"hidden"}},
@@ -478,7 +519,7 @@ function App(){
           ),
           React.createElement("div",{style:{display:"flex",gap:"6px",flexWrap:"wrap",marginTop:"10px"}},
             React.createElement("span",{style:{display:"inline-block",padding:"2px 8px",borderRadius:"6px",fontSize:"11px",fontWeight:700,background:(p.theoryDone?"#6bcb77":"#888")+"20",color:p.theoryDone?"#6bcb77":"#888"}},p.theoryDone?"✓ Theorie":"○ Theorie"),
-            React.createElement("span",{style:{display:"inline-block",padding:"2px 8px",borderRadius:"6px",fontSize:"11px",fontWeight:700,background:(pct>=70&&p.total>=5?"#6bcb77":"#888")+"20",color:pct>=70&&p.total>=5?"#6bcb77":"#888"}},p.total>0?p.correct+"/"+p.total+" ("+pct+"%)":"Nog niet geoefend"),
+            React.createElement("span",{style:{display:"inline-block",padding:"2px 8px",borderRadius:"6px",fontSize:"11px",fontWeight:700,background:(pct>=80&&p.total>=8?"#6bcb77":"#888")+"20",color:pct>=80&&p.total>=8?"#6bcb77":"#888"}},p.total>0?p.correct+"/"+p.total+" ("+pct+"%)":"Nog niet geoefend"),
             p.bestStreak>=3&&React.createElement("span",{style:{display:"inline-block",padding:"2px 8px",borderRadius:"6px",fontSize:"11px",fontWeight:700,background:"#ffd93d20",color:"#ffd93d"}},"🔥 "+p.bestStreak+"x")
           ),
           p.total>0&&React.createElement("div",{style:{height:"4px",borderRadius:"2px",background:"rgba(255,255,255,0.08)",marginTop:"8px",position:"relative",overflow:"hidden"}},
@@ -489,6 +530,22 @@ function App(){
             React.createElement("button",{style:{padding:"10px 20px",borderRadius:"12px",border:"none",background:sec.color,color:"#fff",fontSize:"14px",fontWeight:700,cursor:"pointer"},onClick:()=>startQuiz(sec.id,1)},"✏️ Oefenen")
           )
         )}),
+        // Proeftoets card
+        React.createElement("div",{style:{fontSize:"13px",fontWeight:800,color:"#ffd93d",textTransform:"uppercase",letterSpacing:"1px",margin:"20px 0 10px",paddingLeft:"4px"}},"Proeftoets"),
+        React.createElement("div",{style:{background:"linear-gradient(135deg,rgba(255,217,61,0.08),rgba(255,107,107,0.06))",border:"1px solid rgba(255,217,61,0.25)",borderRadius:"16px",padding:"20px",marginBottom:"12px"}},
+          React.createElement("div",{style:{display:"flex",gap:"14px",alignItems:"center"}},
+            React.createElement("div",{style:{width:"48px",height:"48px",borderRadius:"12px",background:"linear-gradient(135deg,#ffd93d20,#ff6b6b20)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"24px",flexShrink:0}},"📝"),
+            React.createElement("div",{style:{flex:1}},
+              React.createElement("div",{style:{fontSize:"17px",fontWeight:800,color:"#ffd93d"}},"Proeftoets H5+H6"),
+              React.createElement("div",{style:{fontSize:"12px",color:"#999",marginTop:"2px"}},"12 vragen · 1 per paragraaf · willekeurig niveau")
+            )
+          ),
+          React.createElement("div",{style:{fontSize:"13px",color:"#888",marginTop:"12px",lineHeight:1.6}},"Test jezelf op alle 12 paragrafen tegelijk. Per paragraaf krijg je 1 vraag op een willekeurig niveau."),
+          React.createElement("div",{style:{display:"flex",gap:"8px",marginTop:"14px"}},
+            React.createElement("button",{style:{flex:1,padding:"12px 16px",borderRadius:"12px",border:"none",background:"#ffd93d",color:"#000",fontSize:"14px",fontWeight:700,cursor:"pointer"},onClick:()=>startProeftoets(false)},"▶ Start"),
+            React.createElement("button",{style:{flex:1,padding:"12px 16px",borderRadius:"12px",border:"2px solid #ffd93d",background:"transparent",color:"#ffd93d",fontSize:"14px",fontWeight:700,cursor:"pointer"},onClick:()=>startProeftoets(true)},"⏱ Met timer (20 min)")
+          )
+        ),
         React.createElement("button",{style:{width:"100%",padding:"12px",borderRadius:"10px",border:"none",background:"rgba(255,255,255,0.03)",color:"#555",fontSize:"12px",fontWeight:600,cursor:"pointer",marginTop:"20px"},onClick:()=>{setProgress(defaultProgress())}},"🔄 Reset voortgang"),
         React.createElement("div",{style:{textAlign:"center",color:"#444",fontSize:"11px",marginTop:"16px",paddingBottom:"40px"}},"Studieplan Stijn · PW maart 2026")
       )
@@ -582,7 +639,7 @@ function App(){
   }
 
   // RESULTS
-  if(screen==="results"){const sec=getSection(section),pct=Math.round(session.c/session.t*100),ok=pct>=70;
+  if(screen==="results"){const sec=getSection(section),pct=Math.round(session.c/session.t*100),ok=pct>=80;
     return React.createElement("div",{style:{minHeight:"100vh",background:"linear-gradient(160deg,#0c0c20,#141432 40%,#0e0e28)"}},
       React.createElement("div",{style:{background:"rgba(0,0,0,0.25)",padding:"14px 20px",borderBottom:"1px solid "+bdr}},React.createElement("div",{style:{fontSize:"18px",fontWeight:900,background:"linear-gradient(90deg,#ff6b6b,#feca57,#48dbfb)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",textAlign:"center"}},"Resultaten")),
       React.createElement("div",{style:{maxWidth:"640px",margin:"0 auto",padding:"20px 16px"}},
@@ -590,16 +647,112 @@ function App(){
           React.createElement("div",{style:{fontSize:"64px",marginBottom:"12px"}},ok?"🎉":"💪"),
           React.createElement("div",{style:{fontSize:"32px",fontWeight:900,color:ok?"#6bcb77":"#ffd93d"}},pct+"%"),
           React.createElement("div",{style:{fontSize:"18px",fontWeight:700,marginTop:"4px"}},session.c+" van "+session.t+" goed"),
-          React.createElement("div",{style:{fontSize:"14px",color:"#888",marginTop:"8px"}},ok?"§"+section+" beheerst! Ga door naar het volgende onderwerp.":"Je hebt ≥70% nodig. Bestudeer de theorie en probeer opnieuw!"),
+          React.createElement("div",{style:{fontSize:"14px",color:"#888",marginTop:"8px"}},ok?"§"+section+" beheerst! Ga door naar het volgende onderwerp.":"Je hebt ≥80% nodig. Bestudeer de theorie en probeer opnieuw!"),
           React.createElement("div",{style:{display:"flex",gap:"8px",marginTop:"20px",justifyContent:"center"}},
             React.createElement("button",{style:{padding:"10px 20px",borderRadius:"12px",border:"2px solid "+sec.color,background:"transparent",color:sec.color,fontSize:"14px",fontWeight:700,cursor:"pointer"},onClick:()=>startTheory(section)},"📖 Theorie"),
             React.createElement("button",{style:{padding:"10px 20px",borderRadius:"12px",border:"none",background:sec.color,color:"#fff",fontSize:"14px",fontWeight:700,cursor:"pointer"},onClick:()=>startQuiz(section,level)},"🔄 Opnieuw")
           ),
           React.createElement("button",{style:{width:"100%",padding:"12px",borderRadius:"10px",border:"none",background:"rgba(255,255,255,0.05)",color:"#aaa",fontSize:"13px",fontWeight:600,cursor:"pointer",marginTop:"12px"},onClick:()=>setScreen("home")},"← Terug naar overzicht")
+        ),
+        wrongAnswers.length>0&&React.createElement("div",{style:{textAlign:"left",marginTop:"16px"}},
+          React.createElement("div",{style:{fontSize:"14px",fontWeight:700,color:"#ff6b6b",marginBottom:"8px"}},"❌ Foute antwoorden:"),
+          wrongAnswers.map((w,i)=>React.createElement("div",{key:i,style:{background:"rgba(255,107,107,0.08)",border:"1px solid rgba(255,107,107,0.2)",borderRadius:"10px",padding:"10px 14px",marginBottom:"6px"}},
+            React.createElement("div",{style:{fontSize:"13px",color:"#ccc"}},w.q),
+            React.createElement("div",{style:{fontSize:"12px",color:"#ff6b6b",marginTop:"2px"}},"Jouw antwoord: "+w.chosen),
+            React.createElement("div",{style:{fontSize:"12px",color:"#6bcb77",marginTop:"2px"}},"Goed: "+w.correct))))
+      )
+    );
+  }
+
+  // PROEFTOETS QUIZ
+  if(screen==="proeftoets"&&ptQuestions.length>0){
+    const cur=ptQuestions[ptIndex],sec=getSection(cur.sectionId);
+    const mm=Math.floor(ptTimeLeft/60),ss=ptTimeLeft%60;
+    return React.createElement("div",{style:{minHeight:"100vh",background:"linear-gradient(160deg,#0c0c20,#141432 40%,#0e0e28)"}},
+      React.createElement("div",{style:{background:"rgba(0,0,0,0.25)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+bdr,padding:"14px 20px",display:"flex",justifyContent:"space-between",alignItems:"center",position:"sticky",top:0,zIndex:50}},
+        React.createElement("button",{style:{background:"none",border:"none",color:"#888",cursor:"pointer",fontSize:"14px",fontWeight:600},onClick:()=>{if(timerRef.current)clearInterval(timerRef.current);setScreen("home")}},"← Stop"),
+        React.createElement("div",{style:{fontSize:"16px",fontWeight:800,color:"#ffd93d"}},"Proeftoets"),
+        React.createElement("div",{style:{display:"flex",gap:"10px",alignItems:"center"}},
+          ptUseTimer&&React.createElement("span",{style:{padding:"3px 10px",borderRadius:"8px",background:ptTimeLeft<=120?"rgba(255,107,107,0.2)":"rgba(255,217,61,0.15)",color:ptTimeLeft<=120?"#ff6b6b":"#ffd93d",fontSize:"13px",fontWeight:700}},mm+":"+(ss<10?"0":"")+ss),
+          React.createElement("span",{style:{fontSize:"13px",fontWeight:700,color:"#aaa"}},(ptIndex+1)+"/"+ptQuestions.length)
+        )
+      ),
+      React.createElement("div",{style:{maxWidth:"640px",margin:"0 auto",padding:"20px 16px"}},
+        // Progress dots
+        React.createElement("div",{style:{display:"flex",gap:"4px",justifyContent:"center",marginBottom:"16px",flexWrap:"wrap"}},
+          ptQuestions.map((pq,i)=>{
+            const done=i<ptAnswers.length,isCur=i===ptIndex;
+            const bg=done?(ptAnswers[i].ok?"#6bcb77":"#ff6b6b"):isCur?"#ffd93d":"rgba(255,255,255,0.1)";
+            return React.createElement("div",{key:i,style:{width:"22px",height:"6px",borderRadius:"3px",background:bg,transition:"background 0.3s"}})
+          })
+        ),
+        // Section label
+        React.createElement("div",{style:{display:"inline-block",padding:"4px 12px",borderRadius:"8px",background:sec.color+"18",color:sec.color,fontSize:"12px",fontWeight:700,marginBottom:"12px"}},"§"+cur.sectionId+" "+cur.sectionName+" · "+["","Basis","Gemiddeld","Diagnostisch"][cur.lv]),
+        // Question card
+        question&&React.createElement("div",{key:animKey,style:{background:cBg,borderRadius:"18px",padding:"24px 20px",border:"1px solid "+bdr,animation:"fadeIn 0.3s ease"}},
+          React.createElement("div",{style:{fontSize:"clamp(17px,4vw,22px)",fontWeight:700,lineHeight:1.5,whiteSpace:"pre-line",marginBottom:"20px"}},question.q),
+          question.t==="choice"?
+            React.createElement("div",null,question.o.map(o=>React.createElement("button",{key:o,style:{width:"100%",padding:"12px 18px",borderRadius:"11px",border:"2px solid "+(answer===o?"#ffd93d":bdr),background:answer===o?"rgba(255,217,61,0.12)":"rgba(255,255,255,0.03)",color:"#ddd",fontSize:"16px",fontWeight:600,cursor:"pointer",marginBottom:"8px",textAlign:"left"},onClick:()=>!checked&&setAnswer(o),disabled:checked},o)))
+            :React.createElement("input",{style:{width:"100%",padding:"14px 18px",borderRadius:"12px",border:"2px solid "+bdr,background:"rgba(255,255,255,0.05)",color:"#fff",fontSize:"18px",fontWeight:600,outline:"none",boxSizing:"border-box",fontFamily:"'Nunito',monospace"},value:answer,onChange:e=>setAnswer(e.target.value),onKeyDown:e=>e.key==="Enter"&&answer&&!checked&&checkPt(),placeholder:"Typ je antwoord...",disabled:checked,inputMode:question.t==="text"?"text":"numeric",autoFocus:true}),
+          !checked?
+            React.createElement("button",{style:{width:"100%",padding:"14px",borderRadius:"12px",border:"none",background:"#ffd93d",color:"#000",fontSize:"16px",fontWeight:700,cursor:"pointer",marginTop:"14px",opacity:answer?1:0.4},onClick:checkPt,disabled:!answer},"Controleer")
+            :React.createElement("div",null,
+              React.createElement("div",{style:{padding:"16px",borderRadius:"14px",background:correct?"rgba(107,203,119,0.1)":"rgba(255,107,107,0.1)",border:"1px solid "+(correct?"#6bcb7730":"#ff6b6b30"),marginTop:"14px"}},
+                React.createElement("div",{style:{fontSize:"17px",fontWeight:800,color:correct?"#6bcb77":"#ff6b6b",marginBottom:"6px"}},correct?"Goed! ✅":"Antwoord: "+question.a),
+                React.createElement("div",{style:{whiteSpace:"pre-line",fontSize:"14px",color:"#aaa",fontFamily:"monospace",lineHeight:1.6}},question.h)
+              ),
+              React.createElement("button",{style:{width:"100%",padding:"14px",borderRadius:"12px",border:"none",background:"#6bcb77",color:"#fff",fontSize:"16px",fontWeight:700,cursor:"pointer",marginTop:"14px"},onClick:nextPt},ptIndex>=ptQuestions.length-1?"📊 Resultaten":"Volgende →")
+            )
         )
       )
     );
   }
+
+  // PROEFTOETS RESULTS
+  if(screen==="pt-results"){
+    const totalC=ptAnswers.filter(a=>a.ok).length,totalT=ptAnswers.length,pct=totalT>0?Math.round(totalC/totalT*100):0;
+    // Group by section
+    const bySection={};ptAnswers.forEach(a=>{if(!bySection[a.sectionId])bySection[a.sectionId]={name:a.sectionName,correct:0,total:0,wrong:[]};bySection[a.sectionId].total++;if(a.ok)bySection[a.sectionId].correct++;else bySection[a.sectionId].wrong.push(a)});
+    return React.createElement("div",{style:{minHeight:"100vh",background:"linear-gradient(160deg,#0c0c20,#141432 40%,#0e0e28)"}},
+      React.createElement("div",{style:{background:"rgba(0,0,0,0.25)",padding:"14px 20px",borderBottom:"1px solid "+bdr}},React.createElement("div",{style:{fontSize:"18px",fontWeight:900,background:"linear-gradient(90deg,#ffd93d,#ff6b6b,#48dbfb)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",textAlign:"center"}},"Proeftoets Resultaten")),
+      React.createElement("div",{style:{maxWidth:"640px",margin:"0 auto",padding:"20px 16px"}},
+        // Score card
+        React.createElement("div",{style:{background:cBg,borderRadius:"18px",padding:"28px 20px",border:"1px solid "+bdr,textAlign:"center",marginBottom:"20px"}},
+          React.createElement("div",{style:{fontSize:"64px",marginBottom:"12px"}},pct>=80?"🎉":pct>=60?"💪":"📚"),
+          React.createElement("div",{style:{fontSize:"36px",fontWeight:900,color:pct>=80?"#6bcb77":pct>=60?"#ffd93d":"#ff6b6b"}},pct+"%"),
+          React.createElement("div",{style:{fontSize:"18px",fontWeight:700,marginTop:"4px"}},totalC+" van "+totalT+" goed"),
+          React.createElement("div",{style:{fontSize:"14px",color:"#888",marginTop:"8px"}},pct>=80?"Goed voorbereid op de toets!":pct>=60?"Bijna! Oefen de rode paragrafen nog.":"Bestudeer de theorie nog eens goed.")
+        ),
+        // Per-section breakdown
+        React.createElement("div",{style:{fontSize:"14px",fontWeight:700,color:"#ffd93d",marginBottom:"10px"}},"Resultaat per paragraaf:"),
+        SECTIONS.map(sec=>{const data=bySection[sec.id];if(!data)return null;
+          const ok=data.correct===data.total;
+          return React.createElement("div",{key:sec.id,style:{display:"flex",alignItems:"center",gap:"10px",padding:"10px 14px",borderRadius:"10px",background:ok?"rgba(107,203,119,0.08)":"rgba(255,107,107,0.08)",border:"1px solid "+(ok?"rgba(107,203,119,0.2)":"rgba(255,107,107,0.2)"),marginBottom:"6px"}},
+            React.createElement("div",{style:{width:"28px",height:"28px",borderRadius:"7px",background:sec.color+"20",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"14px",color:sec.color,fontWeight:800,flexShrink:0}},sec.id.split(".")[1]),
+            React.createElement("div",{style:{flex:1,fontSize:"13px",fontWeight:600}},"§"+sec.id+" "+sec.name),
+            React.createElement("div",{style:{fontSize:"13px",fontWeight:800,color:ok?"#6bcb77":"#ff6b6b"}},ok?"✓ Goed":"✗ Fout")
+          )
+        }),
+        // Wrong answers detail
+        ptAnswers.filter(a=>!a.ok).length>0&&React.createElement("div",{style:{marginTop:"16px"}},
+          React.createElement("div",{style:{fontSize:"14px",fontWeight:700,color:"#ff6b6b",marginBottom:"8px"}},"❌ Foute antwoorden:"),
+          ptAnswers.filter(a=>!a.ok).map((w,i)=>React.createElement("div",{key:i,style:{background:"rgba(255,107,107,0.08)",border:"1px solid rgba(255,107,107,0.2)",borderRadius:"10px",padding:"10px 14px",marginBottom:"6px"}},
+            React.createElement("div",{style:{fontSize:"11px",fontWeight:700,color:getSection(w.sectionId).color,marginBottom:"2px"}},"§"+w.sectionId+" "+w.sectionName),
+            React.createElement("div",{style:{fontSize:"13px",color:"#ccc"}},w.q),
+            React.createElement("div",{style:{fontSize:"12px",color:"#ff6b6b",marginTop:"2px"}},"Jouw antwoord: "+w.chosen),
+            React.createElement("div",{style:{fontSize:"12px",color:"#6bcb77",marginTop:"2px"}},"Goed: "+w.correctAns)
+          ))
+        ),
+        // Action buttons
+        React.createElement("div",{style:{display:"flex",gap:"8px",marginTop:"20px"}},
+          React.createElement("button",{style:{flex:1,padding:"12px 16px",borderRadius:"12px",border:"none",background:"#ffd93d",color:"#000",fontSize:"14px",fontWeight:700,cursor:"pointer"},onClick:()=>startProeftoets(false)},"🔄 Opnieuw"),
+          React.createElement("button",{style:{flex:1,padding:"12px 16px",borderRadius:"12px",border:"2px solid #ffd93d",background:"transparent",color:"#ffd93d",fontSize:"14px",fontWeight:700,cursor:"pointer"},onClick:()=>setScreen("home")},"← Overzicht")
+        ),
+        React.createElement("div",{style:{textAlign:"center",color:"#444",fontSize:"11px",marginTop:"20px",paddingBottom:"40px"}},"Proeftoets · 12 paragrafen · H5+H6")
+      )
+    );
+  }
+
   return null;
 }
 

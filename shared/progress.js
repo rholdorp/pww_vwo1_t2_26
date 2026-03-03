@@ -91,10 +91,10 @@ class TrainerProgress {
     this._save();
   }
 
-  // Check if section is mastered (≥5 answers, ≥70% correct)
+  // Check if section is mastered (≥8 answers, ≥80% correct)
   isMastered(sectionId) {
     const s = this.getSection(sectionId);
-    return s.total >= 5 && s.correct / s.total >= 0.7;
+    return s.total >= 8 && s.correct / s.total >= 0.8;
   }
 
   // Get overall stats
