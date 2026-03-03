@@ -56,10 +56,11 @@ async function fetchTrainerStats(user){
 }
 const Cd={WISK:"#3498DB",NED:"#E67E22",FRAN:"#9B59B6",GESCH:"#E74C3C",BIO:"#27AE60",AK:"#F1C40F",TKHV:"#1ABC9C",ENG:"#E74C3C"};
 const TRAINER_META={
-  "Wiskunde":      {url:"trainers/wiskunde-h6/index.html",   key:"wiskunde_h6_v2",           fmt:"flat",n:6},
+  "Wiskunde":      {url:"trainers/wiskunde-h6/index.html",   key:"wiskunde_h5h6",            fmt:"flat",n:12},
   "Nederlands":    {url:"trainers/nederlands-1.3/index.html",key:"trainer_nederlands_1.3",    fmt:"std", n:4},
   "Frans":         {url:"trainers/frans/index.html",          key:"trainer_frans_ch123",       fmt:"std", n:6},
   "Engels":        {url:"trainers/engels/index.html",         key:"trainer_engels_u23",        fmt:"std", n:5},
+  "Geschiedenis":  {url:"trainers/geschiedenis/index.html",   key:"geschiedenis_h4",           fmt:"std", n:3},
   "Biologie":      {url:"trainers/biologie/index.html",       key:"trainer_biologie_t3",       fmt:"std", n:8},
   "Aardrijkskunde":{url:"trainers/aardrijkskunde/index.html", key:"trainer_aardrijkskunde_h4", fmt:"std", n:6},
 };
@@ -319,16 +320,16 @@ return React.createElement("div",{key:subj,style:{background:cBg,borderRadius:"1
     React.createElement("div",null,React.createElement("span",{style:{fontSize:"14px",fontWeight:800,color:st.pct===100?"#6bcb77":"#fff"}},st.done+"/"+st.total),React.createElement("span",{style:{fontSize:"11px",color:"#666",marginLeft:"6px"}},st.pct+"%"))),
   pBar(st.pct,c),
   exam&&React.createElement("div",{style:{fontSize:"11px",color:"#777",marginTop:"8px"}},"📝 PW: "+new Date(exam.date).toLocaleDateString("nl-NL",{weekday:"short",day:"numeric",month:"short"})),
-  TRAINER_META[subj]&&React.createElement("div",{style:{marginTop:10,paddingTop:10,borderTop:"1px solid rgba(255,255,255,0.05)"}},
-    React.createElement("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}},
-      React.createElement("a",{href:TRAINER_META[subj].url,style:{fontSize:12,fontWeight:700,color:c,textDecoration:"none"}},"🎯 Trainer"),
-      getTr(subj)
-        ?React.createElement("div",{style:{display:"flex",gap:8,alignItems:"center"}},
-            React.createElement("span",{style:{fontSize:11,color:"#888"}},getTr(subj).acc+"%"),
-            React.createElement("span",{style:{fontSize:12,fontWeight:700,color:getTr(subj).mastered===getTr(subj).n?"#6bcb77":getTr(subj).mastered>0?"#ffd93d":"#888"}},getTr(subj).mastered+"/"+getTr(subj).n+" ✓"))
-        :React.createElement("span",{style:{fontSize:11,color:"#555"}},"niet gestart")),
-    pBar(getTr(subj)?getTr(subj).pct:0,getTr(subj)&&getTr(subj).mastered===getTr(subj).n?"#6bcb77":c,"4px")
-  ))}),
+  TRAINER_META[subj]&&(()=>{const tr=getTr(subj);
+    return React.createElement("div",{style:{marginTop:10,paddingTop:10,borderTop:"1px solid rgba(255,255,255,0.05)"}},
+      React.createElement("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}},
+        React.createElement("a",{href:TRAINER_META[subj].url,style:{fontSize:12,fontWeight:700,color:c,textDecoration:"none"}},"🎯 Trainer"),
+        tr
+          ?React.createElement("div",{style:{display:"flex",gap:8,alignItems:"center"}},
+              React.createElement("span",{style:{fontSize:11,color:"#888"}},tr.acc+"%"),
+              React.createElement("span",{style:{fontSize:12,fontWeight:700,color:tr.mastered===tr.n?"#6bcb77":tr.mastered>0?"#ffd93d":"#888"}},tr.mastered+"/"+tr.n+" ✓"))
+          :React.createElement("span",{style:{fontSize:11,color:"#555"}},"niet gestart")),
+      pBar(tr?tr.pct:0,tr&&tr.mastered===tr.n?"#6bcb77":c,"4px"));})())}),
 
 // ====== EXAMS VIEW ======
 view==="exams"&&React.createElement("div",null,

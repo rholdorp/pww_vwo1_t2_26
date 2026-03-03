@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Wiskunde H6 Trainer – Stijn</title>
+<title>Wiskunde H5+H6 Trainer – Stijn</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧮</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -29,27 +29,66 @@ const {useState,useEffect,useRef}=React;
 const rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 
-const STORE_KEY="wiskunde_h6_v2";
+const STORE_KEY="wiskunde_h5h6";
 const loadState=()=>{try{return JSON.parse(localStorage.getItem(STORE_KEY))}catch{return null}};
 const saveState=s=>{
   const withTs={...s,_lastUpdated:new Date().toISOString()};
   try{localStorage.setItem(STORE_KEY,JSON.stringify(withTs))}catch{}
   if(window.FB) window.FB.syncToFirebase(window.FB.trainerRef(STORE_KEY),withTs);
 };
-const defaultProgress=()=>({"6.1":{theoryDone:false,correct:0,total:0,bestStreak:0},"6.2":{theoryDone:false,correct:0,total:0,bestStreak:0},"6.3":{theoryDone:false,correct:0,total:0,bestStreak:0},"6.4":{theoryDone:false,correct:0,total:0,bestStreak:0},"6.5":{theoryDone:false,correct:0,total:0,bestStreak:0},"6.6":{theoryDone:false,correct:0,total:0,bestStreak:0}});
+const defaultProgress=()=>({"5.1":{theoryDone:false,correct:0,total:0,bestStreak:0},"5.2":{theoryDone:false,correct:0,total:0,bestStreak:0},"5.3":{theoryDone:false,correct:0,total:0,bestStreak:0},"5.4":{theoryDone:false,correct:0,total:0,bestStreak:0},"5.5":{theoryDone:false,correct:0,total:0,bestStreak:0},"5.6":{theoryDone:false,correct:0,total:0,bestStreak:0},"6.1":{theoryDone:false,correct:0,total:0,bestStreak:0},"6.2":{theoryDone:false,correct:0,total:0,bestStreak:0},"6.3":{theoryDone:false,correct:0,total:0,bestStreak:0},"6.4":{theoryDone:false,correct:0,total:0,bestStreak:0},"6.5":{theoryDone:false,correct:0,total:0,bestStreak:0},"6.6":{theoryDone:false,correct:0,total:0,bestStreak:0}});
 
 const SECTIONS=[
-  {id:"6.1",name:"Kwadraten",icon:"²",color:"#E74C3C",desc:"Kwadraten, negatieve getallen, wortels, rekenvolgorde"},
-  {id:"6.2",name:"Kwadratische formules",icon:"x²",color:"#3498DB",desc:"Rekenen met y = ax² + b en y = (x−p)²"},
-  {id:"6.3",name:"Grafieken",icon:"📈",color:"#2ECC71",desc:"Parabolen tekenen, lineair vs kwadratisch"},
-  {id:"6.4",name:"Rekenen met letters",icon:"ab",color:"#F39C12",desc:"Producten herleiden, gelijksoortige termen"},
-  {id:"6.5",name:"Herleiden",icon:"±",color:"#9B59B6",desc:"Optellen en aftrekken met mintekens"},
-  {id:"6.6",name:"Herleiden van breuken",icon:"a⁄b",color:"#1ABC9C",desc:"Breuken vereenvoudigen, gelijknamig en niet-gelijknamig"},
+  {id:"5.1",name:"Lijnen",icon:"📏",color:"#1E90FF",desc:"Lijnstuk, lijn, halve lijn, loodrecht, evenwijdig",ch:5},
+  {id:"5.2",name:"Hoeken en graden",icon:"📐",color:"#20B2AA",desc:"Rechte, scherpe, stompe en gestrekte hoek",ch:5},
+  {id:"5.3",name:"Hoeken meten",icon:"📏",color:"#9370DB",desc:"Geodriehoek gebruiken, hoeken aflezen",ch:5},
+  {id:"5.4",name:"Hoeken tekenen",icon:"✏️",color:"#FF69B4",desc:"Hoeken en driehoeken tekenen met geodriehoek",ch:5},
+  {id:"5.5",name:"Hoeken berekenen",icon:"🔢",color:"#FF8C00",desc:"Rechte hoek, gestrekte hoek, overstaande hoeken",ch:5},
+  {id:"5.6",name:"Hoeken in figuren",icon:"🔺",color:"#32CD32",desc:"Hoekensom driehoek (180°) en vierhoek (360°)",ch:5},
+  {id:"6.1",name:"Kwadraten",icon:"²",color:"#E74C3C",desc:"Kwadraten, negatieve getallen, wortels, rekenvolgorde",ch:6},
+  {id:"6.2",name:"Kwadratische formules",icon:"x²",color:"#3498DB",desc:"Rekenen met y = ax² + b en y = (x−p)²",ch:6},
+  {id:"6.3",name:"Grafieken",icon:"📈",color:"#2ECC71",desc:"Parabolen tekenen, lineair vs kwadratisch",ch:6},
+  {id:"6.4",name:"Rekenen met letters",icon:"ab",color:"#F39C12",desc:"Producten herleiden, gelijksoortige termen",ch:6},
+  {id:"6.5",name:"Herleiden",icon:"±",color:"#9B59B6",desc:"Optellen en aftrekken met mintekens",ch:6},
+  {id:"6.6",name:"Herleiden van breuken",icon:"a⁄b",color:"#1ABC9C",desc:"Breuken vereenvoudigen, gelijknamig en niet-gelijknamig",ch:6},
 ];
 const getSection=id=>SECTIONS.find(s=>s.id===id);
 
 // ========== THEORY ==========
 const THEORY={
+"5.1":[
+  {type:"explain",title:"Lijnstuk, lijn en halve lijn",text:"Een **LIJNSTUK** is de kortste verbinding tussen twee punten.\nBijv. lijnstuk AB — A en B zijn de eindpunten.\n\nEen **LIJN** ontstaat als je een lijnstuk aan beide kanten oneindig verlengt.\n→ Een lijn heeft **GEEN** eindpunten.\n→ We noteren een lijn met een kleine letter, bijv. lijn k.\n\nEen **HALVE LIJN** ontstaat als je een lijnstuk aan één kant verlengt.\n→ Een halve lijn heeft **ÉÉN** eindpunt.\n\nSamenvatting:\n• Lijnstuk: **2** eindpunten\n• Lijn: **0** eindpunten\n• Halve lijn: **1** eindpunt"},
+  {type:"explain",title:"Loodlijnen en evenwijdige lijnen",text:"**LOODRECHT (⊥)**\nTwee lijnen staan loodrecht op elkaar als ze een rechte hoek (90°) maken.\nNotatie: l ⊥ m ('l staat loodrecht op m')\nHet tekentje ⊢ in de figuur = rechtehoekteken.\n\n**EVENWIJDIG (//**)\nEvenwijdige lijnen hebben dezelfde richting en snijden elkaar NIET.\nNotatie: l // m ('l is evenwijdig met m')\nAan de pijltjes (→→) kun je zien welke lijnen evenwijdig zijn.\n\nTekenen:\n• Loodlijn: gebruik de loodlijn van je geodriehoek\n• Evenwijdige lijn: gebruik de lange zijde van je geodriehoek"},
+  {type:"check",q:"Hoeveel eindpunten heeft een halve lijn?",answer:1,hint:"Een halve lijn heeft 1 eindpunt."},
+  {type:"check",q:"Hoeveel eindpunten heeft een lijn?",answer:0,hint:"Een lijn heeft geen eindpunten (oneindig aan beide kanten)."},
+],
+"5.2":[
+  {type:"explain",title:"Soorten hoeken",text:"Twee halve lijnen met hetzelfde eindpunt vormen een **HOEK**.\nDe halve lijnen zijn de **benen** van de hoek.\nHet gemeenschappelijke eindpunt is het **hoekpunt**.\n\n4 soorten hoeken:\n📐 **RECHTE HOEK** = precies 90°\n🔹 **SCHERPE HOEK** = tussen 0° en 90°\n🔸 **STOMPE HOEK** = tussen 90° en 180°\n➖ **GESTREKTE HOEK** = precies 180° (rechte lijn)"},
+  {type:"explain",title:"Graden en de klok",text:"Hoeken meten we in **graden**.\n\nEen rechte hoek = **90°**\nEen gestrekte hoek = **180°**\nEen kwartslag = 90°, halve slag = 180°, hele slag = **360°**.\n\n🕐 Klok:\n• Grote wijzer: 360° per uur = **6°** per minuut\n• Kleine wijzer: 360° per 12 uur = **30°** per uur = 0,5° per minuut\n\nVoorbeelden:\nOm 3 uur → 90° (rechte hoek)\nOm 6 uur → 180° (gestrekte hoek)\nOm 5 uur → 150° (stompe hoek)\nOm 1 uur → 30° (scherpe hoek)"},
+  {type:"check",q:"Hoeveel graden is een gestrekte hoek?",answer:180,hint:"Een gestrekte hoek = 180°"},
+  {type:"check",q:"Hoeveel graden draait de kleine wijzer per uur?",answer:30,hint:"360° / 12 uur = 30° per uur"},
+],
+"5.3":[
+  {type:"explain",title:"Hoeken meten met je geodriehoek",text:"**Werkschema:**\n\n**1.** Leg je geodriehoek op het hoekpunt.\nLeg het streepje bij de 0 op het hoekpunt.\n\n**2.** Leg de lange kant langs één been van de hoek.\nZorg dat het andere been onder de gradenboog ligt.\n\n**3.** Lees het aantal graden af bij het andere been.\nEr staan **TWEE** getallen — kies het juiste!\n\n**4.** Kies scherp of stomp:\n• Scherpe hoek → kies het kleinere getal\n• Stompe hoek → kies het grotere getal\n\nVoorbeeld: je leest af 53° en 127°.\nDe hoek is scherp → ∠A = 53°.\n\n💡 De twee getallen tellen altijd op tot **180°**!"},
+  {type:"check",q:"De twee getallen bij een streepje op de geodriehoek tellen op tot...",answer:180,hint:"Ze tellen altijd op tot 180°"},
+],
+"5.4":[
+  {type:"explain",title:"Hoeken tekenen met je geodriehoek",text:"**Werkschema** voor het tekenen van een hoek van 130°:\n\n**1.** Teken een punt A en een been van de hoek.\n\n**2.** Leg de lange kant langs het been.\nLeg het 0-streepje op punt A.\n\n**3.** Zoek het getal 130 op de gradenboog.\n130° is stomp → kies de kant die een stompe hoek oplevert.\nZet daar een stip.\n\n**4.** Teken het tweede been door de stip.\n\n💡 **Driehoeken tekenen:**\nAls je twee hoeken en de zijde ertussen kent:\n1. Teken de zijde\n2. Teken de ene hoek bij het ene eindpunt\n3. Teken de andere hoek bij het andere eindpunt\n4. Waar de benen snijden = het derde hoekpunt"},
+  {type:"check",q:"Is een hoek van 130° scherp of stomp?",answer:"stomp",type2:"choice",options:["scherp","stomp"],hint:"130° > 90° → stomp"},
+],
+"5.5":[
+  {type:"explain",title:"Drie rekenregels",text:"Bij het berekenen van hoeken gebruik je drie regels:\n\n**1️⃣ Een RECHTE HOEK is 90°**\n∠A₁ + ∠A₂ = 90° (als ze samen een rechte hoek vormen)\n\n**2️⃣ Een GESTREKTE HOEK is 180°**\n∠B₁ + ∠B₂ = 180° (als ze samen een gestrekte hoek vormen)\n\n**3️⃣ OVERSTAANDE HOEKEN zijn even groot**\nBij twee snijdende lijnen:\nDe hoeken die tegenover elkaar liggen zijn gelijk.\n∠S₁ = ∠S₃  en  ∠S₂ = ∠S₄"},
+  {type:"example",title:"Voorbeeld",text:"Gegeven: ∠A₁ = 42° en ∠A₃ = 90°.\n∠A₁₂₃ is een gestrekte hoek (180°).\n\nBereken ∠A₂:\n∠A₂ = 180° − 42° − 90° = **48°** (gestrekte hoek)\n\nBereken ∠A₄:\n∠A₄ = ∠A₁ = **42°** (overstaande hoeken)\n\nBereken ∠A₅:\n∠A₅ = ∠A₂₃ = 48° + 90° = **138°** (overstaande hoeken)\n\n💡 Zet bij elke berekening de gebruikte regel tussen haakjes!"},
+  {type:"check",q:"∠A₁ = 42° en vormt samen met ∠A₂ een gestrekte hoek. ∠A₂ = ?",answer:138,hint:"180° − 42° = 138°"},
+  {type:"check",q:"∠B₁ = 53° en vormt samen met ∠B₂ een rechte hoek. ∠B₂ = ?",answer:37,hint:"90° − 53° = 37°"},
+],
+"5.6":[
+  {type:"explain",title:"Hoekensom driehoek",text:"In elke driehoek is de som van de drie hoeken **180°**.\n\n∠D + ∠E + ∠F = 180° (hoekensom driehoek)\n\nAls je twee hoeken kent → bereken de derde.\n\nVoorbeeld:\nVan △DEF: ∠D = 40° en ∠F = 60°.\n∠E = 180° − 40° − 60° = **80°** (hoekensom driehoek)"},
+  {type:"explain",title:"Hoekensom vierhoek",text:"In elke vierhoek is de som van de vier hoeken **360°**.\n\nWaarom? Een diagonaal verdeelt de vierhoek in twee driehoeken.\n2 × 180° = **360°**\n\nVoorbeeld:\nVan PQRS: ∠P = 76°, ∠Q = 108°, ∠S = 98°.\n∠R = 360° − 76° − 108° − 98° = **78°** (hoekensom vierhoek)"},
+  {type:"explain",title:"Figuren met meerdere driehoeken",text:"In figuren met meerdere driehoeken heb je vaak tussenstappen nodig.\n\nAlle regels op een rij:\n• Rechte hoek: **90°**\n• Gestrekte hoek: **180°**\n• Overstaande hoeken: **even groot**\n• Hoekensom driehoek: **180°**\n• Hoekensom vierhoek: **360°**\n\n💡 Zet altijd de gebruikte regel tussen haakjes achter je berekening!"},
+  {type:"check",q:"∠D = 40° en ∠F = 60° in △DEF. Bereken ∠E.",answer:80,hint:"180° − 40° − 60° = 80° (hoekensom driehoek)"},
+  {type:"check",q:"∠P = 76°, ∠Q = 108°, ∠S = 98° in vierhoek PQRS. Bereken ∠R.",answer:78,hint:"360° − 76° − 108° − 98° = 78° (hoekensom vierhoek)"},
+],
 "6.1":[
   {type:"explain",title:"Wat is een kwadraat?",text:"Het **kwadraat** van een getal bereken je door het getal met zichzelf te vermenigvuldigen.\n\nHet kwadraat van 7 is **7² = 7 × 7 = 49**.\nHet kwadraat van 15 is **15² = 15 × 15 = 225**.\n\nWe schrijven dit als 7² (spreek uit: 'zeven kwadraat')."},
   {type:"example",title:"Voorbeeld: kwadraten berekenen",text:"6² = 6 × 6 = **36**\n(⅔)² = ⅔ × ⅔ = **4/9**\n\nBij berekeningen gaat kwadrateren vóór vermenigvuldigen en delen:\n2 · 3² = 2 · 9 = **18** (eerst kwadrateren!)"},
@@ -111,8 +150,131 @@ const THEORY={
 
 // ========== QUESTION GENERATORS ==========
 function genQ(section,lv){
-  const g={"6.1":g61,"6.2":g62,"6.3":g63,"6.4":g64,"6.5":g65,"6.6":g66};
+  const g={"5.1":g51,"5.2":g52,"5.3":g53,"5.4":g54,"5.5":g55,"5.6":g56,"6.1":g61,"6.2":g62,"6.3":g63,"6.4":g64,"6.5":g65,"6.6":g66};
   return g[section](lv);
+}
+
+function g51(lv){
+  const pool1=[
+    {q:"Hoeveel eindpunten heeft een lijnstuk?",a:"2",o:["0","1","2","Oneindig"],h:"Lijnstuk: 2 eindpunten"},
+    {q:"Hoeveel eindpunten heeft een lijn?",a:"0",o:["0","1","2","Oneindig"],h:"Lijn: geen eindpunten"},
+    {q:"Hoeveel eindpunten heeft een halve lijn?",a:"1",o:["0","1","2","Oneindig"],h:"Halve lijn: 1 eindpunt"},
+    {q:"Wat betekent het symbool ⊥?",a:"Loodrecht",o:["Loodrecht","Evenwijdig","Gelijk aan","Groter dan"],h:"⊥ = loodrecht (rechte hoek)"},
+    {q:"Wat betekent het symbool //?",a:"Evenwijdig",o:["Evenwijdig","Loodrecht","Gelijk aan","Snijdend"],h:"// = evenwijdig"},
+  ];
+  const pool2=[
+    {q:"Twee lijnen staan loodrecht op elkaar. Welke hoek maken ze?",a:"90°",o:["90°","180°","45°","0°"],h:"Loodrecht = rechte hoek = 90°"},
+    {q:"Evenwijdige lijnen...",a:"Snijden elkaar niet",o:["Snijden elkaar niet","Snijden in één punt","Staan loodrecht","Maken 45°"],h:"Evenwijdig = zelfde richting, snijden niet"},
+    {q:"Wat verandert als je een lijnstuk aan beide kanten oneindig verlengt?",a:"Het wordt een lijn",o:["Het wordt een lijn","Het wordt een halve lijn","Er komt een punt bij","Niets"],h:"Aan beide kanten verlengen → lijn (0 eindpunten)"},
+    {q:"Hoe herken je evenwijdige lijnen in een figuur?",a:"Aan de pijltjes (→→)",o:["Aan de pijltjes (→→)","Aan het rechtehoekteken","Ze zijn even lang","Ze hebben dezelfde kleur"],h:"Evenwijdigheidspijltjes: →→"},
+  ];
+  const pool3=[
+    {q:"Lijn k ⊥ lijn l. Lijn m // k. Wat geldt?",a:"m ⊥ l",o:["m ⊥ l","m // l","m snijdt l schuin","Niets te zeggen"],h:"Als k ⊥ l en m // k, dan m ⊥ l"},
+    {q:"Een lijnstuk heeft 2 eindpunten. Als je aan één kant verlengt, hoeveel eindpunten dan?",a:"1",o:["0","1","2","3"],h:"Eén kant verlengen → halve lijn → 1 eindpunt"},
+    {q:"Welk hulpmiddel gebruik je om een loodlijn te tekenen?",a:"De loodlijn van je geodriehoek",o:["De loodlijn van je geodriehoek","Een passer","Een liniaal","Een gradenboog"],h:"Gebruik de loodlijn van je geodriehoek"},
+  ];
+  const p=lv===1?pool1:lv===2?pool2:pool3;
+  const q=pick(p);
+  return{q:q.q,a:q.a,t:"choice",o:q.o.sort(()=>Math.random()-0.5),h:q.h};
+}
+
+function g52(lv){
+  const pool1=[
+    {q:"Hoeveel graden is een rechte hoek?",a:"90°",o:["90°","180°","45°","360°"],h:"Rechte hoek = 90°"},
+    {q:"Hoeveel graden is een gestrekte hoek?",a:"180°",o:["180°","90°","270°","360°"],h:"Gestrekte hoek = 180°"},
+    {q:"Een hoek van 55° is een...",a:"Scherpe hoek",o:["Scherpe hoek","Rechte hoek","Stompe hoek","Gestrekte hoek"],h:"55° < 90° → scherp"},
+    {q:"Een hoek van 135° is een...",a:"Stompe hoek",o:["Stompe hoek","Scherpe hoek","Rechte hoek","Gestrekte hoek"],h:"90° < 135° < 180° → stomp"},
+    {q:"Hoeveel graden is een hele draai?",a:"360°",o:["360°","180°","90°","270°"],h:"Hele draai = 360°"},
+  ];
+  const pool2=[
+    {q:"De wijzers om 3 uur maken een hoek van...",a:"90°",o:["90°","180°","45°","120°"],h:"3 uur → 3×30° = 90°"},
+    {q:"De wijzers om 6 uur maken een hoek van...",a:"180°",o:["180°","90°","120°","270°"],h:"6 uur → 6×30° = 180°"},
+    {q:"Over hoeveel graden draait de grote wijzer per uur?",a:"360°",o:["360°","180°","30°","90°"],h:"Grote wijzer: 1 heel rondje per uur = 360°"},
+    {q:"Over hoeveel graden draait de kleine wijzer per uur?",a:"30°",o:["30°","360°","90°","60°"],h:"360° / 12 uur = 30° per uur"},
+    {q:"De hoek tussen de wijzers om 5 uur is...",a:"150°",o:["150°","90°","120°","180°"],h:"5 × 30° = 150°"},
+  ];
+  const pool3=[
+    {q:"Hoeveel graden draait de grote wijzer per minuut?",a:"6°",o:["6°","1°","12°","30°"],h:"360°/60 min = 6° per minuut"},
+    {q:"De hoek om kwart over 12 is...",a:"90°",o:["90°","45°","180°","30°"],h:"Kwart over → rechte hoek = 90°"},
+    {q:"Een hoek van precies 180° heet een...",a:"Gestrekte hoek",o:["Gestrekte hoek","Rechte hoek","Stompe hoek","Volle hoek"],h:"180° = gestrekte hoek"},
+    {q:"Hoeveel graden draait de kleine wijzer per minuut?",a:"0,5°",o:["0,5°","1°","6°","30°"],h:"30°/60 min = 0,5° per minuut"},
+  ];
+  const p=lv===1?pool1:lv===2?pool2:pool3;
+  const q=pick(p);
+  return{q:q.q,a:q.a,t:"choice",o:q.o.sort(()=>Math.random()-0.5),h:q.h};
+}
+
+function g53(lv){
+  const pool1=[
+    {q:"Je leest 47° en 133° af. De hoek is scherp. De hoek is...",a:"47°",o:["47°","133°","90°","180°"],h:"Scherp → kies het kleinere getal: 47°"},
+    {q:"De gradenboog op de geodriehoek loopt van...",a:"0° tot 180°",o:["0° tot 180°","0° tot 90°","0° tot 360°","0° tot 270°"],h:"Gradenboog: 0° – 180°"},
+    {q:"De twee getallen bij een streepje tellen op tot...",a:"180°",o:["180°","90°","360°","270°"],h:"Altijd 180°"},
+    {q:"Bij het meten leg je het 0-streepje op...",a:"Het hoekpunt",o:["Het hoekpunt","Het einde van een been","Het midden","Ergens naast de hoek"],h:"0-streepje op het hoekpunt"},
+  ];
+  const pool2=[
+    {q:"Je leest 62° en 118° af. De hoek is stomp. De hoek is...",a:"118°",o:["118°","62°","180°","90°"],h:"Stomp → kies het grotere getal: 118°"},
+    {q:"∠B is stomp. Je leest af: 43° en 137°. Hoe groot is ∠B?",a:"137°",o:["137°","43°","90°","180°"],h:"Stomp → 137°"},
+    {q:"Waarom staan er twee getallen bij elk streepje?",a:"Voor scherpe en stompe hoeken",o:["Voor scherpe en stompe hoeken","Om verwarring te voorkomen","Voor cm en graden","Voor linkshandigen"],h:"Twee schalen: scherp en stomp"},
+  ];
+  const pool3=[
+    {q:"Hoe kies je het juiste getal op de geodriehoek?",a:"Kijk of de hoek scherp of stomp is",o:["Kijk of de hoek scherp of stomp is","Kies altijd het kleinste","Kies altijd het grootste","Het maakt niet uit"],h:"Scherp → klein getal, stomp → groot getal"},
+    {q:"Je leest 90° af op de geodriehoek. De hoek is...",a:"Een rechte hoek",o:["Een rechte hoek","Scherp","Stomp","Gestrekt"],h:"90° = rechte hoek"},
+    {q:"Een overstrekte hoek is een hoek tussen...",a:"180° en 360°",o:["180° en 360°","0° en 90°","90° en 180°","0° en 180°"],h:"Overstrekt: 180° – 360°"},
+  ];
+  const p=lv===1?pool1:lv===2?pool2:pool3;
+  const q=pick(p);
+  return{q:q.q,a:q.a,t:"choice",o:q.o.sort(()=>Math.random()-0.5),h:q.h};
+}
+
+function g54(lv){
+  const pool1=[
+    {q:"Je wilt een hoek van 130° tekenen. Is dat scherp of stomp?",a:"Stomp",o:["Stomp","Scherp","Recht","Gestrekt"],h:"130° > 90° → stomp"},
+    {q:"Je tekent een hoek van 45°. Is dat scherp of stomp?",a:"Scherp",o:["Scherp","Stomp","Recht","Gestrekt"],h:"45° < 90° → scherp"},
+    {q:"Stap 1 bij het tekenen van een hoek: teken een...",a:"Punt en een been",o:["Punt en een been","Cirkel","Driehoek","Twee evenwijdige lijnen"],h:"Eerst een punt en een been tekenen"},
+  ];
+  const pool2=[
+    {q:"Bij het tekenen van △ABC ken je AB, ∠A en ∠B. Wat teken je eerst?",a:"Zijde AB",o:["Zijde AB","Hoek A","Hoek B","Punt C"],h:"Eerst de bekende zijde tekenen"},
+    {q:"Bij een driehoek snijden de benen van twee hoeken elkaar. Dat snijpunt is...",a:"Het derde hoekpunt",o:["Het derde hoekpunt","Het midden","Het zwaartepunt","Het middelpunt"],h:"Snijpunt = derde hoekpunt"},
+    {q:"Je wilt ∠D = 160° tekenen. Aan welke kant kies je 160?",a:"De stompe kant",o:["De stompe kant","Altijd links","Altijd rechts","Het maakt niet uit"],h:"160° is stomp → kies de stompe kant"},
+  ];
+  const pool3=[
+    {q:"Je hebt twee hoeken en de zijde ertussen. Kun je de driehoek tekenen?",a:"Ja",o:["Ja","Nee","Alleen als alle hoeken scherp zijn","Alleen met een passer"],h:"Twee hoeken + zijde ertussen → tekenen mogelijk"},
+    {q:"Wat doe je als de benen bij het tekenen van een driehoek elkaar niet snijden?",a:"Er is een fout gemaakt",o:["Er is een fout gemaakt","Maak de benen langer","Meet opnieuw","Het is geen driehoek"],h:"Als benen niet snijden: fout of niet mogelijk"},
+    {q:"Bij het tekenen leg je de 0 van de geodriehoek op...",a:"Het hoekpunt",o:["Het hoekpunt","Het einde van het been","Ergens op het been","Buiten de hoek"],h:"0-streepje altijd op het hoekpunt"},
+  ];
+  const p=lv===1?pool1:lv===2?pool2:pool3;
+  const q=pick(p);
+  return{q:q.q,a:q.a,t:"choice",o:q.o.sort(()=>Math.random()-0.5),h:q.h};
+}
+
+function g55(lv){
+  if(lv===1){
+    const a=rand(25,155);
+    return{q:"∠A₁ = "+a+"°. ∠A₁ en ∠A₂ vormen een gestrekte hoek.\nBereken ∠A₂.",a:180-a,h:"180° − "+a+"° = "+(180-a)+"°"};
+  }
+  if(lv===2){
+    const t=rand(1,2);
+    if(t===1){const a=rand(10,80);return{q:"∠B₁ = "+a+"°. ∠B₁ en ∠B₂ vormen een rechte hoek.\nBereken ∠B₂.",a:90-a,h:"90° − "+a+"° = "+(90-a)+"°"};}
+    const a=rand(30,150);return{q:"∠S₁ = "+a+"°. ∠S₃ is de overstaande hoek.\nHoe groot is ∠S₃?",a:a,h:"Overstaande hoeken zijn even groot: "+a+"°"};
+  }
+  const a=rand(20,70),b=90;
+  const c=180-a-b;
+  return{q:"∠A₁ = "+a+"° en ∠A₃ = "+b+"°.\n∠A₁₂₃ is een gestrekte hoek (180°).\nBereken ∠A₂.",a:c,h:"180° − "+a+"° − "+b+"° = "+c+"°"};
+}
+
+function g56(lv){
+  if(lv===1){
+    const a=rand(30,80),b=rand(30,80);
+    return{q:"In △DEF: ∠D = "+a+"° en ∠E = "+b+"°.\nBereken ∠F.",a:180-a-b,h:"180° − "+a+"° − "+b+"° = "+(180-a-b)+"° (hoekensom driehoek)"};
+  }
+  if(lv===2){
+    const a=rand(40,120),b=rand(40,120),c=rand(40,120);const d=360-a-b-c;
+    if(d<10||d>170){return g56(lv);}
+    return{q:"In vierhoek PQRS: ∠P = "+a+"°, ∠Q = "+b+"°, ∠S = "+c+"°.\nBereken ∠R.",a:d,h:"360° − "+a+"° − "+b+"° − "+c+"° = "+d+"° (hoekensom vierhoek)"};
+  }
+  const a=rand(25,70),b=rand(25,70);const c=180-a-b;
+  const d=rand(20,60);
+  return{q:"In △ABC: ∠B = "+a+"° en ∠C = "+b+"°.\n∠A₁ = ∠A₂ (twee gelijke delen).\nBereken ∠A₁.",a:Math.round(c/2),h:"∠A = 180° − "+a+"° − "+b+"° = "+c+"°\n∠A₁ = "+c+"° ÷ 2 = "+Math.round(c/2)+"°"};
 }
 
 function g61(lv){
@@ -207,22 +369,46 @@ function App(){
     React.createElement("div",{style:{minHeight:"100vh",background:"linear-gradient(160deg,#0c0c20,#141432 40%,#0e0e28)"}},
       React.createElement("div",{style:{background:"rgba(0,0,0,0.25)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+bdr,padding:"14px 20px",display:"flex",justifyContent:"space-between",alignItems:"center",position:"sticky",top:0,zIndex:50}},
         React.createElement("div",{style:{fontSize:"18px",fontWeight:900,background:"linear-gradient(90deg,#ff6b6b,#feca57,#48dbfb)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}},"Wiskunde Trainer"),
-        React.createElement("div",{style:{fontSize:"12px",color:"#666"}},"H6 · Formules & Letters")
+        React.createElement("div",{style:{fontSize:"12px",color:"#666"}},"H5+H6 · Lijnen, hoeken, formules")
       ),
       React.createElement("div",{style:{maxWidth:"640px",margin:"0 auto",padding:"20px 16px"}},
         React.createElement("div",{style:{textAlign:"center",margin:"8px 0 4px"}},React.createElement("span",{style:{fontSize:"42px"}},"🧮")),
-        React.createElement("div",{style:{fontSize:"clamp(26px,5vw,34px)",fontWeight:900,textAlign:"center",marginBottom:"6px"}},"Hoofdstuk 6"),
+        React.createElement("div",{style:{fontSize:"clamp(26px,5vw,34px)",fontWeight:900,textAlign:"center",marginBottom:"6px"}},"Hoofdstuk 5 + 6"),
         React.createElement("div",{style:{textAlign:"center",color:"#777",fontSize:"14px",marginBottom:"28px"}},"Kies een paragraaf om theorie te leren of te oefenen"),
         // Overall progress card
         React.createElement("div",{style:{background:cBg,borderRadius:"16px",padding:"18px",border:"1px solid "+bdr,marginBottom:"24px",textAlign:"center"}},
-          React.createElement("div",{style:{fontSize:"28px",fontWeight:900,color:totalMastered===6?"#6bcb77":"#fff"}},totalMastered+"/6 beheerst"),
-          React.createElement("div",{style:{fontSize:"13px",color:"#777",marginTop:"4px"}},totalMastered===6?"🎉 Alles beheerst! Klaar voor de toets!":"Min. 5 opgaven met ≥70% goed per paragraaf"),
+          React.createElement("div",{style:{fontSize:"28px",fontWeight:900,color:totalMastered===SECTIONS.length?"#6bcb77":"#fff"}},totalMastered+"/"+SECTIONS.length+" beheerst"),
+          React.createElement("div",{style:{fontSize:"13px",color:"#777",marginTop:"4px"}},totalMastered===SECTIONS.length?"🎉 Alles beheerst! Klaar voor de toets!":"Min. 5 opgaven met ≥70% goed per paragraaf"),
           React.createElement("div",{style:{display:"flex",gap:"6px",justifyContent:"center",marginTop:"12px"}},
             SECTIONS.map(s=>React.createElement("div",{key:s.id,style:{width:"32px",height:"32px",borderRadius:"8px",background:isMastered(s.id)?s.color+"30":"rgba(255,255,255,0.05)",border:"2px solid "+(isMastered(s.id)?s.color:"rgba(255,255,255,0.08)"),display:"flex",alignItems:"center",justifyContent:"center",fontSize:"14px",color:isMastered(s.id)?s.color:"#555"}},isMastered(s.id)?"✓":s.id.split(".")[1]))
           )
         ),
         // Section cards
-        SECTIONS.map(sec=>{const p=progress[sec.id],pct=getPct(sec.id),m=isMastered(sec.id);return React.createElement("div",{key:sec.id,style:{background:m?sec.color+"12":cBg,border:"1px solid "+(m?sec.color+"40":bdr),borderRadius:"16px",padding:"18px",marginBottom:"12px"}},
+        React.createElement("div",{style:{fontSize:"13px",fontWeight:800,color:"#1E90FF",textTransform:"uppercase",letterSpacing:"1px",margin:"8px 0 10px",paddingLeft:"4px"}},"Hoofdstuk 5 — Lijnen & hoeken"),
+        SECTIONS.filter(s=>s.ch===5).map(sec=>{const p=progress[sec.id],pct=getPct(sec.id),m=isMastered(sec.id);return React.createElement("div",{key:sec.id,style:{background:m?sec.color+"12":cBg,border:"1px solid "+(m?sec.color+"40":bdr),borderRadius:"16px",padding:"18px",marginBottom:"12px"}},
+          React.createElement("div",{style:{display:"flex",gap:"14px",alignItems:"center"}},
+            React.createElement("div",{style:{width:"40px",height:"40px",borderRadius:"10px",background:sec.color+"20",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"16px",fontWeight:800,color:sec.color,flexShrink:0}},sec.icon),
+            React.createElement("div",{style:{flex:1}},
+              React.createElement("div",{style:{fontSize:"16px",fontWeight:700}},"§"+sec.id+" "+sec.name),
+              React.createElement("div",{style:{fontSize:"12px",color:"#888",marginTop:"2px"}},sec.desc)
+            ),
+            m&&React.createElement("span",{style:{fontSize:"20px"}},"✅")
+          ),
+          React.createElement("div",{style:{display:"flex",gap:"6px",flexWrap:"wrap",marginTop:"10px"}},
+            React.createElement("span",{style:{display:"inline-block",padding:"2px 8px",borderRadius:"6px",fontSize:"11px",fontWeight:700,background:(p.theoryDone?"#6bcb77":"#888")+"20",color:p.theoryDone?"#6bcb77":"#888"}},p.theoryDone?"✓ Theorie":"○ Theorie"),
+            React.createElement("span",{style:{display:"inline-block",padding:"2px 8px",borderRadius:"6px",fontSize:"11px",fontWeight:700,background:(pct>=70&&p.total>=5?"#6bcb77":"#888")+"20",color:pct>=70&&p.total>=5?"#6bcb77":"#888"}},p.total>0?p.correct+"/"+p.total+" ("+pct+"%)":"Nog niet geoefend"),
+            p.bestStreak>=3&&React.createElement("span",{style:{display:"inline-block",padding:"2px 8px",borderRadius:"6px",fontSize:"11px",fontWeight:700,background:"#ffd93d20",color:"#ffd93d"}},"🔥 "+p.bestStreak+"x")
+          ),
+          p.total>0&&React.createElement("div",{style:{height:"4px",borderRadius:"2px",background:"rgba(255,255,255,0.08)",marginTop:"8px",position:"relative",overflow:"hidden"}},
+            React.createElement("div",{style:{position:"absolute",top:0,left:0,height:"100%",width:Math.min(pct,100)+"%",background:sec.color,borderRadius:"2px",transition:"width 0.5s"}})
+          ),
+          React.createElement("div",{style:{display:"flex",gap:"8px",marginTop:"12px"}},
+            React.createElement("button",{style:{padding:"10px 20px",borderRadius:"12px",border:"2px solid "+sec.color,background:"transparent",color:sec.color,fontSize:"14px",fontWeight:700,cursor:"pointer"},onClick:()=>startTheory(sec.id)},"📖 "+(p.theoryDone?"Herhaal":"Leer")),
+            React.createElement("button",{style:{padding:"10px 20px",borderRadius:"12px",border:"none",background:sec.color,color:"#fff",fontSize:"14px",fontWeight:700,cursor:"pointer"},onClick:()=>startQuiz(sec.id,1)},"✏️ Oefenen")
+          )
+        )}),
+        React.createElement("div",{style:{fontSize:"13px",fontWeight:800,color:"#E74C3C",textTransform:"uppercase",letterSpacing:"1px",margin:"20px 0 10px",paddingLeft:"4px"}},"Hoofdstuk 6 — Formules & letters"),
+        SECTIONS.filter(s=>s.ch===6).map(sec=>{const p=progress[sec.id],pct=getPct(sec.id),m=isMastered(sec.id);return React.createElement("div",{key:sec.id,style:{background:m?sec.color+"12":cBg,border:"1px solid "+(m?sec.color+"40":bdr),borderRadius:"16px",padding:"18px",marginBottom:"12px"}},
           React.createElement("div",{style:{display:"flex",gap:"14px",alignItems:"center"}},
             React.createElement("div",{style:{width:"40px",height:"40px",borderRadius:"10px",background:sec.color+"20",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"16px",fontWeight:800,color:sec.color,flexShrink:0}},sec.icon),
             React.createElement("div",{style:{flex:1}},

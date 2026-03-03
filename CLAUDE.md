@@ -25,6 +25,8 @@ Interactief studieplan + trainer-apps voor **Stijn** (VWO 1, Trevianum) ter voor
 ├── shared/
 │   └── progress.js        ← gedeelde progress tracking API (localStorage)
 └── trainers/
+    ├── wiskunde-h5/
+    │   └── index.html     ← ✅ Wiskunde H5 trainer (6 secties, §5.1-5.6 Lijnen en hoeken)
     ├── wiskunde-h6/
     │   └── index.html     ← ✅ Wiskunde H6 trainer (6 secties, multiple choice)
     ├── nederlands-1.3/
@@ -34,11 +36,11 @@ Interactief studieplan + trainer-apps voor **Stijn** (VWO 1, Trevianum) ter voor
     ├── engels/
     │   └── index.html     ← ✅ Engels Unit 2+3 trainer (5 secties, TYPE-modus)
     ├── geschiedenis/
-    │   └── index.html     ← ❌ NOG TE BOUWEN
+    │   └── index.html     ← ✅ Geschiedenis H4 Het Romeinse Rijk (3 secties)
     ├── biologie/
-    │   └── index.html     ← ❌ NOG TE BOUWEN
+    │   └── index.html     ← ✅ Biologie Thema 3 Ordening (8 secties)
     ├── aardrijkskunde/
-    │   └── index.html     ← ❌ NOG TE BOUWEN
+    │   └── index.html     ← ✅ Aardrijkskunde H4 Natuurrampen Japan (6 secties)
     └── tekenen-hv/
         └── index.html     ← ❌ NOG TE BOUWEN
 ```
@@ -139,10 +141,9 @@ Een sectie is "mastered" wanneer:
 - WB blz. 112-118 & 125-126
 - **Let op: Engels trainer gebruikt TYPEN, geen multiple choice**
 
-### ❌ Geschiedenis (nog te bouwen)
-- Blz 10-11, par 4.1, 4.2, 4.3
-- 8 vaardigheden
-- Materiaal: nog niet ontvangen van gebruiker
+### ✅ Geschiedenis (trainer klaar)
+- H4 Het Romeinse Rijk: par 4.1, 4.2, 4.3
+- Van stadstaat tot wereldrijk, bestuurstijdperken, leven in het Romeinse Rijk
 
 ### ❌ Biologie (nog te bouwen)
 - Thema 3: basisstof 1-6, extra stof 7-8
