@@ -6,11 +6,14 @@
 <title>Engels Trainer – Unit 2+3</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🇬🇧</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-<style>*{box-sizing:border-box;margin:0;padding:0}body{background:linear-gradient(160deg,#0a0e1a,#111830 50%,#0c1020);font-family:'Nunito',sans-serif;color:#ddd;min-height:100vh}button{font-family:inherit;cursor:pointer}button:active{transform:scale(0.97)}.fade-in{animation:fadeIn 0.3s ease}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}input[type=text]{font-family:inherit;font-size:16px;padding:14px 16px;border-radius:12px;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);color:#fff;width:100%;outline:none;transition:border-color 0.2s}input[type=text]:focus{border-color:#E91E6380}input[type=text].correct{border-color:#6bcb77;background:rgba(107,203,119,0.1)}input[type=text].wrong{border-color:#ff6b6b;background:rgba(255,107,107,0.1)}</style>
+<link rel="stylesheet" href="../../shared/trainer-base.css">
+<style>input[type=text]{font-family:inherit;font-size:16px;padding:14px 16px;border-radius:12px;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);color:#fff;width:100%;outline:none;transition:border-color 0.2s}input[type=text]:focus{border-color:#E91E6380}input[type=text].correct{border-color:#6bcb77;background:rgba(107,203,119,0.1)}input[type=text].wrong{border-color:#ff6b6b;background:rgba(255,107,107,0.1)}</style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="../../shared/firebase-config.js"></script>
 <script src="../../shared/progress.js"></script>
+<script src="../../shared/ui-helpers.js"></script>
+<script src="../../shared/dashboard-link.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
@@ -148,25 +151,20 @@ function App(){
   const[dashTaskId,setDashTaskId]=useState(null);
   const[dashDate,setDashDate]=useState(null);
 
-  const tag=(c,t)=>React.createElement("span",{style:{display:"inline-block",padding:"2px 8px",borderRadius:"6px",fontSize:"10px",fontWeight:700,background:c+"20",color:c}},t);
-  const pBar=(p,c,h)=>React.createElement("div",{style:{height:h||"6px",borderRadius:"3px",background:"rgba(255,255,255,0.06)",position:"relative",overflow:"hidden"}},React.createElement("div",{style:{position:"absolute",top:0,left:0,height:"100%",width:Math.min(p,100)+"%",background:c||COL,borderRadius:"3px",transition:"width 0.6s"}}));
+  const {tag, pBar} = window.TrainerUI;
   const getSt=id=>{const s=progress.getSection(id);return{...s,mastered:progress.isMastered(id),pct:s.total>0?Math.round(s.correct/s.total*100):0}};
   const overall=progress.getOverallStats();
 
   const startTheory=id=>{setActiveSec(id);setStep(0);setMode("theory")};
   // Deep link support
   useEffect(()=>{
-    const h=window.location.hash;if(!h)return;
-    const p=new URLSearchParams(h.slice(1));
-    const sec=p.get("section"),m=p.get("mode");
-    const tid=p.get("taskId"),dd=p.get("date");
-    if(tid)setDashTaskId(tid);
-    if(dd)setDashDate(dd);
-    if(sec&&SECTIONS.find(s=>s.id===sec)){
-      if(m==="practice")setTimeout(()=>startPractice(sec),100);
-      else if(m==="theory")startTheory(sec);
+    const dp=DashboardLink.readParams();if(!dp)return;
+    if(dp.taskId)setDashTaskId(dp.taskId);
+    if(dp.date)setDashDate(dp.date);
+    if(dp.section&&SECTIONS.find(s=>s.id===dp.section)){
+      if(dp.mode==="practice")setTimeout(()=>startPractice(dp.section),100);
+      else if(dp.mode==="theory")startTheory(dp.section);
     }
-    window.location.hash="";
   },[]);
   const startPractice=id=>{
     setActiveSec(id);
@@ -212,7 +210,7 @@ function App(){
     return React.createElement("div",{style:{minHeight:"100vh"}},
       React.createElement("div",{style:{background:"rgba(0,0,0,0.3)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+bdr,padding:"14px 20px",display:"flex",justifyContent:"space-between",alignItems:"center",position:"sticky",top:0,zIndex:50}},
         React.createElement("div",{style:{display:"flex",alignItems:"center",gap:"10px"}},
-          dashDate?React.createElement("a",{href:"../../dashboard.html#day="+dashDate,style:{color:"#4d96ff",textDecoration:"none",fontSize:"13px",fontWeight:700}},"\u2190 Planning"):React.createElement("a",{href:"../../index.html",style:{color:"#666",textDecoration:"none",fontSize:"18px"}},"\u2190"),
+          DashboardLink.backLink(dashDate),
           React.createElement("div",{style:{fontSize:"17px",fontWeight:900,color:COL}},"\u{1F1EC}\u{1F1E7} Engels")),
         React.createElement("div",{style:{fontSize:"12px",color:"#666"}},"Unit 2+3")),
       React.createElement("div",{style:{maxWidth:"640px",margin:"0 auto",padding:"16px 14px 60px"}},
@@ -252,7 +250,7 @@ function App(){
         // Footer
         React.createElement("div",{style:{display:"flex",gap:"8px",marginTop:"16px"}},
           React.createElement("a",{href:"../../index.html",style:{flex:1,display:"block",padding:"10px",borderRadius:"10px",background:"rgba(255,255,255,0.03)",color:"#666",fontSize:"12px",fontWeight:600,textDecoration:"none",textAlign:"center"}},"← Terug"),
-          React.createElement("button",{style:{padding:"10px 16px",borderRadius:"10px",border:"none",background:"rgba(255,255,255,0.03)",color:"#555",fontSize:"12px",fontWeight:600},onClick:()=>{if(confirm("Reset all progress?")){progress.reset();forceUpdate(n=>n+1)}}},"🔄"))));
+          React.createElement("button",{style:{padding:"10px 16px",borderRadius:"10px",border:"none",background:"rgba(255,255,255,0.03)",color:"#555",fontSize:"12px",fontWeight:600},onClick:()=>{if(confirm("Reset all progress?")){progress.reset();forceUpdate(n=>n+1)}}},"🔄 Reset voortgang"))));
   }
 
   // ===== THEORY =====
@@ -277,7 +275,7 @@ function App(){
             step>0&&React.createElement("button",{style:{flex:1,padding:"12px",borderRadius:"12px",border:"none",background:"rgba(255,255,255,0.06)",color:"#999",fontSize:"14px",fontWeight:700},onClick:()=>setStep(step-1)},"← Terug"),
             React.createElement("button",{style:{flex:2,padding:"12px",borderRadius:"12px",border:"none",background:COL,color:"#fff",fontSize:"14px",fontWeight:800},onClick:()=>{
               if(isLast){progress.markTheoryDone(activeSec);forceUpdate(n=>n+1);setMode("home")}else setStep(step+1)
-            }},isLast?"✅ Theorie klaar!":"Volgende →")))));
+            }},isLast?"✅ Theorie afgerond!":"Volgende →")))));
   }
 
   // ===== PRACTICE (TYPING) =====
@@ -346,7 +344,7 @@ function App(){
             React.createElement("div",{style:{fontSize:"13px",color:"#ccc"}},w.q),
             React.createElement("div",{style:{fontSize:"12px",color:"#ff6b6b",marginTop:"2px"}},"Your answer: "+w.chosen),
             React.createElement("div",{style:{fontSize:"12px",color:"#6bcb77",marginTop:"2px"}},"Correct: "+w.correct)))),
-        dashTaskId&&pct>=80&&React.createElement("a",{href:"../../dashboard.html#checkoff="+dashTaskId+"&day="+(dashDate||""),style:{display:"block",width:"100%",padding:"12px",borderRadius:"12px",border:"2px solid #6bcb77",background:"rgba(107,203,119,0.12)",color:"#6bcb77",fontSize:"14px",fontWeight:800,textAlign:"center",textDecoration:"none",marginBottom:"8px"}},"\u2713 Check off & back to planning"),
+        DashboardLink.checkoffButton(dashTaskId,dashDate,pct),
         React.createElement("div",{style:{display:"flex",gap:"8px"}},
           React.createElement("button",{style:{flex:1,padding:"12px",borderRadius:"12px",border:"none",background:"rgba(255,255,255,0.06)",color:"#999",fontSize:"14px",fontWeight:700},onClick:()=>setMode("home")},"\u2190 Back"),
           React.createElement("button",{style:{flex:1,padding:"12px",borderRadius:"12px",border:"none",background:COL,color:"#fff",fontSize:"14px",fontWeight:800},onClick:()=>startPractice(activeSec)},"Again"))));

@@ -6,11 +6,13 @@
 <title>Geschiedenis Trainer – H4 Het Romeinse Rijk</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏛️</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-<style>*{box-sizing:border-box;margin:0;padding:0}body{background:linear-gradient(160deg,#0a0e1a,#111830 50%,#0c1020);font-family:'Nunito',sans-serif;color:#ddd;min-height:100vh}button{font-family:inherit;cursor:pointer}button:active{transform:scale(0.97)}.fade-in{animation:fadeIn 0.3s ease}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}</style>
+<link rel="stylesheet" href="../../shared/trainer-base.css">
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="../../shared/firebase-config.js"></script>
 <script src="../../shared/progress.js"></script>
+<script src="../../shared/ui-helpers.js"></script>
+<script src="../../shared/dashboard-link.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
@@ -160,16 +162,12 @@ function App(){
 
   // Deep link support
   useEffect(()=>{
-    const h=window.location.hash;if(!h)return;
-    const p=new URLSearchParams(h.slice(1));
-    const sec=p.get("section"),m=p.get("mode");
-    const tid=p.get("taskId"),dd=p.get("date");
-    if(tid)setDashTaskId(tid);
-    if(dd)setDashDate(dd);
-    if(sec&&SECTIONS.find(s=>s.id===sec)){
-      openSection(sec,m==="theory"?"theory":"practice");
+    const dp=DashboardLink.readParams();if(!dp)return;
+    if(dp.taskId)setDashTaskId(dp.taskId);
+    if(dp.date)setDashDate(dp.date);
+    if(dp.section&&SECTIONS.find(s=>s.id===dp.section)){
+      openSection(dp.section,dp.mode==="theory"?"theory":"practice");
     }
-    window.location.hash="";
   },[]);
 
   const openSection=(id,mode)=>{
@@ -209,15 +207,12 @@ function App(){
     else{refreshStats();setScreen("results");}
   };
 
-  const pct=n=>Math.min(100,Math.round(n));
-  const pBar=(p,c,h)=>React.createElement("div",{style:{height:h||6,borderRadius:3,background:"rgba(255,255,255,0.06)",overflow:"hidden"}},
-    React.createElement("div",{style:{height:"100%",width:pct(p)+"%",background:c||COL,borderRadius:3,transition:"width 0.5s"}}));
-  const tag=(c,t)=>React.createElement("span",{style:{padding:"2px 8px",borderRadius:6,fontSize:10,fontWeight:700,background:c+"22",color:c}},t);
+  const {tag, pBar} = window.TrainerUI;
 
   // ===== HOME =====
   if(screen==="home") return React.createElement("div",{style:{minHeight:"100vh"}},
     React.createElement("div",{style:{background:"rgba(0,0,0,0.3)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+bdr,padding:"14px 20px",display:"flex",justifyContent:"space-between",alignItems:"center",position:"sticky",top:0,zIndex:50}},
-      dashDate?React.createElement("a",{href:"../../dashboard.html#day="+dashDate,style:{fontSize:13,color:"#4d96ff",textDecoration:"none",fontWeight:700}},"\u2190 Planning"):React.createElement("a",{href:"../../index.html",style:{fontSize:13,color:"#555",textDecoration:"none"}},"\u2190 Terug"),
+      DashboardLink.backLink(dashDate),
       React.createElement("div",{style:{fontSize:16,fontWeight:900,color:COL}},"\u{1F3DB}\uFE0F Geschiedenis"),
       React.createElement("div",{style:{fontSize:12,color:"#555"}},"H4 Het Romeinse Rijk")),
     React.createElement("div",{style:{maxWidth:640,margin:"0 auto",padding:"16px 14px 60px"}},
@@ -278,7 +273,7 @@ function App(){
         React.createElement("button",{
           style:{width:"100%",marginTop:16,padding:"14px",borderRadius:12,border:"none",background:COL,color:"#fff",fontSize:16,fontWeight:800},
           onClick:nextTheory},
-          isLast?"\u2705 Klaar! Terug naar overzicht \u2192":"Volgende \u2192")));
+          isLast?"✅ Theorie afgerond!":"Volgende →")));
   }
 
   // ===== PRACTICE =====
@@ -332,7 +327,7 @@ function App(){
             React.createElement("div",{style:{fontSize:12,color:a.ok?"#6bcb77":"#ff6b6b",fontWeight:700,marginBottom:4}},a.ok?"\u2713 Goed":"\u2717 Fout"),
             React.createElement("div",{style:{fontSize:13,color:"#ccc",marginBottom:2}},a.q),
             !a.ok&&React.createElement("div",{style:{fontSize:12,color:"#6bcb77"}},"Juist: "+a.correct)))),
-        dashTaskId&&pct>=80&&React.createElement("a",{href:"../../dashboard.html#checkoff="+dashTaskId+"&day="+(dashDate||""),style:{display:"block",width:"100%",padding:14,borderRadius:12,border:"2px solid #6bcb77",background:"rgba(107,203,119,0.12)",color:"#6bcb77",fontSize:14,fontWeight:800,textAlign:"center",textDecoration:"none",marginBottom:8}},"\u2713 Afvinken & terug naar planning"),
+        DashboardLink.checkoffButton(dashTaskId,dashDate,pct),
         React.createElement("div",{style:{display:"flex",gap:8}},
           React.createElement("button",{style:{flex:1,padding:14,borderRadius:12,border:"none",background:"rgba(255,255,255,0.06)",color:"#ccc",fontSize:14,fontWeight:700},onClick:()=>setScreen("home")},"\u2190 Overzicht"),
           React.createElement("button",{style:{flex:1,padding:14,borderRadius:12,border:"none",background:COL,color:"#fff",fontSize:14,fontWeight:700},onClick:()=>openSection(secId,"practice")},"\u{1F504} Opnieuw"))));
