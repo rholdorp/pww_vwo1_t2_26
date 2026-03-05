@@ -15,14 +15,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 <script src="../../shared/dashboard-link.js"></script>
+<script src="generators-h5.js"></script>
+<script src="generators-h6.js"></script>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
 const {useState,useEffect,useRef}=React;
 
-const rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
-const pick=a=>a[Math.floor(Math.random()*a.length)];
+// rand and pick are defined in generators-h5.js (loaded as global)
 
 const STORE_KEY="wiskunde_h5h6";
 const loadState=()=>{try{return JSON.parse(localStorage.getItem(STORE_KEY))}catch{return null}};
@@ -143,231 +144,21 @@ const THEORY={
 ],
 };
 
-// ========== QUESTION GENERATORS ==========
-function genQ(section,lv){
+// ========== QUESTION GENERATORS (loaded from generators-h5.js and generators-h6.js) ==========
+// g51-g66 are global functions, no level parameter (diagnostic only)
+function genQ(section){
   const g={"5.1":g51,"5.2":g52,"5.3":g53,"5.4":g54,"5.5":g55,"5.6":g56,"6.1":g61,"6.2":g62,"6.3":g63,"6.4":g64,"6.5":g65,"6.6":g66};
-  return g[section](lv);
+  return g[section]();
 }
-
-function g51(lv){
-  var ln=pick(["k","l","m","n","p","q","r","s"]);
-  var ln2,ln3;do{ln2=pick(["k","l","m","n","p","q","r","s"])}while(ln2===ln);do{ln3=pick(["k","l","m","n","p","q","r","s"])}while(ln3===ln||ln3===ln2);
-  var pt1=pick(["A","B","C","D","E","P","Q","R"]);var pt2;do{pt2=pick(["A","B","C","D","E","P","Q","R"])}while(pt2===pt1);
-  if(lv===1){
-    var t=rand(1,8);
-    if(t===1){var c=pick(["lijnstuk","lijn","halve lijn"]);var ans=c==="lijnstuk"?"2":c==="lijn"?"0":"1";return{q:"Hoeveel eindpunten heeft een "+c+"?",a:ans,t:"choice",o:["0","1","2","Oneindig"].sort(function(){return Math.random()-0.5}),h:c==="lijnstuk"?"Lijnstuk: 2 eindpunten":c==="lijn"?"Lijn: 0 eindpunten":"Halve lijn: 1 eindpunt"};}
-    if(t===2){return{q:"Wat betekent het symbool ⊥?",a:"Loodrecht",t:"choice",o:["Loodrecht","Evenwijdig","Gelijk aan","Groter dan"].sort(function(){return Math.random()-0.5}),h:"⊥ = loodrecht (rechte hoek)"};}
-    if(t===3){return{q:"Wat betekent het symbool //?",a:"Evenwijdig",t:"choice",o:["Evenwijdig","Loodrecht","Gelijk aan","Snijdend"].sort(function(){return Math.random()-0.5}),h:"// = evenwijdig"};}
-    if(t===4){return{q:"Het symbool ⊥ tussen twee lijnen betekent dat ze een hoek maken van...",a:"90°",t:"choice",o:["90°","180°","45°","0°"].sort(function(){return Math.random()-0.5}),h:"⊥ = loodrecht = 90°"};}
-    if(t===5){var c2=pick(["lijnstuk","lijn","halve lijn"]);var ep=c2==="lijnstuk"?2:c2==="lijn"?0:1;return{q:"Een "+c2+" heeft ... eindpunt(en).",a:String(ep),t:"choice",o:["0","1","2","3"].sort(function(){return Math.random()-0.5}),h:c2+": "+ep+" eindpunt(en)"};}
-    if(t===6){return{q:"Lijnstuk "+pt1+pt2+" verbindt twee punten. Hoeveel eindpunten heeft het?",a:"2",t:"choice",o:["0","1","2","Oneindig"].sort(function(){return Math.random()-0.5}),h:"Een lijnstuk heeft altijd 2 eindpunten: "+pt1+" en "+pt2};}
-    if(t===7){return{q:ln+" ⊥ "+ln2+" betekent: "+ln+" staat ... op "+ln2+".",a:"Loodrecht",t:"choice",o:["Loodrecht","Evenwijdig","Schuin","Haaks en evenwijdig"].sort(function(){return Math.random()-0.5}),h:"⊥ = loodrecht"};}
-    return{q:ln+" // "+ln2+" betekent: "+ln+" is ... aan "+ln2+".",a:"Evenwijdig",t:"choice",o:["Evenwijdig","Loodrecht","Gelijk","Tegengesteld"].sort(function(){return Math.random()-0.5}),h:"// = evenwijdig"};
+// Generate a unique question (not in the usedSet)
+function genUniqueQ(section,usedSet,maxTries){
+  maxTries=maxTries||30;
+  for(var i=0;i<maxTries;i++){
+    var q=genQ(section);
+    var key=q.q+"|"+String(q.a);
+    if(!usedSet.has(key)){usedSet.add(key);return q;}
   }
-  if(lv===2){
-    var t=rand(1,8);
-    if(t===1){return{q:"Twee lijnen staan loodrecht op elkaar. Welke hoek maken ze?",a:"90°",t:"choice",o:["90°","180°","45°","0°"].sort(function(){return Math.random()-0.5}),h:"Loodrecht = rechte hoek = 90°"};}
-    if(t===2){return{q:"Evenwijdige lijnen...",a:"Snijden elkaar niet",t:"choice",o:["Snijden elkaar niet","Snijden in één punt","Staan loodrecht","Maken 45°"].sort(function(){return Math.random()-0.5}),h:"Evenwijdig = zelfde richting, snijden niet"};}
-    if(t===3){var from=pick(["lijnstuk","halve lijn"]);if(from==="lijnstuk"){return{q:"Wat ontstaat als je lijnstuk "+pt1+pt2+" aan beide kanten oneindig verlengt?",a:"Een lijn",t:"choice",o:["Een lijn","Een halve lijn","Een straal","Een cirkel"].sort(function(){return Math.random()-0.5}),h:"Beide kanten verlengen → lijn (0 eindpunten)"};}return{q:"Wat ontstaat als je een halve lijn ook aan de andere kant verlengt?",a:"Een lijn",t:"choice",o:["Een lijn","Een lijnstuk","Een straal","Twee halve lijnen"].sort(function(){return Math.random()-0.5}),h:"Beide kanten oneindig → lijn"};}
-    if(t===4){return{q:"Hoe herken je evenwijdige lijnen in een figuur?",a:"Aan de pijltjes (→→)",t:"choice",o:["Aan de pijltjes (→→)","Aan het rechtehoekteken","Ze zijn even lang","Ze hebben dezelfde kleur"].sort(function(){return Math.random()-0.5}),h:"Evenwijdigheidspijltjes: →→"};}
-    if(t===5){return{q:"Hoe herken je loodrechte lijnen in een figuur?",a:"Aan het rechtehoekteken (⊢)",t:"choice",o:["Aan het rechtehoekteken (⊢)","Aan de pijltjes","Ze zijn even lang","Ze kruisen"].sort(function(){return Math.random()-0.5}),h:"Rechtehoekteken ⊢ = loodrecht"};}
-    if(t===6){return{q:"Om een evenwijdige lijn te tekenen gebruik je...",a:"De lange zijde van je geodriehoek",t:"choice",o:["De lange zijde van je geodriehoek","Een passer","De gradenboog","Een liniaal zonder geodriehoek"].sort(function(){return Math.random()-0.5}),h:"Evenwijdige lijn: lange zijde geodriehoek"};}
-    if(t===7){return{q:"Een lijnstuk heeft 2 eindpunten. Als je aan één kant verlengt krijg je...",a:"Een halve lijn (1 eindpunt)",t:"choice",o:["Een halve lijn (1 eindpunt)","Een lijn (0 eindpunten)","Nog steeds een lijnstuk","Een straal"].sort(function(){return Math.random()-0.5}),h:"Eén kant verlengen → halve lijn → 1 eindpunt"};}
-    return{q:"Lijn "+ln+" en lijn "+ln2+" snijden elkaar NIET. Wat geldt er?",a:ln+" // "+ln2,t:"choice",o:[ln+" // "+ln2,ln+" ⊥ "+ln2,ln+" = "+ln2,"Ze zijn gelijk"].sort(function(){return Math.random()-0.5}),h:"Niet snijden = evenwijdig = //"};
-  }
-  // level 3
-  var t=rand(1,8);
-  if(t===1){return{q:"Lijn "+ln+" ⊥ lijn "+ln2+". Lijn "+ln3+" // "+ln+".\nWat geldt voor "+ln3+" en "+ln2+"?",a:ln3+" ⊥ "+ln2,t:"choice",o:[ln3+" ⊥ "+ln2,ln3+" // "+ln2,ln3+" snijdt "+ln2+" schuin","Niets te zeggen"].sort(function(){return Math.random()-0.5}),h:"Als "+ln+" ⊥ "+ln2+" en "+ln3+" // "+ln+", dan "+ln3+" ⊥ "+ln2};}
-  if(t===2){return{q:"Lijn "+ln+" // lijn "+ln2+". Lijn "+ln3+" // "+ln+".\nWat geldt voor "+ln3+" en "+ln2+"?",a:ln3+" // "+ln2,t:"choice",o:[ln3+" // "+ln2,ln3+" ⊥ "+ln2,ln3+" snijdt "+ln2,"Niets te zeggen"].sort(function(){return Math.random()-0.5}),h:"Als "+ln+" // "+ln2+" en "+ln3+" // "+ln+", dan "+ln3+" // "+ln2};}
-  if(t===3){return{q:"Lijn "+ln+" ⊥ lijn "+ln2+". Lijn "+ln3+" ⊥ "+ln2+".\nWat geldt voor "+ln+" en "+ln3+"?",a:ln+" // "+ln3,t:"choice",o:[ln+" // "+ln3,ln+" ⊥ "+ln3,ln+" snijdt "+ln3+" schuin","Niets te zeggen"].sort(function(){return Math.random()-0.5}),h:"Beide loodrecht op "+ln2+" → "+ln+" // "+ln3};}
-  if(t===4){return{q:"Je hebt lijnstuk "+pt1+pt2+". Om er een halve lijn van te maken verleng je...",a:"Aan één kant",t:"choice",o:["Aan één kant","Aan beide kanten","Helemaal niet","Je knipt het door"].sort(function(){return Math.random()-0.5}),h:"Eén kant verlengen → halve lijn"};}
-  if(t===5){return{q:"Welk hulpmiddel gebruik je om een loodlijn te tekenen?",a:"De loodlijn van je geodriehoek",t:"choice",o:["De loodlijn van je geodriehoek","Een passer","Alleen een liniaal","Een gradenboog"].sort(function(){return Math.random()-0.5}),h:"Gebruik de loodlijn van je geodriehoek"};}
-  if(t===6){var c3=pick(["lijnstuk","lijn","halve lijn"]);var ep=c3==="lijnstuk"?2:c3==="lijn"?0:1;var stated=pick([0,1,2]);return{q:"Waar of niet waar: een "+c3+" heeft "+stated+" eindpunt(en).",a:stated===ep?"Waar":"Niet waar",t:"choice",o:["Waar","Niet waar"].sort(function(){return Math.random()-0.5}),h:c3+" heeft "+ep+" eindpunt(en)"};}
-  if(t===7){return{q:ln+" ⊥ "+ln2+" en "+ln+" // "+ln3+".\n"+ln3+" staat op "+ln2+"...",a:"Loodrecht (90°)",t:"choice",o:["Loodrecht (90°)","Evenwijdig","Schuin (45°)","Dat kun je niet weten"].sort(function(){return Math.random()-0.5}),h:ln+" ⊥ "+ln2+" en "+ln3+" // "+ln+" → "+ln3+" ⊥ "+ln2};}
-  return{q:"Lijn "+ln+" ⊥ lijn "+ln2+". Hoeveel graden is de hoek tussen "+ln+" en "+ln2+"?",a:"90°",t:"choice",o:["90°","180°","45°","0°"].sort(function(){return Math.random()-0.5}),h:"Loodrecht = 90°"};
-}
-
-function g52(lv){
-  if(lv===1){
-    var t=rand(1,7);
-    if(t===1){var angle=rand(5,175);if(angle===90)return g52(lv);var type=angle<90?"Scherpe hoek":"Stompe hoek";return{q:"Een hoek van "+angle+"° is een...",a:type,t:"choice",o:["Scherpe hoek","Rechte hoek","Stompe hoek","Gestrekte hoek"].sort(function(){return Math.random()-0.5}),h:angle+"° "+(angle<90?"< 90° → scherp":"> 90° → stomp")};}
-    if(t===2){return{q:"Hoeveel graden is een rechte hoek?",a:"90°",t:"choice",o:["90°","180°","45°","360°"].sort(function(){return Math.random()-0.5}),h:"Rechte hoek = 90°"};}
-    if(t===3){return{q:"Hoeveel graden is een gestrekte hoek?",a:"180°",t:"choice",o:["180°","90°","270°","360°"].sort(function(){return Math.random()-0.5}),h:"Gestrekte hoek = 180°"};}
-    if(t===4){return{q:"Hoeveel graden is een hele draai?",a:"360°",t:"choice",o:["360°","180°","90°","270°"].sort(function(){return Math.random()-0.5}),h:"Hele draai = 360°"};}
-    if(t===5){var angle2=rand(1,179);var soort=angle2<90?"scherp":angle2===90?"recht":"stomp";return{q:"Een hoek van "+angle2+"° is "+soort+". Waar of niet waar?",a:"Waar",t:"choice",o:["Waar","Niet waar"].sort(function(){return Math.random()-0.5}),h:angle2+"° is inderdaad "+soort};}
-    if(t===6){var kwart=pick(["kwartslag","halve slag","hele slag"]);var ans=kwart==="kwartslag"?"90°":kwart==="halve slag"?"180°":"360°";return{q:"Een "+kwart+" is ... graden.",a:ans,t:"choice",o:["90°","180°","360°","270°"].sort(function(){return Math.random()-0.5}),h:kwart+" = "+ans};}
-    var angle3=rand(91,179);return{q:"Een stompe hoek ligt tussen...",a:"90° en 180°",t:"choice",o:["90° en 180°","0° en 90°","180° en 360°","0° en 180°"].sort(function(){return Math.random()-0.5}),h:"Stomp: tussen 90° en 180°"};
-  }
-  if(lv===2){
-    var t=rand(1,7);
-    if(t<=4){var hour=rand(1,11);var angle=hour<=6?hour*30:(12-hour)*30;var w1=angle+30;var w2=angle-30>0?angle-30:angle+60;return{q:"De hoek tussen de wijzers om "+hour+" uur is...",a:angle+"°",t:"choice",o:[angle+"°",w1+"°",w2+"°","180°"].sort(function(){return Math.random()-0.5}),h:hour+" uur → "+(hour<=6?hour:12-hour)+"×30° = "+angle+"°"};}
-    if(t===5){return{q:"Over hoeveel graden draait de grote wijzer per uur?",a:"360°",t:"choice",o:["360°","180°","30°","90°"].sort(function(){return Math.random()-0.5}),h:"Grote wijzer: 1 heel rondje per uur = 360°"};}
-    if(t===6){return{q:"Over hoeveel graden draait de kleine wijzer per uur?",a:"30°",t:"choice",o:["30°","360°","90°","6°"].sort(function(){return Math.random()-0.5}),h:"360° / 12 uur = 30° per uur"};}
-    var hour2=rand(1,11);var angle2=hour2<=6?hour2*30:(12-hour2)*30;var soort=angle2<90?"scherp":angle2===90?"recht":"stomp";return{q:"Om "+hour2+" uur is de hoek tussen de wijzers "+soort+". Waar of niet waar?",a:"Waar",t:"choice",o:["Waar","Niet waar"].sort(function(){return Math.random()-0.5}),h:hour2+" uur → "+angle2+"° → "+soort};
-  }
-  // level 3
-  var t=rand(1,7);
-  if(t===1){return{q:"Hoeveel graden draait de grote wijzer per minuut?",a:"6°",t:"choice",o:["6°","1°","12°","30°"].sort(function(){return Math.random()-0.5}),h:"360°/60 min = 6° per minuut"};}
-  if(t===2){return{q:"Hoeveel graden draait de kleine wijzer per minuut?",a:"0,5°",t:"choice",o:["0,5°","1°","6°","30°"].sort(function(){return Math.random()-0.5}),h:"30°/60 min = 0,5° per minuut"};}
-  if(t===3){var kw=pick([3,6,9,12]);var kwLabel=kw===3?"kwart over 12":kw===6?"half 1":kw===9?"kwart voor 1":"12 uur";var kwAngle=kw===3?90:kw===6?180:kw===9?90:0;if(kwAngle===0)return g52(lv);return{q:"De hoek tussen de wijzers om "+kwLabel+" is...",a:kwAngle+"°",t:"choice",o:[kwAngle+"°",(kwAngle+30)+"°","45°","180°"].sort(function(){return Math.random()-0.5}),h:kwLabel+" → "+kwAngle+"°"};}
-  if(t===4){var angle=rand(1,179);var naam;if(angle<90)naam="Scherpe hoek";else if(angle===90)naam="Rechte hoek";else naam="Stompe hoek";return{q:"Een hoek van "+angle+"° heet een...",a:naam,t:"choice",o:["Scherpe hoek","Rechte hoek","Stompe hoek","Gestrekte hoek"].sort(function(){return Math.random()-0.5}),h:angle+"° → "+naam};}
-  if(t===5){var edge=pick([89,91,1,179]);var naam2=edge<90?"Scherpe hoek":"Stompe hoek";return{q:"Een hoek van "+edge+"° is een...",a:naam2,t:"choice",o:["Scherpe hoek","Rechte hoek","Stompe hoek","Gestrekte hoek"].sort(function(){return Math.random()-0.5}),h:edge+"° "+(edge<90?"< 90° → scherp":"> 90° → stomp")};}
-  if(t===6){var min=pick([10,15,20,30,45]);var groteW=min*6;return{q:"De grote wijzer draait in "+min+" minuten ... graden.",a:groteW+"°",t:"choice",o:[groteW+"°",(groteW+30)+"°",(min*30)+"°","360°"].sort(function(){return Math.random()-0.5}),h:min+" min × 6°/min = "+groteW+"°"};}
-  var min2=pick([10,20,30]);var kleineW=min2*0.5;return{q:"De kleine wijzer draait in "+min2+" minuten ... graden.",a:kleineW+"°",t:"choice",o:[kleineW+"°",(kleineW*2)+"°","6°","30°"].sort(function(){return Math.random()-0.5}),h:min2+" min × 0,5°/min = "+kleineW+"°"};
-}
-
-function g53(lv){
-  if(lv===1){
-    var t=rand(1,7);
-    if(t<=3){var scherp=rand(15,85);var stomp=180-scherp;var askScherp=rand(0,1);var type=askScherp?"scherp":"stomp";var ans=askScherp?scherp+"°":stomp+"°";var wrong=askScherp?stomp+"°":scherp+"°";return{q:"Je leest "+scherp+"° en "+stomp+"° af.\nDe hoek is "+type+". De hoek is...",a:ans,t:"choice",o:[ans,wrong,"90°","180°"].sort(function(){return Math.random()-0.5}),h:type+" → kies "+(askScherp?"het kleinere":"het grotere")+" getal: "+ans};}
-    if(t===4){return{q:"De gradenboog op de geodriehoek loopt van...",a:"0° tot 180°",t:"choice",o:["0° tot 180°","0° tot 90°","0° tot 360°","0° tot 270°"].sort(function(){return Math.random()-0.5}),h:"Gradenboog: 0° – 180°"};}
-    if(t===5){return{q:"De twee getallen bij een streepje tellen op tot...",a:"180°",t:"choice",o:["180°","90°","360°","270°"].sort(function(){return Math.random()-0.5}),h:"Altijd 180°"};}
-    if(t===6){return{q:"Bij het meten leg je het 0-streepje op...",a:"Het hoekpunt",t:"choice",o:["Het hoekpunt","Het einde van een been","Het midden","Ergens naast de hoek"].sort(function(){return Math.random()-0.5}),h:"0-streepje op het hoekpunt"};}
-    return{q:"Stap 1 bij hoeken meten: leg de ... langs één been.",a:"Lange kant van de geodriehoek",t:"choice",o:["Lange kant van de geodriehoek","Korte kant","Gradenboog","Liniaal"].sort(function(){return Math.random()-0.5}),h:"Lange kant langs één been leggen"};
-  }
-  if(lv===2){
-    var t=rand(1,7);
-    if(t<=3){var scherp=rand(15,85);var stomp=180-scherp;var letter=pick(["A","B","C","D","E","P"]);var isStomp=rand(0,1);var type=isStomp?"stomp":"scherp";var ans=isStomp?stomp+"°":scherp+"°";var wrong=isStomp?scherp+"°":stomp+"°";return{q:"∠"+letter+" is "+type+". Je leest af: "+scherp+"° en "+stomp+"°.\nHoe groot is ∠"+letter+"?",a:ans,t:"choice",o:[ans,wrong,"90°","180°"].sort(function(){return Math.random()-0.5}),h:type+" → "+ans};}
-    if(t===4){return{q:"Waarom staan er twee getallen bij elk streepje?",a:"Voor scherpe en stompe hoeken",t:"choice",o:["Voor scherpe en stompe hoeken","Om verwarring te voorkomen","Voor cm en graden","Voor linkshandigen"].sort(function(){return Math.random()-0.5}),h:"Twee schalen: scherp en stomp"};}
-    if(t===5){var s=rand(10,80);var st=180-s;return{q:"Je leest "+s+"° af. Wat is het andere getal bij hetzelfde streepje?",a:st+"°",t:"choice",o:[st+"°",(st+10)+"°",(s+10)+"°","90°"].sort(function(){return Math.random()-0.5}),h:"De twee getallen tellen op tot 180°: 180° − "+s+"° = "+st+"°"};}
-    if(t===6){return{q:"Na het meten lees je twee getallen af. Hoe kies je het juiste?",a:"Kijk of de hoek scherp of stomp is",t:"choice",o:["Kijk of de hoek scherp of stomp is","Kies altijd het kleinste","Kies altijd het grootste","Neem het gemiddelde"].sort(function(){return Math.random()-0.5}),h:"Scherp → klein getal, stomp → groot getal"};}
-    var s2=rand(20,70);var st2=180-s2;return{q:"Bij een streepje lees je "+s2+"° en "+st2+"° af.\nWelk getal hoort bij een stompe hoek?",a:st2+"°",t:"choice",o:[st2+"°",s2+"°","90°","180°"].sort(function(){return Math.random()-0.5}),h:"Stomp > 90° → kies "+st2+"°"};
-  }
-  // level 3
-  var t=rand(1,7);
-  if(t<=2){var scherp=rand(15,85);var stomp=180-scherp;var isStomp=rand(0,1);var type=isStomp?"stomp":"scherp";var ans=isStomp?stomp+"°":scherp+"°";return{q:"Je leest "+scherp+"° en "+stomp+"° af op de geodriehoek.\nJe ziet dat de hoek "+type+" is.\nWat is de juiste maat?",a:ans,t:"choice",o:[scherp+"°",stomp+"°","90°","180°"].sort(function(){return Math.random()-0.5}),h:type+" → "+(isStomp?"grotere":"kleinere")+" getal = "+ans};}
-  if(t===3){return{q:"Je leest 90° af op de geodriehoek. De hoek is...",a:"Een rechte hoek",t:"choice",o:["Een rechte hoek","Scherp","Stomp","Gestrekt"].sort(function(){return Math.random()-0.5}),h:"90° = rechte hoek"};}
-  if(t===4){return{q:"Een overstrekte hoek is een hoek tussen...",a:"180° en 360°",t:"choice",o:["180° en 360°","0° en 90°","90° en 180°","0° en 180°"].sort(function(){return Math.random()-0.5}),h:"Overstrekt: 180° – 360°"};}
-  if(t===5){var s=rand(10,80);var st=180-s;return{q:"Je leest "+s+"° en "+st+"° af. De hoek is stomp.\nDe binnenboog van de hoek is dan...",a:st+"°",t:"choice",o:[st+"°",s+"°",(s+st)/2+"°","360°"].sort(function(){return Math.random()-0.5}),h:"Stomp → kies het grotere getal: "+st+"°"};}
-  if(t===6){var s2=rand(20,70);var st2=180-s2;return{q:"Je leest "+s2+"° af. Het andere getal is "+st2+"°.\nDe hoek blijkt scherp. Dan is de hoek...",a:s2+"°",t:"choice",o:[s2+"°",st2+"°","90°","180°"].sort(function(){return Math.random()-0.5}),h:"Scherp → kleinere getal = "+s2+"°"};}
-  return{q:"Kun je met een geodriehoek een hoek van 200° meten?",a:"Nee, de gradenboog gaat tot 180°",t:"choice",o:["Nee, de gradenboog gaat tot 180°","Ja, met de buitenschaal","Ja, door twee keer te meten","Ja, met de 0 aan de andere kant"].sort(function(){return Math.random()-0.5}),h:"Geodriehoek: 0° – 180°"};
-}
-
-function g54(lv){
-  if(lv===1){
-    var t=rand(1,7);
-    if(t<=3){var angle=rand(10,170);if(angle===90)return g54(lv);var type=angle<90?"Scherp":"Stomp";return{q:"Je wilt een hoek van "+angle+"° tekenen. Is dat scherp of stomp?",a:type,t:"choice",o:["Scherp","Stomp","Recht","Gestrekt"].sort(function(){return Math.random()-0.5}),h:angle+"° "+(angle<90?"< 90° → scherp":"> 90° → stomp")};}
-    if(t===4){return{q:"Stap 1 bij het tekenen van een hoek: teken een...",a:"Punt en een been",t:"choice",o:["Punt en een been","Cirkel","Driehoek","Twee evenwijdige lijnen"].sort(function(){return Math.random()-0.5}),h:"Eerst een punt en een been tekenen"};}
-    if(t===5){return{q:"Stap 2 bij het tekenen van een hoek: leg de geodriehoek met de 0 op...",a:"Het hoekpunt",t:"choice",o:["Het hoekpunt","Het einde van het been","Het midden van het been","Ergens naast de hoek"].sort(function(){return Math.random()-0.5}),h:"0-streepje op het hoekpunt"};}
-    if(t===6){var angle2=rand(95,170);return{q:"Je tekent een hoek van "+angle2+"°. Aan welke kant van de geodriehoek kies je "+angle2+"?",a:"De stompe kant",t:"choice",o:["De stompe kant","De scherpe kant","Altijd links","Het maakt niet uit"].sort(function(){return Math.random()-0.5}),h:angle2+"° is stomp → kies de stompe kant"};}
-    var angle3=rand(10,85);return{q:"Je tekent een hoek van "+angle3+"°. Aan welke kant kies je "+angle3+"?",a:"De scherpe kant",t:"choice",o:["De scherpe kant","De stompe kant","Altijd rechts","Het maakt niet uit"].sort(function(){return Math.random()-0.5}),h:angle3+"° is scherp → kies de scherpe kant"};
-  }
-  if(lv===2){
-    var t=rand(1,7);
-    var pts=pick([["A","B","C"],["D","E","F"],["P","Q","R"],["K","L","M"]]);
-    if(t===1){return{q:"Bij het tekenen van △"+pts[0]+pts[1]+pts[2]+" ken je "+pts[0]+pts[1]+", ∠"+pts[0]+" en ∠"+pts[1]+".\nWat teken je eerst?",a:"Zijde "+pts[0]+pts[1],t:"choice",o:["Zijde "+pts[0]+pts[1],"Hoek "+pts[0],"Hoek "+pts[1],"Punt "+pts[2]].sort(function(){return Math.random()-0.5}),h:"Eerst de bekende zijde tekenen"};}
-    if(t===2){return{q:"Bij een driehoek snijden de benen van twee hoeken elkaar. Dat snijpunt is...",a:"Het derde hoekpunt",t:"choice",o:["Het derde hoekpunt","Het midden","Het zwaartepunt","Het middelpunt"].sort(function(){return Math.random()-0.5}),h:"Snijpunt = derde hoekpunt"};}
-    if(t===3){var angle=rand(95,165);return{q:"Je wilt ∠"+pick(["D","E","F","G"])+" = "+angle+"° tekenen.\nKies je de scherpe of stompe kant?",a:"De stompe kant",t:"choice",o:["De stompe kant","De scherpe kant","Maakt niet uit","Beide"].sort(function(){return Math.random()-0.5}),h:angle+"° > 90° → stompe kant"};}
-    if(t===4){return{q:"Na het tekenen van het eerste been leg je de lange kant van de geodriehoek...",a:"Langs het eerste been",t:"choice",o:["Langs het eerste been","Loodrecht op het been","Willekeurig","Op het hoekpunt"].sort(function(){return Math.random()-0.5}),h:"Lange kant langs het getekende been"};}
-    if(t===5){return{q:"Je tekent een driehoek. Je hebt zijde "+pts[0]+pts[1]+" en ∠"+pts[0]+" getekend.\nWat doe je nu?",a:"Teken ∠"+pts[1]+" bij punt "+pts[1],t:"choice",o:["Teken ∠"+pts[1]+" bij punt "+pts[1],"Teken punt "+pts[2]+" ergens","Meet de langste zijde","Teken een cirkel"].sort(function(){return Math.random()-0.5}),h:"De tweede hoek tekenen bij het andere eindpunt"};}
-    if(t===6){var angle2=rand(20,80);return{q:"Je tekent een hoek van "+angle2+"°. Na stap 3 zet je een stip bij "+angle2+" op de gradenboog.\nWat is stap 4?",a:"Teken het tweede been door de stip",t:"choice",o:["Teken het tweede been door de stip","Meet de hoek opnieuw","Teken een cirkel","Gum het eerste been uit"].sort(function(){return Math.random()-0.5}),h:"Stap 4: tweede been door de stip tekenen"};}
-    return{q:"Hoeveel gegevens heb je minimaal nodig om een driehoek te tekenen?",a:"Een zijde en twee hoeken",t:"choice",o:["Een zijde en twee hoeken","Alleen drie hoeken","Alleen twee zijden","Eén hoek"].sort(function(){return Math.random()-0.5}),h:"Minimaal: 1 zijde + 2 hoeken (of 2 zijden + 1 hoek)"};
-  }
-  // level 3
-  var t=rand(1,7);
-  if(t===1){return{q:"Je hebt twee hoeken en de zijde ertussen. Kun je de driehoek tekenen?",a:"Ja",t:"choice",o:["Ja","Nee","Alleen als alle hoeken scherp zijn","Alleen met een passer"].sort(function(){return Math.random()-0.5}),h:"Twee hoeken + zijde ertussen → tekenen mogelijk"};}
-  if(t===2){return{q:"Wat doe je als de benen bij het tekenen van een driehoek elkaar niet snijden?",a:"Er is een fout gemaakt",t:"choice",o:["Er is een fout gemaakt","Maak de benen langer","Meet opnieuw","Het is geen driehoek"].sort(function(){return Math.random()-0.5}),h:"Als benen niet snijden: fout of niet mogelijk"};}
-  if(t===3){var a1=rand(30,80);var a2=rand(30,80);var a3=180-a1-a2;return{q:"Je tekent △ABC met ∠A = "+a1+"° en ∠B = "+a2+"°.\nHoe groot wordt ∠C?",a:a3+"°",t:"choice",o:[a3+"°",(a3+10)+"°",(a3-10>0?a3-10:a3+20)+"°","90°"].sort(function(){return Math.random()-0.5}),h:"180° − "+a1+"° − "+a2+"° = "+a3+"°"};}
-  if(t===4){return{q:"Wanneer heb je een passer nodig bij het tekenen?",a:"Bij het tekenen van cirkels en bogen",t:"choice",o:["Bij het tekenen van cirkels en bogen","Bij het meten van hoeken","Bij het tekenen van rechte lijnen","Bij het tekenen van punten"].sort(function(){return Math.random()-0.5}),h:"Passer = cirkels en bogen"};}
-  if(t===5){var a1b=rand(100,160);var a2b=rand(100,180-a1b+90);if(a1b+a2b>=180){return{q:"Kun je een driehoek tekenen met ∠A = "+a1b+"° en ∠B = "+a2b+"°?",a:"Nee, samen al ≥ 180°",t:"choice",o:["Nee, samen al ≥ 180°","Ja, altijd mogelijk","Ja, als je een passer gebruikt","Alleen als ∠C = 0°"].sort(function(){return Math.random()-0.5}),h:a1b+"° + "+a2b+"° = "+(a1b+a2b)+"° ≥ 180° → niet mogelijk"};}return g54(lv);}
-  if(t===6){return{q:"Bij het tekenen van een hoek is stap 3: zoek het juiste getal op de gradenboog.\nWaarop moet je letten?",a:"Of de hoek scherp of stomp is",t:"choice",o:["Of de hoek scherp of stomp is","De kleur van de gradenboog","Of je links- of rechtshandig bent","Het maakt niet uit"].sort(function(){return Math.random()-0.5}),h:"Scherp → scherpe kant, stomp → stompe kant"};}
-  var a1c=rand(20,70);var a2c=rand(20,70);return{q:"Je tekent een driehoek met twee hoeken: "+a1c+"° en "+a2c+"°.\nIs de derde hoek scherp of stomp?",a:(180-a1c-a2c)>90?"Stomp":"Scherp",t:"choice",o:["Scherp","Stomp","Recht","Gestrekt"].sort(function(){return Math.random()-0.5}),h:"Derde hoek = 180° − "+a1c+"° − "+a2c+"° = "+(180-a1c-a2c)+"° → "+((180-a1c-a2c)>90?"stomp":"scherp")};
-}
-
-function g55(lv){
-  var letters=pick([["A","B","C"],["P","Q","R"],["S","T","U"],["D","E","F"]]);
-  if(lv===1){
-    var t=rand(1,6);
-    if(t<=3){var a=rand(25,155);return{q:"∠"+letters[0]+"₁ = "+a+"°. ∠"+letters[0]+"₁ en ∠"+letters[0]+"₂ vormen een gestrekte hoek.\nBereken ∠"+letters[0]+"₂.",a:180-a,h:"180° − "+a+"° = "+(180-a)+"°"};}
-    if(t<=5){var a2=rand(10,80);return{q:"∠"+letters[0]+"₁ = "+a2+"°. ∠"+letters[0]+"₁ en ∠"+letters[0]+"₂ vormen een rechte hoek.\nBereken ∠"+letters[0]+"₂.",a:90-a2,h:"90° − "+a2+"° = "+(90-a2)+"°"};}
-    var a3=rand(30,150);return{q:"Twee hoeken vormen samen een gestrekte hoek (180°).\nDe ene hoek is "+a3+"°. Hoe groot is de andere?",a:180-a3,h:"180° − "+a3+"° = "+(180-a3)+"°"};
-  }
-  if(lv===2){
-    var t=rand(1,6);
-    if(t===1){var a=rand(10,80);return{q:"∠"+letters[1]+"₁ = "+a+"°. ∠"+letters[1]+"₁ en ∠"+letters[1]+"₂ vormen een rechte hoek.\nBereken ∠"+letters[1]+"₂.",a:90-a,h:"90° − "+a+"° = "+(90-a)+"°"};}
-    if(t===2){var a2=rand(30,150);return{q:"∠"+letters[2]+"₁ = "+a2+"°. ∠"+letters[2]+"₃ is de overstaande hoek.\nHoe groot is ∠"+letters[2]+"₃?",a:a2,h:"Overstaande hoeken zijn even groot: "+a2+"°"};}
-    if(t===3){var a3=rand(25,155);var other=180-a3;return{q:"∠"+letters[0]+"₁ = "+a3+"° en vormt een gestrekte hoek met ∠"+letters[0]+"₂.\n∠"+letters[0]+"₂ is overstaand aan ∠"+letters[0]+"₄.\nHoe groot is ∠"+letters[0]+"₄?",a:other,h:"∠"+letters[0]+"₂ = 180° − "+a3+"° = "+other+"°\nOverstaand: ∠"+letters[0]+"₄ = "+other+"°"};}
-    if(t===4){var a4=rand(20,70);var b4=rand(20,70-a4+20);var c4=90-a4-b4;if(c4<=0)return g55(lv);return{q:"∠"+letters[0]+"₁ = "+a4+"° en ∠"+letters[0]+"₂ = "+b4+"°.\n∠"+letters[0]+"₁₂₃ vormt een rechte hoek (90°).\nBereken ∠"+letters[0]+"₃.",a:90-a4-b4,h:"90° − "+a4+"° − "+b4+"° = "+(90-a4-b4)+"°"};}
-    if(t===5){var a5=rand(30,150);return{q:"Twee lijnen snijden elkaar. Eén hoek is "+a5+"°.\nDe overstaande hoek is...",a:a5,h:"Overstaande hoeken zijn even groot: "+a5+"°"};}
-    var a6=rand(30,150);var adj=180-a6;return{q:"Twee lijnen snijden elkaar. Eén hoek is "+a6+"°.\nDe naastliggende hoek is...",a:adj,h:"Naastliggende hoeken vormen gestrekte hoek: 180° − "+a6+"° = "+adj+"°"};
-  }
-  // level 3
-  var t=rand(1,6);
-  if(t===1){var a=rand(20,70);var b=90;var c=180-a-b;return{q:"∠"+letters[0]+"₁ = "+a+"° en ∠"+letters[0]+"₃ = "+b+"°.\n∠"+letters[0]+"₁₂₃ is een gestrekte hoek (180°).\nBereken ∠"+letters[0]+"₂.",a:c,h:"180° − "+a+"° − "+b+"° = "+c+"°"};}
-  if(t===2){var a2=rand(20,60);var b2=rand(20,60);var c2=rand(20,60);var d2=180-a2-b2-c2;if(d2<=0)return g55(lv);return{q:"∠"+letters[0]+"₁ = "+a2+"°, ∠"+letters[0]+"₂ = "+b2+"° en ∠"+letters[0]+"₃ = "+c2+"°.\nAlle vier vormen een gestrekte hoek.\nBereken ∠"+letters[0]+"₄.",a:d2,h:"180° − "+a2+"° − "+b2+"° − "+c2+"° = "+d2+"°"};}
-  if(t===3){var a3=rand(25,65);var b3=rand(25,155-a3-10);var c3=180-a3-b3;return{q:"Drie hoeken vormen samen een gestrekte hoek.\n∠1 = "+a3+"° en ∠2 = "+b3+"°.\nBereken ∠3.",a:c3,h:"180° − "+a3+"° − "+b3+"° = "+c3+"°"};}
-  if(t===4){var a4=rand(30,150);var over=a4;var adj=180-a4;return{q:"Twee lijnen snijden elkaar. ∠"+letters[2]+"₁ = "+a4+"°.\nBereken ∠"+letters[2]+"₂ (naastliggend) en ∠"+letters[2]+"₃ (overstaand).\n\nHoe groot is ∠"+letters[2]+"₂?",a:adj,h:"Naastliggend: 180° − "+a4+"° = "+adj+"°\nOverstaand: ∠"+letters[2]+"₃ = "+a4+"°"};}
-  if(t===5){var a5=rand(20,70);var b5=90-a5;var c5=180-a5;return{q:"∠"+letters[0]+"₁ = "+a5+"°.\n∠"+letters[0]+"₁ en ∠"+letters[0]+"₂ vormen een rechte hoek.\n∠"+letters[0]+"₁ en ∠"+letters[0]+"₃ vormen een gestrekte hoek.\nBereken ∠"+letters[0]+"₂ + ∠"+letters[0]+"₃.",a:b5+c5,h:"∠"+letters[0]+"₂ = 90° − "+a5+"° = "+b5+"°\n∠"+letters[0]+"₃ = 180° − "+a5+"° = "+c5+"°\nSom = "+b5+"° + "+c5+"° = "+(b5+c5)+"°"};}
-  var a6=rand(30,70);var over6=a6;var adj6=180-a6;return{q:"Twee lijnen snijden in punt "+letters[2]+".\n∠"+letters[2]+"₁ = "+a6+"°.\nBereken ∠"+letters[2]+"₂ (naastliggend).",a:adj6,h:"180° − "+a6+"° = "+adj6+"° (gestrekte hoek)"};
-}
-
-function g56(lv){
-  var triNames=pick([["D","E","F"],["A","B","C"],["P","Q","R"],["K","L","M"]]);
-  var quadNames=pick([["P","Q","R","S"],["A","B","C","D"],["K","L","M","N"]]);
-  if(lv===1){
-    var t=rand(1,6);
-    if(t<=3){var a=rand(30,80);var b=rand(30,80);var c=180-a-b;if(c<=0)return g56(lv);return{q:"In △"+triNames.join("")+": ∠"+triNames[0]+" = "+a+"° en ∠"+triNames[1]+" = "+b+"°.\nBereken ∠"+triNames[2]+".",a:c,h:"180° − "+a+"° − "+b+"° = "+c+"° (hoekensom driehoek)"};}
-    if(t===4){var a2=rand(30,80);var b2=rand(30,80);var c2=180-a2-b2;if(c2<=0)return g56(lv);var sum=a2+b2+c2;return{q:"Een driehoek heeft hoeken van "+a2+"°, "+b2+"° en "+c2+"°.\nIs dat een geldige driehoek?",a:"Ja (som = 180°)",t:"choice",o:["Ja (som = 180°)","Nee (som ≠ 180°)","Alleen als alle hoeken scherp zijn","Dat hangt af van de zijden"].sort(function(){return Math.random()-0.5}),h:a2+"° + "+b2+"° + "+c2+"° = 180° ✓"};}
-    if(t===5){var bad1=rand(60,100);var bad2=rand(60,100);var bad3=rand(60,100);if(bad1+bad2+bad3===180)return g56(lv);return{q:"Een driehoek heeft hoeken van "+bad1+"°, "+bad2+"° en "+bad3+"°.\nIs dat een geldige driehoek?",a:"Nee (som ≠ 180°)",t:"choice",o:["Ja (som = 180°)","Nee (som ≠ 180°)"].sort(function(){return Math.random()-0.5}),h:bad1+"° + "+bad2+"° + "+bad3+"° = "+(bad1+bad2+bad3)+"° ≠ 180°"};}
-    var type=pick(["scherpe","stompe","rechte"]);var a3,b3,c3;if(type==="rechte"){a3=90;b3=rand(10,70);c3=180-90-b3;}else if(type==="stompe"){a3=rand(95,150);b3=rand(5,180-a3-5);c3=180-a3-b3;}else{a3=rand(30,80);b3=rand(30,80);c3=180-a3-b3;if(c3>=90||a3>=90||b3>=90)return g56(lv);}if(c3<=0)return g56(lv);return{q:"△"+triNames.join("")+" heeft hoeken "+a3+"°, "+b3+"° en "+c3+"°.\nDit is een ... driehoek.",a:type+" driehoek",t:"choice",o:["scherpe driehoek","stompe driehoek","rechte driehoek","gelijkzijdige driehoek"].sort(function(){return Math.random()-0.5}),h:(type==="rechte"?"Eén hoek = 90° → rechthoekig":type==="stompe"?"Eén hoek > 90° → stomp":"Alle hoeken < 90° → scherp")};
-  }
-  if(lv===2){
-    var t=rand(1,7);
-    if(t<=2){var a=rand(40,120);var b=rand(40,120);var c=rand(40,120);var d=360-a-b-c;if(d<10||d>170)return g56(lv);return{q:"In vierhoek "+quadNames.join("")+": ∠"+quadNames[0]+" = "+a+"°, ∠"+quadNames[1]+" = "+b+"°, ∠"+quadNames[3]+" = "+c+"°.\nBereken ∠"+quadNames[2]+".",a:d,h:"360° − "+a+"° − "+b+"° − "+c+"° = "+d+"° (hoekensom vierhoek)"};}
-    if(t===3){var a2=rand(30,70);var b2=90;var c2=180-a2-b2;return{q:"In △"+triNames.join("")+": ∠"+triNames[0]+" = "+a2+"° en ∠"+triNames[1]+" = 90° (recht).\nBereken ∠"+triNames[2]+".",a:c2,h:"180° − "+a2+"° − 90° = "+c2+"° (hoekensom driehoek)"};}
-    if(t===4){return{q:"Een gelijkzijdige driehoek heeft drie gelijke hoeken.\nHoe groot is elke hoek?",a:60,h:"180° ÷ 3 = 60° (hoekensom driehoek)"};}
-    if(t===5){var basis=rand(40,80);var top=180-2*basis;if(top<=0||top>=180)return g56(lv);return{q:"In een gelijkbenige driehoek zijn de basishoeken elk "+basis+"°.\nHoe groot is de tophoek?",a:top,h:"180° − 2×"+basis+"° = 180° − "+(2*basis)+"° = "+top+"°"};}
-    if(t===6){var top2=rand(20,100);if(top2%2!==0)top2++;var basis2=(180-top2)/2;return{q:"In een gelijkbenige driehoek is de tophoek "+top2+"°.\nHoe groot zijn de basishoeken?",a:basis2,h:"(180° − "+top2+"°) ÷ 2 = "+basis2+"°"};}
-    return{q:"De hoekensom van een vierhoek is...",a:"360°",t:"choice",o:["360°","180°","270°","540°"].sort(function(){return Math.random()-0.5}),h:"Vierhoek = 2 driehoeken = 2×180° = 360°"};
-  }
-  // level 3
-  var t=rand(1,7);
-  if(t===1){var a=rand(25,70);var b=rand(25,70);var c=180-a-b;if(c<=0||c%2!==0)return g56(lv);return{q:"In △"+triNames.join("")+": ∠"+triNames[1]+" = "+a+"° en ∠"+triNames[2]+" = "+b+"°.\n∠"+triNames[0]+" is verdeeld in twee gelijke delen.\nBereken ∠"+triNames[0]+"₁.",a:Math.round(c/2),h:"∠"+triNames[0]+" = 180° − "+a+"° − "+b+"° = "+c+"°\n∠"+triNames[0]+"₁ = "+c+"° ÷ 2 = "+Math.round(c/2)+"°"};}
-  if(t===2){var a2=rand(50,110);var b2=rand(50,110);var c2=rand(50,110);var d2=360-a2-b2-c2;if(d2<10||d2>170)return g56(lv);var soort=d2<90?"scherp":d2===90?"recht":"stomp";return{q:"In vierhoek "+quadNames.join("")+": ∠"+quadNames[0]+" = "+a2+"°, ∠"+quadNames[1]+" = "+b2+"°, ∠"+quadNames[3]+" = "+c2+"°.\nBereken ∠"+quadNames[2]+" en bepaal of die scherp of stomp is.",a:d2,h:"∠"+quadNames[2]+" = 360° − "+a2+"° − "+b2+"° − "+c2+"° = "+d2+"° ("+soort+")"};}
-  if(t===3){return{q:"Een rechthoek heeft vier hoeken.\nZijn alle hoeken 90°?",a:"Ja",t:"choice",o:["Ja","Nee, alleen 2 hoeken","Nee, de som is 360° maar niet per se 90°","Alleen bij een vierkant"].sort(function(){return Math.random()-0.5}),h:"Rechthoek: alle hoeken = 90° (4×90° = 360°)"};}
-  if(t===4){var a4=rand(30,70);var b4=rand(30,70);var c4=180-a4-b4;if(c4<=0)return g56(lv);var gestr=180-c4;return{q:"In △"+triNames.join("")+": ∠"+triNames[0]+" = "+a4+"° en ∠"+triNames[1]+" = "+b4+"°.\n∠"+triNames[2]+" en een aangrenzende hoek vormen een gestrekte hoek.\nBereken de aangrenzende hoek.",a:gestr,h:"∠"+triNames[2]+" = 180° − "+a4+"° − "+b4+"° = "+c4+"°\nAangrenzend: 180° − "+c4+"° = "+gestr+"°"};}
-  if(t===5){var a5=rand(30,80);var b5=rand(30,80);var c5=180-a5-b5;if(c5<=0)return g56(lv);return{q:"In △"+triNames.join("")+": ∠"+triNames[0]+" = "+a5+"° en ∠"+triNames[2]+" = "+c5+"°.\nBereken ∠"+triNames[1]+".",a:b5,h:"180° − "+a5+"° − "+c5+"° = "+b5+"° (hoekensom driehoek)"};}
-  if(t===6){var a6=rand(20,50);var b6=180-2*a6;if(b6<=0||b6>=180)return g56(lv);return{q:"In een gelijkbenige △"+triNames.join("")+" geldt ∠"+triNames[0]+" = ∠"+triNames[2]+" = "+a6+"°.\nDe diagonaal vanuit "+triNames[1]+" verdeelt ∠"+triNames[1]+" in twee gelijke delen.\nHoe groot is elk deel?",a:Math.round(b6/2),h:"∠"+triNames[1]+" = 180° − 2×"+a6+"° = "+b6+"°\nElk deel = "+b6+"° ÷ 2 = "+Math.round(b6/2)+"°"};}
-  var a7=rand(60,120);var b7=rand(60,120);var rest7=360-a7-b7;var half7=Math.round(rest7/2);if(rest7<=0||rest7%2!==0)return g56(lv);return{q:"In vierhoek "+quadNames.join("")+": ∠"+quadNames[0]+" = "+a7+"° en ∠"+quadNames[1]+" = "+b7+"°.\n∠"+quadNames[2]+" = ∠"+quadNames[3]+".\nBereken ∠"+quadNames[2]+".",a:half7,h:"∠"+quadNames[2]+" + ∠"+quadNames[3]+" = 360° − "+a7+"° − "+b7+"° = "+rest7+"°\n∠"+quadNames[2]+" = "+rest7+"° ÷ 2 = "+half7+"°"};
-}
-
-function g61(lv){
-  if(lv===1){const t=rand(1,5);if(t===1){const n=pick([3,4,5,6,7,8,9,10,11,12]);return{q:`Bereken: ${n}²`,a:n*n,h:`${n}² = ${n}×${n} = ${n*n}`}}if(t===2){const n=pick([4,9,16,25,36,49,64,81,100,121,144]);const r=Math.round(Math.sqrt(n));return{q:`Bereken: √${n}`,a:r,h:`√${n} = ${r}`}}if(t===3){const n=pick([2,3,4,5,6,7]);return{q:`Bereken: (−${n})²`,a:n*n,h:`(−${n})² = ${n*n}\nMin × min = plus!`}}if(t===4){const n=pick([3,4,5,6,7,8,9]);return{q:`Bereken: (${n}+1)²`,a:(n+1)*(n+1),h:`(${n+1})² = ${(n+1)*(n+1)}`}}const n=pick([2,3,4,5]);return{q:`Bereken: ${n}² + 1`,a:n*n+1,h:`${n*n} + 1 = ${n*n+1}`}}
-  if(lv===2){const t=rand(1,5);if(t===1){const n=pick([2,3,4,5,6,7,8]);return{q:`Bereken: −${n}²`,a:-(n*n),h:`−${n}² = −${n*n}\nMin gaat NIET mee!`}}if(t===2){const a=pick([2,3,4,5]),b=pick([2,3,4]);return{q:`Bereken: ${a} · ${b}²`,a:a*b*b,h:`${b}² = ${b*b}, dan ${a}·${b*b} = ${a*b*b}`}}if(t===3){const a=pick([2,3,4]),b=pick([2,3,5]);return{q:`Bereken: ${a}² + ${b}²`,a:a*a+b*b,h:`${a*a} + ${b*b} = ${a*a+b*b}`}}if(t===4){const n=pick([4,9,16,25,36,49,64,81]);const r=Math.round(Math.sqrt(n));return{q:`(√${n})² = ?`,a:n,h:`(√${n})² = ${n}\nWortel en kwadraat heffen op!`}}const n=pick([5,7,10,13,15,20]);return{q:`Is √${n} een geheel getal?`,a:Number.isInteger(Math.sqrt(n))?"Ja":"Nee",t:"choice",o:["Ja","Nee"],h:`√${n} = ${Math.sqrt(n).toFixed(2)}... → ${Number.isInteger(Math.sqrt(n))?"ja":"nee"}`}}
-  const t=rand(1,4);if(t===1){const a=pick([3,4,5]),b=pick([2,3,4]),c=pick([2,3]);const r=-(a*a)+c*b*b;return{q:`Bereken: −${a}² + ${c}·${b}²`,a:r,h:`−${a*a} + ${c}·${b*b} = −${a*a}+${c*b*b} = ${r}`}}
-  if(t===2){const a=pick([5,6,7,8]),sq=pick([4,9,16,25,36]),rt=Math.round(Math.sqrt(sq));return{q:`Bereken: ${a}² − √${sq}`,a:a*a-rt,h:`${a*a} − ${rt} = ${a*a-rt}`}}
-  if(t===3){const vals=[{v:3,s:"3²"},{v:8,s:"√64"},{v:4,s:"(−2)²"}];const sorted=[...vals].sort((a,b)=>a.v-b.v);return{q:`Rangschik van klein naar groot:\n${vals.map(v=>v.s).join(", ")}`,a:sorted.map(v=>v.s).join(", "),t:"text",h:vals.map(v=>v.s+"="+v.v).join(", ")}}
-  const n=pick([5,6,7,8,9]);return{q:`Een vierkant heeft zijde ${n} cm.\nBereken de oppervlakte.`,a:n*n,h:`${n}² = ${n*n} cm²`};
-}
-
-function g62(lv){
-  if(lv===1){const t=rand(1,4);if(t===1){const a=pick([1,2,3]),c=pick([1,3,5]),x=pick([2,3,4]);const y=a*x*x+c;return{q:`y = ${a===1?"":a}x² + ${c}\nBereken y voor x = ${x}`,a:y,h:`y = ${a===1?"":a+"·"}${x*x} + ${c} = ${y}`}}if(t===2){const a=pick([2,3,4]),x=pick([2,3,5]);return{q:`y = ${a}x²\nBereken y voor x = ${x}`,a:a*x*x,h:`y = ${a}·${x*x} = ${a*x*x}`}}if(t===3){const c=pick([3,5,7]),x=pick([-2,-3,2,3]);return{q:`y = x² + ${c}\nBereken y voor x = ${x}`,a:x*x+c,h:`y = ${x*x} + ${c} = ${x*x+c}`}}const c=pick([2,4,6]),x=pick([1,2,3]);return{q:`y = x² − ${c}\nBereken y voor x = ${x}`,a:x*x-c,h:`y = ${x*x} − ${c} = ${x*x-c}`}}
-  if(lv===2){const t=rand(1,5);if(t===1){const a=pick([-1,-2,-3]),c=pick([5,7,10]),x=pick([2,3,4]);return{q:`y = ${a}x² + ${c}\nBereken y voor x = ${x}`,a:a*x*x+c,h:`y = ${a}·${x*x}+${c} = ${a*x*x+c}`}}if(t===2){const p=pick([2,3,4,5]),x=pick([0,1,6,7,8]);return{q:`y = (x−${p})²\nBereken y voor x = ${x}`,a:(x-p)*(x-p),h:`(${x}−${p})² = (${x-p})² = ${(x-p)*(x-p)}`}}if(t===3){const c=pick([3,5,7]),x=0;return{q:`y = x² − ${c}\nBereken y voor x = 0`,a:-c,h:`y = 0 − ${c} = −${c}`}}if(t===4){const p=pick([2,3,4]);return{q:`y = (x−${p})²\nBereken y voor x = ${p}`,a:0,h:`(${p}−${p})² = 0² = 0`}}const a=pick([2,3]),c=pick([-4,-2,3,5]),x=pick([-1,-2,3]);return{q:`y = ${a}x² + ${c>0?c:("("+c+")")}\nBereken y voor x = ${x}`,a:a*x*x+c,h:`y = ${a}·${x*x}${c>=0?"+"+c:c} = ${a*x*x+c}`}}
-  const t=rand(1,3);if(t===1){const a=pick([-2,-3,2,3]),p=pick([1,3]),c=pick([7,10]),x=pick([-2,4,5]);const y=a*(x-p)*(x-p)+c;return{q:`y = ${a}(x−${p})² + ${c}\nBereken y voor x = ${x}`,a:y,h:`${a}·(${x-p})²+${c} = ${a}·${(x-p)*(x-p)}+${c} = ${y}`}}if(t===2){const a=pick([1,2]),b=pick([2,3]),c=pick([-1,1,4]),x=pick([2,3,-1]);const y=a*x*x+b*x+c;return{q:`y = ${a===1?"":a}x² + ${b}x + ${c}\nBereken y voor x = ${x}`,a:y,h:`y = ${a*x*x} + ${b*x} + ${c} = ${y}`}}const c=pick([4,9,16,25]);const x1=Math.round(Math.sqrt(c)),x2=-x1;return{q:`y = x² − ${c}\nSnijdt deze parabool de x-as? (y=0)`,a:"Ja",t:"choice",o:["Ja","Nee"],h:`x² = ${c} → x = ±${x1}`};
-}
-
-function g63(lv){
-  if(lv===1){const t=rand(1,4);if(t===1){const isQ=rand(0,1);if(isQ){const a=pick([1,-1,2]),c=pick([-3,0,4]);const aS=a===1?"":a===-1?"−":""+a;return{q:`Is y = ${aS}x²${c>0?" + "+c:c<0?" − "+Math.abs(c):""} lineair of kwadratisch?`,a:"kwadratisch",t:"choice",o:["lineair","kwadratisch"],h:"Er staat x² → kwadratisch!"}}const m=pick([-2,1,3]),b=pick([-2,0,4]);return{q:`Is y = ${m===1?"":m===-1?"−":""+m}x${b>0?" + "+b:b<0?" − "+Math.abs(b):""} lineair of kwadratisch?`,a:"lineair",t:"choice",o:["lineair","kwadratisch"],h:"Geen x² → lineair!"}}if(t===2){return{q:"y = −x² geeft een parabool die...",a:"Naar beneden opent",t:"choice",o:["Naar beneden opent","Naar boven opent","Een rechte lijn is","Een cirkel is"],h:"Min voor x² → parabool opent omlaag"}}if(t===3){return{q:"De grafiek van y = x² is een...",a:"Parabool (U-vorm)",t:"choice",o:["Parabool (U-vorm)","Rechte lijn","Cirkel","Zigzag"],h:"x² → parabool"}}return{q:"Welke grafiek hoort bij y = x²?",a:"Een dalparabool (U-vorm omhoog)",t:"choice",o:["Een dalparabool (U-vorm omhoog)","Een bergparabool (omlaag)","Een rechte lijn","Een V-vorm"],h:"y = x² → dalparabool"}}
-  if(lv===2){const t=rand(1,5);if(t===1){const c=pick([2,3,5]);return{q:`Waar snijdt y = x² + ${c} de y-as?`,a:c,h:`y-as → x=0 → y = 0+${c} = ${c}`}}if(t===2){const c=pick([-3,0,2,4]),vals=[-2,-1,0,1,2];const ys=vals.map(x=>x*x+c);return{q:`y = x²${c>0?" + "+c:c<0?" − "+Math.abs(c):""}\nVul in: y(−2)=${ys[0]}, y(0)=${ys[2]}, y(2)=?`,a:ys[4],h:`y(2) = 4${c>=0?"+"+c:c} = ${ys[4]}`}}if(t===3){const c=pick([1,3,5]);return{q:`Wat is de top (laagste punt) van y = x² + ${c}?`,a:`(0, ${c})`,t:"text",h:`Top bij x=0: y = ${c} → (0,${c})`}}if(t===4){const a=pick([1,-1]),c=pick([-3,0,2,4]),x=pick([-3,-2,-1,0,1,2,3]);return{q:`y = ${a===-1?"−":""}x²${c>0?" + "+c:c<0?" − "+Math.abs(c):""}\nBereken y voor x = ${x}`,a:a*x*x+c,h:`y = ${a===-1?"−":""}${x*x}${c>0?"+"+c:c<0?"−"+Math.abs(c):""} = ${a*x*x+c}`}}return{q:"Een parabool is symmetrisch.\ny = x² bij x=3 geeft y=9.\nWat is y bij x=−3?",a:9,h:"Symmetrie: y(3)=y(−3)=9"}}
-  const t=rand(1,4);if(t===1){const c=pick([4,9,16]);const r=Math.round(Math.sqrt(c));return{q:`Snijdt y = x² − ${c} de x-as?\nZo ja, waar?`,a:`x = ${r} en x = −${r}`,t:"text",h:`x²=${c} → x=±${r}`}}if(t===2){const a=pick([1,2]),b=pick([2,3]),c=pick([0,1,3]);const xv=3;const y1=a*xv*xv,y2=b*xv+c;return{q:`Bij x=3: y=x² geeft ${y1}, y=${b}x+${c} geeft ${y2}.\nWelke is groter?`,a:y1>y2?"y = x²":"y = "+b+"x+"+c,t:"choice",o:["y = x²","y = "+b+"x+"+c],h:`${y1} vs ${y2}`}}if(t===3){const a=pick([1,2]),c=pick([0,1,-2]);const xs=[-2,-1,0,1,2];const ys=xs.map(x=>a*x*x+c);return{q:`Welke formule past bij deze tabel?\nx: ${xs.join(", ")}\ny: ${ys.join(", ")}`,a:`y = ${a===1?"":""+a}x²${c>0?"+"+c:c<0?""+c:""}`,t:"text",h:"Patroon: kwadratisch"}}const a=pick([1,-1]),c=pick([-2,0,3]);const x=pick([-2,-1,0,1,2]);return{q:`y = ${a===-1?"−":""}x²${c>0?" + "+c:c<0?" − "+Math.abs(c):""}\nBereken y voor x = ${x}`,a:a*x*x+c,h:`y = ${a*x*x+c}`};
-}
-
-function g64(lv){
-  if(lv===1){const t=rand(1,3);if(t===1){const a=pick([2,3,4,5]),b=pick([2,3,4,6,7]),v1=pick(["a","p","x"]),v2=pick(["b","q","y"]);const vs=[v1,v2].sort().join("");return{q:`Herleid: ${a}${v1} · ${b}${v2}`,a:`${a*b}${vs}`,t:"text",h:`${a}×${b}=${a*b} → ${a*b}${vs}`}}if(t===2){const a=pick([3,5,7,8,9]),b=pick([2,3,4,5]),v=pick(["a","x","p"]);return{q:`Herleid: ${a}${v} + ${b}${v}`,a:`${a+b}${v}`,t:"text",h:`${a+b}${v}`}}const v=pick(["a","x","p"]);return{q:`Herleid: ${v} · ${v}`,a:`${v}²`,t:"text",h:`${v}·${v} = ${v}²`}}
-  if(lv===2){const t=rand(1,3);if(t===1){const a=pick([2,3,5]),b=pick([4,6,8]),c=pick([1,2,3]),d=pick([2,3,5]);return{q:`Herleid: ${a}a + ${b}b + ${c}a + ${d}b`,a:`${a+c}a+${b+d}b`,t:"text",h:`a:${a}+${c}=${a+c}, b:${b}+${d}=${b+d}`}}if(t===2){const a=pick([3,4]),b=pick([-2,-3]),c=pick([4,5]);return{q:`Herleid: ${a}a · ${b}b · ${c}c`,a:`${a*b*c}abc`,t:"text",h:`${a}·${b}·${c}=${a*b*c} → ${a*b*c}abc`}}const a=pick([2,3,5]),b=pick([4,6]),c=pick([1,3]);return{q:`Herleid: ${a}x + ${b}x − ${c}x`,a:`${a+b-c}x`,t:"text",h:`${a}+${b}−${c}=${a+b-c}`}}
-  const t=rand(1,2);if(t===1){const a=pick([3,5,8]),b=pick([2,4,6]),c=pick([2,3]),d=pick([1,5]);return{q:`Herleid: ${a}a + ${b}b + ${c}a + ${d}`,a:`${a+c}a+${b}b+${d}`,t:"text",h:`a:${a+c}a, b:${b}b, getal:${d}`}}const terms=["3a","5b","2a","7b","4a"];return{q:`Welke zijn gelijksoortige termen?\n${terms.join(", ")}`,a:"3a, 2a, 4a en 5b, 7b",t:"text",h:"Gelijksoortig = zelfde letter"};
-}
-
-function g65(lv){
-  if(lv===1){const t=rand(1,2);if(t===1){const a=pick([8,10,12,15]),b=pick([3,4,5,7]),v=pick(["a","x","p","n"]);return{q:`Herleid: ${a}${v} − ${b}${v}`,a:`${a-b}${v}`,t:"text",h:`${a-b}${v}`}}const a=pick([3,5,7]),b=pick([4,6,8]),v=pick(["x","a"]);return{q:`Herleid: −${a}${v} + ${b}${v}`,a:`${b-a}${v}`,t:"text",h:`${b-a}${v}`}}
-  if(lv===2){const t=rand(1,3);if(t===1){const a=pick([3,5,7]),b=pick([4,6,8]),v=pick(["a","x"]);return{q:`Herleid: −${a}${v} − ${b}${v}`,a:`${-(a+b)}${v}`,t:"text",h:`−${a+b}${v}`}}if(t===2){const a=pick([5,7,9]),b=pick([3,6,8]),c=pick([2,4]),d=pick([1,3,5]);const rx=a-c,ry=b-d;return{q:`Herleid: ${a}x + ${b}y − ${c}x − ${d}y`,a:`${rx}x${ry>0?"+":""}${ry}y`,t:"text",h:`x:${rx}, y:${ry}`}}const a=pick([4,7]),b=pick([7,9]),v=pick(["a","x"]);return{q:`Herleid: ${a}${v} − ${b}${v}`,a:`${a-b}${v}`,t:"text",h:`${a-b}${v}`}}
-  const t=rand(1,3);if(t===1){const a=pick([2,3]),b=pick([7,8]),c=pick([5,6,7]),d=pick([3,4,5]);const ra=a-c,rb=b-d;return{q:`Herleid: ${a}a + ${b}b − ${c}a − ${d}b`,a:`${ra}a${rb>=0?"+":""}${rb}b`,t:"text",h:`a:${ra}, b:${rb}`}}if(t===2){const a=pick([-2,3]),b=pick([5,4]),c=pick([-3,-5]),d=pick([2,3]),e=pick([-4,7]);return{q:`Herleid: ${a}x + ${b}y ${c}x + ${d}y − ${Math.abs(e)}`,a:`${a+c}x+${b+d}y${e>=0?"+"+e:e}`,t:"text",h:`x:${a+c}, y:${b+d}, getal:${e}`}}const a=pick([5,7]),b=pick([3,4]),v=pick(["a","x"]);return{q:`5${v} − 3${v} = 2${v}. Waar of niet waar?`,a:"Waar",t:"choice",o:["Waar","Niet waar"],h:`5${v} − 3${v} = 2${v} ✓`};
-}
-
-function g66(lv){
-  if(lv===1){const t=rand(1,2);if(t===1){const m=pick([2,3,4,5,6]),d=pick([2,3,4]),v=pick(["a","x","p"]);return{q:`Vereenvoudig: ${m*d}${v} / ${d}${v}`,a:`${m}`,t:"text",h:`${m*d}${v}/${d}${v} = ${m}`}}const n=pick([2,4,6,8]),d=pick([2,4]),v1=pick(["a","b"]),v2=pick(["b","a"]);return{q:`Vereenvoudig: ${n}${v1}${v2} / ${d}${v2}`,a:`${n/d}${v1}`,t:"text",h:`${n}/${d}=${n/d}, ${v2} weg → ${n/d}${v1}`}}
-  if(lv===2){const t=rand(1,3);if(t===1){const a=pick([5,7,9]),b=pick([2,3,4]),v1=pick(["a","x"]),v2=pick(["b","y"]);return{q:`Herleid: ${a}${v1}/${v2} + ${b}${v1}/${v2}`,a:`${a+b}${v1}/${v2}`,t:"text",h:`${a+b}${v1}/${v2}`}}if(t===2){const m=pick([3,4,5,6]),d=pick([2,3,4]),v1=pick(["a","x"]),v2=pick(["b","y"]);return{q:`Vereenvoudig: ${m*d}${v1}${v2} / ${d}${v1}`,a:`${m}${v2}`,t:"text",h:`${m}${v2}`}}const v=pick(["a","x"]);return{q:`Herleid: ${v}/3 + ${v}/3`,a:`2${v}/3`,t:"text",h:`Zelfde noemer: 1${v}+1${v}=2${v}, noemer 3`}}
-  const t=rand(1,3);if(t===1){const a=pick([8,10,12]),b=pick([3,5,7]),v1="a",v2="b";return{q:`Herleid: ${a}${v1}/${v2} − ${b}${v1}/${v2}`,a:`${a-b}${v1}/${v2}`,t:"text",h:`${a-b}${v1}/${v2}`}}if(t===2){const n=pick([6,9,12]),d=pick([3]),v=pick(["x","a"]);return{q:`Vereenvoudig: ${n}${v}² / ${d}${v}`,a:`${n/d}${v}`,t:"text",h:`${n}/${d}=${n/d}, ${v}²/${v}=${v} → ${n/d}${v}`}}const v=pick(["a","x"]);return{q:`Herleid: 2${v}/3 + ${v}/6`,a:`5${v}/6`,t:"text",h:`4${v}/6 + ${v}/6 = 5${v}/6`};
+  return genQ(section); // fallback
 }
 
 // ========== APP ==========
@@ -381,7 +172,7 @@ function App(){
   },[]);
   const[screen,setScreen]=useState("home");
   const[section,setSection]=useState(null);
-  const[level,setLevel]=useState(1);
+  const usedQsRef=useRef(new Set());
   const[theoryStep,setTheoryStep]=useState(0);
   const[theoryAnswer,setTheoryAnswer]=useState("");
   const[theoryChecked,setTheoryChecked]=useState(false);
@@ -415,13 +206,13 @@ function App(){
   const totalMastered=SECTIONS.filter(s=>isMastered(s.id)).length;
 
   const startTheory=sid=>{setSection(sid);setTheoryStep(0);setTheoryAnswer("");setTheoryChecked(false);setScreen("theory")};
-  const startQuiz=(sid,lv)=>{setSection(sid);setLevel(lv);setQNum(0);setSession({c:0,t:0});setWrongAnswers([]);setStreak(0);setScreen("quiz");loadQ(sid,lv)};
-  const loadQ=(sec,lv)=>{setQuestion(genQ(sec||section,lv||level));setAnswer("");setChecked(false);setQNum(n=>n+1);setAnimKey(k=>k+1)};
+  const startQuiz=(sid)=>{setSection(sid);usedQsRef.current=new Set();setQNum(0);setSession({c:0,t:0});setWrongAnswers([]);setStreak(0);setScreen("quiz");loadQ(sid)};
+  const loadQ=(sec)=>{setQuestion(genUniqueQ(sec||section,usedQsRef.current));setAnswer("");setChecked(false);setQNum(n=>n+1);setAnimKey(k=>k+1)};
 
   // Proeftoets
   const startProeftoets=(useTimer)=>{
     if(timerRef.current)clearInterval(timerRef.current);
-    const qs=SECTIONS.map(sec=>{const lv=rand(1,3);const q=genQ(sec.id,lv);return{...q,sectionId:sec.id,sectionName:sec.name,lv}});
+    const qs=SECTIONS.map(sec=>{const q=genQ(sec.id);return{...q,sectionId:sec.id,sectionName:sec.name}});
     setPtQuestions(qs);setPtIndex(0);setPtAnswers([]);setPtUseTimer(useTimer);
     setQuestion(qs[0]);setAnswer("");setChecked(false);setAnimKey(k=>k+1);
     if(useTimer){setPtTimeLeft(20*60);timerRef.current=setInterval(()=>setPtTimeLeft(t=>{if(t<=1){clearInterval(timerRef.current);return 0}return t-1}),1000)}
@@ -441,7 +232,7 @@ function App(){
     if(dp.taskId)setDashTaskId(dp.taskId);
     if(dp.date)setDashDate(dp.date);
     if(dp.section&&SECTIONS.find(s=>s.id===dp.section)){
-      if(dp.mode==="practice")startQuiz(dp.section,1);
+      if(dp.mode==="practice")startQuiz(dp.section);
       else if(dp.mode==="theory")startTheory(dp.section);
     }
   },[]);
@@ -453,7 +244,7 @@ function App(){
   const nextTheory=()=>{if(theoryStep<theorySteps.length-1){setTheoryStep(s=>s+1);setTheoryAnswer("");setTheoryChecked(false)}else{markTheory(section);setScreen("home")}};
 
   const checkQuiz=()=>{if(!question)return;let ok=false;if(question.t==="choice")ok=answer===question.a;else if(question.t==="text")ok=answer.replace(/\s/g,"").toLowerCase()===String(question.a).replace(/\s/g,"").toLowerCase();else ok=parseFloat(answer.replace(",","."))=== question.a;setCorrect(ok);setChecked(true);if(!ok)setWrongAnswers(w=>[...w,{q:question.q,chosen:answer,correct:String(question.a)}]);setStreak(s=>ok?s+1:0);setSession(s=>({c:s.c+(ok?1:0),t:s.t+1}));updateProg(section,ok)};
-  const nextQuiz=()=>{if(session.t>=10)setScreen("results");else loadQ(section,level)};
+  const nextQuiz=()=>{if(session.t>=10)setScreen("results");else loadQ(section)};
 
   const fmtBold=text=>{const parts=text.split(/(\*\*[^*]+\*\*)/g);return parts.map((p,i)=>p.startsWith("**")&&p.endsWith("**")?React.createElement("strong",{key:i,style:{color:"#fff",fontWeight:800}},p.slice(2,-2)):React.createElement("span",{key:i},p))};
 
@@ -502,7 +293,7 @@ function App(){
           ),
           React.createElement("div",{style:{display:"flex",gap:"8px",marginTop:"12px"}},
             React.createElement("button",{style:{padding:"10px 20px",borderRadius:"12px",border:"2px solid "+sec.color,background:"transparent",color:sec.color,fontSize:"14px",fontWeight:700,cursor:"pointer"},onClick:()=>startTheory(sec.id)},"📖 "+(p.theoryDone?"Herhaal":"Leer")),
-            React.createElement("button",{style:{padding:"10px 20px",borderRadius:"12px",border:"none",background:sec.color,color:"#fff",fontSize:"14px",fontWeight:700,cursor:"pointer"},onClick:()=>startQuiz(sec.id,1)},"✏️ Oefenen")
+            React.createElement("button",{style:{padding:"10px 20px",borderRadius:"12px",border:"none",background:sec.color,color:"#fff",fontSize:"14px",fontWeight:700,cursor:"pointer"},onClick:()=>startQuiz(sec.id)},"✏️ Oefenen")
           )
         )}),
         React.createElement("div",{style:{fontSize:"13px",fontWeight:800,color:"#E74C3C",textTransform:"uppercase",letterSpacing:"1px",margin:"20px 0 10px",paddingLeft:"4px"}},"Hoofdstuk 6 — Formules & letters"),
@@ -525,7 +316,7 @@ function App(){
           ),
           React.createElement("div",{style:{display:"flex",gap:"8px",marginTop:"12px"}},
             React.createElement("button",{style:{padding:"10px 20px",borderRadius:"12px",border:"2px solid "+sec.color,background:"transparent",color:sec.color,fontSize:"14px",fontWeight:700,cursor:"pointer"},onClick:()=>startTheory(sec.id)},"📖 "+(p.theoryDone?"Herhaal":"Leer")),
-            React.createElement("button",{style:{padding:"10px 20px",borderRadius:"12px",border:"none",background:sec.color,color:"#fff",fontSize:"14px",fontWeight:700,cursor:"pointer"},onClick:()=>startQuiz(sec.id,1)},"✏️ Oefenen")
+            React.createElement("button",{style:{padding:"10px 20px",borderRadius:"12px",border:"none",background:sec.color,color:"#fff",fontSize:"14px",fontWeight:700,cursor:"pointer"},onClick:()=>startQuiz(sec.id)},"✏️ Oefenen")
           )
         )}),
         // Proeftoets card
@@ -535,10 +326,10 @@ function App(){
             React.createElement("div",{style:{width:"48px",height:"48px",borderRadius:"12px",background:"linear-gradient(135deg,#ffd93d20,#ff6b6b20)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"24px",flexShrink:0}},"📝"),
             React.createElement("div",{style:{flex:1}},
               React.createElement("div",{style:{fontSize:"17px",fontWeight:800,color:"#ffd93d"}},"Proeftoets H5+H6"),
-              React.createElement("div",{style:{fontSize:"12px",color:"#999",marginTop:"2px"}},"12 vragen · 1 per paragraaf · willekeurig niveau")
+              React.createElement("div",{style:{fontSize:"12px",color:"#999",marginTop:"2px"}},"12 vragen · 1 per paragraaf · diagnostisch niveau")
             )
           ),
-          React.createElement("div",{style:{fontSize:"13px",color:"#888",marginTop:"12px",lineHeight:1.6}},"Test jezelf op alle 12 paragrafen tegelijk. Per paragraaf krijg je 1 vraag op een willekeurig niveau."),
+          React.createElement("div",{style:{fontSize:"13px",color:"#888",marginTop:"12px",lineHeight:1.6}},"Test jezelf op alle 12 paragrafen tegelijk. Per paragraaf krijg je 1 vraag op diagnostisch niveau."),
           React.createElement("div",{style:{display:"flex",gap:"8px",marginTop:"14px"}},
             React.createElement("button",{style:{flex:1,padding:"12px 16px",borderRadius:"12px",border:"none",background:"#ffd93d",color:"#000",fontSize:"14px",fontWeight:700,cursor:"pointer"},onClick:()=>startProeftoets(false)},"▶ Start"),
             React.createElement("button",{style:{flex:1,padding:"12px 16px",borderRadius:"12px",border:"2px solid #ffd93d",background:"transparent",color:"#ffd93d",fontSize:"14px",fontWeight:700,cursor:"pointer"},onClick:()=>startProeftoets(true)},"⏱ Met timer (20 min)")
@@ -596,7 +387,6 @@ function App(){
 
   // QUIZ
   if(screen==="quiz"){const sec=getSection(section),pct=session.t>0?Math.round(session.c/session.t*100):0;
-    const lvN=["","Basis","Gemiddeld","Diagnostisch"],lvC=["","#6bcb77","#ffd93d","#ff6b6b"];
     return React.createElement("div",{style:{minHeight:"100vh",background:"linear-gradient(160deg,#0c0c20,#141432 40%,#0e0e28)"}},
       React.createElement("div",{style:{background:"rgba(0,0,0,0.25)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+bdr,padding:"14px 20px",display:"flex",justifyContent:"space-between",alignItems:"center",position:"sticky",top:0,zIndex:50}},
         React.createElement("button",{style:{background:"none",border:"none",color:"#888",cursor:"pointer",fontSize:"14px",fontWeight:600},onClick:()=>setScreen("home")},"← Stop"),
@@ -604,20 +394,17 @@ function App(){
         React.createElement("div",{style:{fontSize:"13px",fontWeight:700}},session.c+"/"+session.t)
       ),
       React.createElement("div",{style:{maxWidth:"640px",margin:"0 auto",padding:"20px 16px"}},
-        // Level selector
-        React.createElement("div",{style:{display:"flex",gap:"8px",marginBottom:"16px"}},
-          [1,2,3].map(lv=>React.createElement("button",{key:lv,style:{flex:1,padding:"12px",borderRadius:"10px",border:"2px solid "+(level===lv?lvC[lv]:bdr),background:level===lv?lvC[lv]+"15":"transparent",color:level===lv?lvC[lv]:"#888",fontSize:"13px",fontWeight:700,cursor:"pointer",textAlign:"center"},onClick:()=>{setLevel(lv);loadQ(section,lv);setSession({c:0,t:0});setQNum(0)}},(lv===1?"⭐":lv===2?"⭐⭐":"⭐⭐⭐")+" "+lvN[lv]))
-        ),
         // Score bar
         React.createElement("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 16px",borderRadius:"12px",background:cBg,marginBottom:"16px",fontSize:"13px"}},
           React.createElement("span",null,"Vraag "+qNum+"/10 · "+pct+"% goed"),
           React.createElement("div",{style:{display:"flex",gap:"6px",alignItems:"center"}},
             streak>=3&&React.createElement("span",{style:{background:"linear-gradient(135deg,#ffd93d,#ff6b6b)",color:"#000",padding:"3px 10px",borderRadius:"16px",fontSize:"12px",fontWeight:800}},"🔥 "+streak+"x"),
-            React.createElement("span",{style:{display:"inline-block",padding:"2px 8px",borderRadius:"6px",fontSize:"11px",fontWeight:700,background:lvC[level]+"20",color:lvC[level]}},lvN[level])
+            React.createElement("span",{style:{display:"inline-block",padding:"2px 8px",borderRadius:"6px",fontSize:"11px",fontWeight:700,background:"#ff6b6b20",color:"#ff6b6b"}},"Diagnostisch")
           )
         ),
         // Question
         question&&React.createElement("div",{key:animKey,style:{background:cBg,borderRadius:"18px",padding:"24px 20px",border:"1px solid "+bdr,animation:"fadeIn 0.3s ease"}},
+          question.svg&&React.createElement("div",{style:{textAlign:"center",marginBottom:"16px",overflow:"hidden"},dangerouslySetInnerHTML:{__html:question.svg}}),
           React.createElement("div",{style:{fontSize:"clamp(17px,4vw,22px)",fontWeight:700,lineHeight:1.5,whiteSpace:"pre-line",marginBottom:"20px"}},question.q),
           question.t==="choice"?
             React.createElement("div",null,question.o.map(o=>React.createElement("button",{key:o,style:{width:"100%",padding:"12px 18px",borderRadius:"11px",border:"2px solid "+(answer===o?"#4d96ff":bdr),background:answer===o?"rgba(77,150,255,0.12)":"rgba(255,255,255,0.03)",color:"#ddd",fontSize:"16px",fontWeight:600,cursor:"pointer",marginBottom:"8px",textAlign:"left"},onClick:()=>!checked&&setAnswer(o),disabled:checked},o)))
@@ -648,7 +435,7 @@ function App(){
           React.createElement("div",{style:{fontSize:"14px",color:"#888",marginTop:"8px"}},ok?"§"+section+" beheerst! Ga door naar het volgende onderwerp.":"Je hebt ≥80% nodig. Bestudeer de theorie en probeer opnieuw!"),
           React.createElement("div",{style:{display:"flex",gap:"8px",marginTop:"20px",justifyContent:"center"}},
             React.createElement("button",{style:{padding:"10px 20px",borderRadius:"12px",border:"2px solid "+sec.color,background:"transparent",color:sec.color,fontSize:"14px",fontWeight:700,cursor:"pointer"},onClick:()=>startTheory(section)},"📖 Theorie"),
-            React.createElement("button",{style:{padding:"10px 20px",borderRadius:"12px",border:"none",background:sec.color,color:"#fff",fontSize:"14px",fontWeight:700,cursor:"pointer"},onClick:()=>startQuiz(section,level)},"🔄 Opnieuw")
+            React.createElement("button",{style:{padding:"10px 20px",borderRadius:"12px",border:"none",background:sec.color,color:"#fff",fontSize:"14px",fontWeight:700,cursor:"pointer"},onClick:()=>startQuiz(section)},"🔄 Opnieuw")
           ),
           DashboardLink.checkoffButton(dashTaskId,dashDate,pct),
           React.createElement("button",{style:{width:"100%",padding:"12px",borderRadius:"10px",border:"none",background:"rgba(255,255,255,0.05)",color:"#aaa",fontSize:"13px",fontWeight:600,cursor:"pointer",marginTop:"12px"},onClick:()=>setScreen("home")},"\u2190 Terug naar overzicht")
@@ -686,9 +473,10 @@ function App(){
           })
         ),
         // Section label
-        React.createElement("div",{style:{display:"inline-block",padding:"4px 12px",borderRadius:"8px",background:sec.color+"18",color:sec.color,fontSize:"12px",fontWeight:700,marginBottom:"12px"}},"§"+cur.sectionId+" "+cur.sectionName+" · "+["","Basis","Gemiddeld","Diagnostisch"][cur.lv]),
+        React.createElement("div",{style:{display:"inline-block",padding:"4px 12px",borderRadius:"8px",background:sec.color+"18",color:sec.color,fontSize:"12px",fontWeight:700,marginBottom:"12px"}},"§"+cur.sectionId+" "+cur.sectionName+" · Diagnostisch"),
         // Question card
         question&&React.createElement("div",{key:animKey,style:{background:cBg,borderRadius:"18px",padding:"24px 20px",border:"1px solid "+bdr,animation:"fadeIn 0.3s ease"}},
+          question.svg&&React.createElement("div",{style:{textAlign:"center",marginBottom:"16px",overflow:"hidden"},dangerouslySetInnerHTML:{__html:question.svg}}),
           React.createElement("div",{style:{fontSize:"clamp(17px,4vw,22px)",fontWeight:700,lineHeight:1.5,whiteSpace:"pre-line",marginBottom:"20px"}},question.q),
           question.t==="choice"?
             React.createElement("div",null,question.o.map(o=>React.createElement("button",{key:o,style:{width:"100%",padding:"12px 18px",borderRadius:"11px",border:"2px solid "+(answer===o?"#ffd93d":bdr),background:answer===o?"rgba(255,217,61,0.12)":"rgba(255,255,255,0.03)",color:"#ddd",fontSize:"16px",fontWeight:600,cursor:"pointer",marginBottom:"8px",textAlign:"left"},onClick:()=>!checked&&setAnswer(o),disabled:checked},o)))
