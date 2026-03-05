@@ -259,7 +259,7 @@ function App(){
     setSelected(idx);
     const q=questions[qIdx];
     const ok=idx===q.correct;
-    if(!ok)setWrongAnswers(w=>[...w,{q:q.q,chosen:q.options[idx],correct:q.options[q.correct]}]);
+    if(!ok)setWrongAnswers(w=>[...w,{q:q.q,chosen:q.opts[idx],correct:q.opts[q.correct]}]);
     progress.recordAnswer(activeSec,ok);
     setScore(s=>({correct:s.correct+(ok?1:0),total:s.total+1}));
     forceUpdate(n=>n+1);
