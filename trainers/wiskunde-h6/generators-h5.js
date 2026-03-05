@@ -83,11 +83,14 @@ function svgAngle(degrees, label) {
     '</svg>';
 }
 
-function svgIntersectingLines(angleLabels, givenAngles) {
+function svgIntersectingLines(angleLabels, givenAngles, pointLabel) {
   // Draw 2 or 3 lines through a central point with labeled angles
   // angleLabels: array of {name, deg} where deg is the angle from the positive x-axis (counter-clockwise)
   // givenAngles: array of {label, startDeg, endDeg, value, color} - arcs to draw
-  var cx = 150, cy = 110, armLen = 100;
+  //   label: angle name e.g. "S₁" (always shown)
+  //   value: numeric angle value (shown as "75°") or null/undefined for unknown ("?")
+  // pointLabel: optional label for the center point (e.g. "S")
+  var cx = 150, cy = 120, armLen = 100;
 
   function pos(deg, len) {
     var rad = -deg * Math.PI / 180;
@@ -112,7 +115,7 @@ function svgIntersectingLines(angleLabels, givenAngles) {
   if (givenAngles && givenAngles.length) {
     for (var j = 0; j < givenAngles.length; j++) {
       var ga = givenAngles[j];
-      var arcR = 25 + j * 8;
+      var arcR = 28 + j * 6;
       var col = ga.color || "#3498db";
       var startRad = -ga.startDeg * Math.PI / 180;
       var endRad = -ga.endDeg * Math.PI / 180;
@@ -124,54 +127,75 @@ function svgIntersectingLines(angleLabels, givenAngles) {
       if (span < 0) span += 360;
       var large = span > 180 ? 1 : 0;
       arcs += '<path d="M ' + sx + ' ' + sy + ' A ' + arcR + ' ' + arcR + ' 0 ' + large + ' 0 ' + exx + ' ' + eyy + '" fill="none" stroke="' + col + '" stroke-width="1.5"/>';
-      // Label
+
+      // Always show the angle label (e.g. S₁) and value on separate lines
       var midDeg = ga.startDeg + span / 2;
       var midRad = -midDeg * Math.PI / 180;
-      var lxx = cx + (arcR + 14) * Math.cos(midRad);
-      var lyy = cy + (arcR + 14) * Math.sin(midRad);
-      var labelText = ga.value !== undefined ? ga.value + "°" : ga.label;
-      arcs += '<text x="' + lxx + '" y="' + (lyy + 4) + '" fill="' + col + '" font-size="11" font-weight="bold" text-anchor="middle">' + labelText + '</text>';
+      var labelDist = arcR + 16;
+      var lxx = cx + labelDist * Math.cos(midRad);
+      var lyy = cy + labelDist * Math.sin(midRad);
+
+      // Show label name (e.g. "S₁")
+      if (ga.label) {
+        arcs += '<text x="' + lxx + '" y="' + (lyy - 1) + '" fill="' + col + '" font-size="11" font-weight="bold" text-anchor="middle">' + ga.label + '</text>';
+      }
+      // Show value underneath the label, or "?" if unknown
+      var valText = (ga.value !== null && ga.value !== undefined) ? ga.value + "\u00b0" : "?";
+      var valDist = labelDist + 13;
+      var vxx = cx + valDist * Math.cos(midRad);
+      var vyy = cy + valDist * Math.sin(midRad);
+      arcs += '<text x="' + vxx + '" y="' + (vyy - 1) + '" fill="' + col + '" font-size="10" text-anchor="middle">' + valText + '</text>';
     }
   }
 
   // Center dot
   var center = '<circle cx="' + cx + '" cy="' + cy + '" r="3" fill="#fff"/>';
+  // Point label (e.g. "S") next to center
+  if (pointLabel) {
+    center += '<text x="' + (cx + 10) + '" y="' + (cy - 8) + '" fill="#fff" font-size="13" font-weight="bold">' + pointLabel + '</text>';
+  }
 
-  return '<svg viewBox="0 0 300 220" width="300" height="220" xmlns="http://www.w3.org/2000/svg">' +
+  return '<svg viewBox="0 0 300 240" width="300" height="240" xmlns="http://www.w3.org/2000/svg">' +
     lines + arcs + center + '</svg>';
 }
 
 function svgTriangle(verts, angles, labels, highlight) {
   // verts: [{x,y}, {x,y}, {x,y}]
-  // angles: [val1, val2, val3] (null for unknown)
-  // labels: [name1, name2, name3] vertex labels
+  // angles: [val1, val2, val3] (null for unknown = show "?")
+  // labels: [name1, name2, name3] vertex labels (e.g. ["D","E","F"])
   // highlight: index of the angle to highlight (optional)
   var pts = verts || [{ x: 30, y: 170 }, { x: 270, y: 170 }, { x: 150, y: 30 }];
 
   var path = 'M ' + pts[0].x + ' ' + pts[0].y + ' L ' + pts[1].x + ' ' + pts[1].y + ' L ' + pts[2].x + ' ' + pts[2].y + ' Z';
   var svg = '<path d="' + path + '" fill="none" stroke="#aaa" stroke-width="2"/>';
 
+  var centX = (pts[0].x + pts[1].x + pts[2].x) / 3;
+  var centY = (pts[0].y + pts[1].y + pts[2].y) / 3;
+
   for (var i = 0; i < 3; i++) {
     var p = pts[i];
-    // Offset label away from centroid
-    var centX = (pts[0].x + pts[1].x + pts[2].x) / 3;
-    var centY = (pts[0].y + pts[1].y + pts[2].y) / 3;
     var dx = p.x - centX, dy = p.y - centY;
     var dist = Math.sqrt(dx * dx + dy * dy);
-    var lx = p.x + (dx / dist) * 18;
-    var ly = p.y + (dy / dist) * 18;
+    var lx = p.x + (dx / dist) * 20;
+    var ly = p.y + (dy / dist) * 20;
 
-    var col = (highlight !== undefined && highlight === i) ? "#e74c3c" : "#fff";
+    var isHL = (highlight !== undefined && highlight === i);
+    var col = isHL ? "#e74c3c" : "#fff";
+
+    // Vertex label (e.g. "D")
     if (labels && labels[i]) {
-      svg += '<text x="' + lx + '" y="' + (ly + 4) + '" fill="' + col + '" font-size="14" font-weight="bold" text-anchor="middle">' + labels[i] + '</text>';
+      svg += '<text x="' + lx + '" y="' + (ly + 5) + '" fill="' + col + '" font-size="14" font-weight="bold" text-anchor="middle">' + labels[i] + '</text>';
     }
 
-    // Angle value near the vertex (inside the triangle)
+    // Angle info near the vertex (inside the triangle): show "∠D = 51°" or "∠E = ?"
+    var ix = p.x + (centX - p.x) * 0.28;
+    var iy = p.y + (centY - p.y) * 0.28;
+    var acol = isHL ? "#e74c3c" : "#3498db";
     if (angles && angles[i] !== null && angles[i] !== undefined) {
-      var ix = p.x + (centX - p.x) * 0.25;
-      var iy = p.y + (centY - p.y) * 0.25;
-      var acol = (highlight !== undefined && highlight === i) ? "#e74c3c" : "#3498db";
-      svg += '<text x="' + ix + '" y="' + (iy + 4) + '" fill="' + acol + '" font-size="11" text-anchor="middle">' + angles[i] + '°</text>';
+      svg += '<text x="' + ix + '" y="' + (iy + 4) + '" fill="' + acol + '" font-size="11" font-weight="bold" text-anchor="middle">' + angles[i] + '\u00b0</text>';
+    } else if (labels && labels[i]) {
+      // Show "?" for unknown angle
+      svg += '<text x="' + ix + '" y="' + (iy + 4) + '" fill="#e74c3c" font-size="11" font-weight="bold" text-anchor="middle">?</text>';
     }
   }
 
@@ -193,19 +217,25 @@ function svgQuadrilateral(verts, angles, labels, highlight) {
     var p = pts[j];
     var dx = p.x - centX, dy = p.y - centY;
     var dist = Math.sqrt(dx * dx + dy * dy);
-    var lx = p.x + (dx / dist) * 18;
-    var ly = p.y + (dy / dist) * 18;
+    var lx = p.x + (dx / dist) * 20;
+    var ly = p.y + (dy / dist) * 20;
 
-    var col = (highlight !== undefined && highlight === j) ? "#e74c3c" : "#fff";
+    var isHL = (highlight !== undefined && highlight === j);
+    var col = isHL ? "#e74c3c" : "#fff";
+
+    // Vertex label
     if (labels && labels[j]) {
-      svg += '<text x="' + lx + '" y="' + (ly + 4) + '" fill="' + col + '" font-size="14" font-weight="bold" text-anchor="middle">' + labels[j] + '</text>';
+      svg += '<text x="' + lx + '" y="' + (ly + 5) + '" fill="' + col + '" font-size="14" font-weight="bold" text-anchor="middle">' + labels[j] + '</text>';
     }
 
+    // Angle value inside the shape
+    var ix = p.x + (centX - p.x) * 0.24;
+    var iy = p.y + (centY - p.y) * 0.24;
+    var acol = isHL ? "#e74c3c" : "#3498db";
     if (angles && angles[j] !== null && angles[j] !== undefined) {
-      var ix = p.x + (centX - p.x) * 0.22;
-      var iy = p.y + (centY - p.y) * 0.22;
-      var acol = (highlight !== undefined && highlight === j) ? "#e74c3c" : "#3498db";
-      svg += '<text x="' + ix + '" y="' + (iy + 4) + '" fill="' + acol + '" font-size="11" text-anchor="middle">' + angles[j] + '°</text>';
+      svg += '<text x="' + ix + '" y="' + (iy + 4) + '" fill="' + acol + '" font-size="11" font-weight="bold" text-anchor="middle">' + angles[j] + '\u00b0</text>';
+    } else if (labels && labels[j]) {
+      svg += '<text x="' + ix + '" y="' + (iy + 4) + '" fill="#e74c3c" font-size="11" font-weight="bold" text-anchor="middle">?</text>';
     }
   }
 
@@ -213,63 +243,65 @@ function svgQuadrilateral(verts, angles, labels, highlight) {
 }
 
 function svgTwoTriangles(config) {
-  // config: {shared: "side"|"vertex", labels, angles, highlight}
-  // Draws two triangles sharing a side or vertex
-  // Returns SVG string
+  // config: {type: "shared_vertex"|"shared_side", labels, angles, highlight}
   var type = config.type || "shared_side";
 
   if (type === "shared_vertex") {
-    // Two triangles sharing a vertex at center (like bowtie / vlinderfiguur)
-    var pts1 = [{ x: 30, y: 30 }, { x: 150, y: 100 }, { x: 30, y: 170 }];
-    var pts2 = [{ x: 270, y: 30 }, { x: 150, y: 100 }, { x: 270, y: 170 }];
+    // Two triangles sharing a vertex at center (bowtie / vlinderfiguur)
     var svg = '';
     svg += '<path d="M 30 30 L 150 100 L 30 170 Z" fill="none" stroke="#aaa" stroke-width="2"/>';
     svg += '<path d="M 270 30 L 150 100 L 270 170 Z" fill="none" stroke="#aaa" stroke-width="2"/>';
 
-    // Labels
-    var allPts = [pts1[0], pts1[1], pts1[2], pts2[0], pts2[2]];
+    var allPts = [{ x: 30, y: 30 }, { x: 150, y: 100 }, { x: 30, y: 170 }, { x: 270, y: 30 }, { x: 270, y: 170 }];
     var allLabels = config.labels || ["A", "S", "B", "C", "D"];
     var allAngles = config.angles || [null, null, null, null, null];
-    var offsets = [{ x: -14, y: -4 }, { x: 0, y: 18 }, { x: -14, y: 8 }, { x: 14, y: -4 }, { x: 14, y: 8 }];
+    var offsets = [{ x: -16, y: -6 }, { x: 0, y: 20 }, { x: -16, y: 10 }, { x: 16, y: -6 }, { x: 16, y: 10 }];
 
     for (var i = 0; i < allPts.length; i++) {
+      var isHL = (config.highlight !== undefined && config.highlight === i);
+      var col = isHL ? "#e74c3c" : "#fff";
       if (allLabels[i]) {
-        var col = (config.highlight !== undefined && config.highlight === i) ? "#e74c3c" : "#fff";
         svg += '<text x="' + (allPts[i].x + offsets[i].x) + '" y="' + (allPts[i].y + offsets[i].y) + '" fill="' + col + '" font-size="13" font-weight="bold" text-anchor="middle">' + allLabels[i] + '</text>';
       }
+      // Angle value or "?"
+      var acol = isHL ? "#e74c3c" : "#3498db";
+      var ax = allPts[i].x + (150 - allPts[i].x) * 0.24;
+      var ay = allPts[i].y + (100 - allPts[i].y) * 0.24;
       if (allAngles[i] !== null && allAngles[i] !== undefined) {
-        var acol = (config.highlight !== undefined && config.highlight === i) ? "#e74c3c" : "#3498db";
-        var ax = allPts[i].x + (150 - allPts[i].x) * 0.22;
-        var ay = allPts[i].y + (100 - allPts[i].y) * 0.22;
-        svg += '<text x="' + ax + '" y="' + (ay + 4) + '" fill="' + acol + '" font-size="11" text-anchor="middle">' + allAngles[i] + '°</text>';
+        svg += '<text x="' + ax + '" y="' + (ay + 4) + '" fill="' + acol + '" font-size="11" font-weight="bold" text-anchor="middle">' + allAngles[i] + '\u00b0</text>';
+      } else if (allLabels[i]) {
+        svg += '<text x="' + ax + '" y="' + (ay + 4) + '" fill="#e74c3c" font-size="11" font-weight="bold" text-anchor="middle">?</text>';
       }
     }
 
     return '<svg viewBox="0 0 300 200" width="300" height="200" xmlns="http://www.w3.org/2000/svg">' + svg + '</svg>';
   }
 
-  // shared_side: two triangles sharing a vertical side
+  // shared_side: two triangles sharing a side
   var svg2 = '';
   svg2 += '<path d="M 50 30 L 150 170 L 50 170 Z" fill="none" stroke="#aaa" stroke-width="2"/>';
-  svg2 += '<path d="M 250 50 L 150 170 L 50 30 Z" fill="none" stroke="#aaa" stroke-width="2" stroke-dasharray="0"/>';
+  svg2 += '<path d="M 250 50 L 150 170 L 50 30 Z" fill="none" stroke="#aaa" stroke-width="2"/>';
 
   var pts = [{ x: 50, y: 30 }, { x: 50, y: 170 }, { x: 150, y: 170 }, { x: 250, y: 50 }];
   var lbls = config.labels || ["A", "B", "C", "D"];
   var angs = config.angles || [null, null, null, null];
-  var offs2 = [{ x: -14, y: -6 }, { x: -14, y: 12 }, { x: 8, y: 16 }, { x: 14, y: -4 }];
+  var offs2 = [{ x: -16, y: -8 }, { x: -16, y: 14 }, { x: 8, y: 18 }, { x: 16, y: -6 }];
+  var cx2 = (pts[0].x + pts[1].x + pts[2].x + pts[3].x) / 4;
+  var cy2 = (pts[0].y + pts[1].y + pts[2].y + pts[3].y) / 4;
 
   for (var k = 0; k < pts.length; k++) {
+    var isHL2 = (config.highlight !== undefined && config.highlight === k);
+    var col2 = isHL2 ? "#e74c3c" : "#fff";
     if (lbls[k]) {
-      var col2 = (config.highlight !== undefined && config.highlight === k) ? "#e74c3c" : "#fff";
       svg2 += '<text x="' + (pts[k].x + offs2[k].x) + '" y="' + (pts[k].y + offs2[k].y) + '" fill="' + col2 + '" font-size="13" font-weight="bold" text-anchor="middle">' + lbls[k] + '</text>';
     }
+    var acol2 = isHL2 ? "#e74c3c" : "#3498db";
+    var ix2 = pts[k].x + (cx2 - pts[k].x) * 0.25;
+    var iy2 = pts[k].y + (cy2 - pts[k].y) * 0.25;
     if (angs[k] !== null && angs[k] !== undefined) {
-      var cx2 = (pts[0].x + pts[1].x + pts[2].x + pts[3].x) / 4;
-      var cy2 = (pts[0].y + pts[1].y + pts[2].y + pts[3].y) / 4;
-      var ix2 = pts[k].x + (cx2 - pts[k].x) * 0.25;
-      var iy2 = pts[k].y + (cy2 - pts[k].y) * 0.25;
-      var acol2 = (config.highlight !== undefined && config.highlight === k) ? "#e74c3c" : "#3498db";
-      svg2 += '<text x="' + ix2 + '" y="' + (iy2 + 4) + '" fill="' + acol2 + '" font-size="11" text-anchor="middle">' + angs[k] + '°</text>';
+      svg2 += '<text x="' + ix2 + '" y="' + (iy2 + 4) + '" fill="' + acol2 + '" font-size="11" font-weight="bold" text-anchor="middle">' + angs[k] + '\u00b0</text>';
+    } else if (lbls[k]) {
+      svg2 += '<text x="' + ix2 + '" y="' + (iy2 + 4) + '" fill="#e74c3c" font-size="11" font-weight="bold" text-anchor="middle">?</text>';
     }
   }
 
@@ -876,7 +908,7 @@ function g55() {
       q: "Twee lijnen snijden in punt " + s + ".\n\u2220" + s + "\u2081 = " + a1 + "\u00b0.\nBereken \u2220" + s + "\u2082 (naastliggend).",
       a: a2,
       h: "Gestrekte hoek: \u2220" + s + "\u2082 = 180\u00b0 \u2212 " + a1 + "\u00b0 = " + a2 + "\u00b0",
-      svg: svgIntersectingLines(imgLines, imgAngles)
+      svg: svgIntersectingLines(imgLines, imgAngles, s)
     };
   }
   if (t === 2) {
@@ -892,7 +924,7 @@ function g55() {
       q: "Twee lijnen snijden in punt " + s + ".\n\u2220" + s + "\u2081 = " + a1 + "\u00b0.\n\u2220" + s + "\u2083 is de overstaande hoek.\nBereken \u2220" + s + "\u2083.",
       a: a1,
       h: "Overstaande hoeken zijn even groot: \u2220" + s + "\u2083 = " + a1 + "\u00b0",
-      svg: svgIntersectingLines(imgLines, imgAngles)
+      svg: svgIntersectingLines(imgLines, imgAngles, s)
     };
   }
   if (t === 3) {
@@ -910,7 +942,7 @@ function g55() {
       q: "Twee lijnen snijden in punt " + s + ".\n\u2220" + s + "\u2081 = " + a1 + "\u00b0.\nBereken \u2220" + s + "\u2084 (overstaand aan \u2220" + s + "\u2082).",
       a: a1,
       h: "\u2220" + s + "\u2082 = 180\u00b0 \u2212 " + a1 + "\u00b0 = " + a2 + "\u00b0.\n\u2220" + s + "\u2084 is overstaand aan \u2220" + s + "\u2082, maar ook: \u2220" + s + "\u2084 = 180\u00b0 \u2212 \u2220" + s + "\u2082 = 180\u00b0 \u2212 " + a2 + "\u00b0 = " + a1 + "\u00b0.\nOf: \u2220" + s + "\u2084 is overstaand aan \u2220" + s + "\u2081 = " + a1 + "\u00b0.",
-      svg: svgIntersectingLines(imgLines, imgAngles)
+      svg: svgIntersectingLines(imgLines, imgAngles, s)
     };
   }
   if (t === 4) {
@@ -932,7 +964,7 @@ function g55() {
       q: "Drie lijnen snijden in punt " + s + ".\n\u2220" + s + "\u2081 = " + seg1 + "\u00b0 en \u2220" + s + "\u2082 = " + seg2 + "\u00b0.\n\u2220" + s + "\u2081, \u2220" + s + "\u2082 en \u2220" + s + "\u2083 vormen samen een gestrekte hoek.\nBereken \u2220" + s + "\u2083.",
       a: seg3,
       h: "\u2220" + s + "\u2083 = 180\u00b0 \u2212 " + seg1 + "\u00b0 \u2212 " + seg2 + "\u00b0 = " + seg3 + "\u00b0",
-      svg: svgIntersectingLines(imgLines, imgAngles)
+      svg: svgIntersectingLines(imgLines, imgAngles, s)
     };
   }
   if (t === 5) {
@@ -960,7 +992,7 @@ function g55() {
       q: "Drie lijnen snijden in punt " + s + ".\n\u2220" + s + "\u2081 = 90\u00b0, \u2220" + s + "\u2082 = " + halfAngle + "\u00b0.\n\u2220" + s + "\u2081, \u2220" + s + "\u2082 en \u2220" + s + "\u2083 vormen een gestrekte hoek.\nBereken \u2220" + s + "\u2083.",
       a: 90 - halfAngle,
       h: "\u2220" + s + "\u2083 = 180\u00b0 \u2212 90\u00b0 \u2212 " + halfAngle + "\u00b0 = " + (90 - halfAngle) + "\u00b0",
-      svg: svgIntersectingLines(imgLines, imgAngles)
+      svg: svgIntersectingLines(imgLines, imgAngles, s)
     };
   }
   if (t === 6) {
@@ -996,7 +1028,7 @@ function g55() {
       q: "Drie lijnen snijden in punt " + s + ".\n\u2220" + s + "\u2081 = " + a1val + "\u00b0 en \u2220" + s + "\u2082 = " + a2val + "\u00b0.\nBereken \u2220" + s + "\u2083.\n(Hint: \u2220" + s + "\u2081 + \u2220" + s + "\u2082 + \u2220" + s + "\u2083 = 180\u00b0)",
       a: a3val,
       h: "\u2220" + s + "\u2083 = 180\u00b0 \u2212 " + a1val + "\u00b0 \u2212 " + a2val + "\u00b0 = " + a3val + "\u00b0",
-      svg: svgIntersectingLines(imgLines, imgAngles)
+      svg: svgIntersectingLines(imgLines, imgAngles, s)
     };
   }
   if (t === 7) {
@@ -1014,7 +1046,7 @@ function g55() {
       q: "Twee lijnen snijden in punt " + s + ".\n\u2220" + s + "\u2082 = " + a2 + "\u00b0.\nBereken \u2220" + s + "\u2081 (naastliggend aan \u2220" + s + "\u2082).",
       a: a1,
       h: "\u2220" + s + "\u2081 + \u2220" + s + "\u2082 = 180\u00b0 (gestrekte hoek).\n\u2220" + s + "\u2081 = 180\u00b0 \u2212 " + a2 + "\u00b0 = " + a1 + "\u00b0",
-      svg: svgIntersectingLines(imgLines, imgAngles)
+      svg: svgIntersectingLines(imgLines, imgAngles, s)
     };
   }
   if (t === 8) {
@@ -1035,7 +1067,7 @@ function g55() {
       q: "Twee lijnen snijden in punt " + s + ".\n\u2220" + s + "\u2082 = " + a2 + "\u00b0.\n\nStap 1: Bereken \u2220" + s + "\u2081 (gestrekte hoek).\nStap 2: \u2220" + s + "\u2083 is overstaand aan \u2220" + s + "\u2081.\n\nHoe groot is \u2220" + s + "\u2083?",
       a: a1,
       h: "Stap 1: \u2220" + s + "\u2081 = 180\u00b0 \u2212 " + a2 + "\u00b0 = " + a1 + "\u00b0.\nStap 2: \u2220" + s + "\u2083 (overstaand) = \u2220" + s + "\u2081 = " + a1 + "\u00b0",
-      svg: svgIntersectingLines(imgLines, imgAngles)
+      svg: svgIntersectingLines(imgLines, imgAngles, s)
     };
   }
   if (t === 9) {
@@ -1058,7 +1090,7 @@ function g55() {
       q: "Drie lijnen snijden in punt " + s + ".\n\u2220" + s + "\u2081 = " + a1 + "\u00b0, \u2220" + s + "\u2082 = " + a2 + "\u00b0, \u2220" + s + "\u2083 = " + a3 + "\u00b0.\nBereken \u2220" + s + "\u2085 (overstaand aan \u2220" + s + "\u2082).",
       a: a2,
       h: "Overstaande hoeken zijn gelijk.\n\u2220" + s + "\u2085 = \u2220" + s + "\u2082 = " + a2 + "\u00b0",
-      svg: svgIntersectingLines(imgLines, imgAngles)
+      svg: svgIntersectingLines(imgLines, imgAngles, s)
     };
   }
   if (t === 10) {
@@ -1113,7 +1145,7 @@ function g55() {
     q: "Drie lijnen snijden in punt " + s + ".\n\u2220" + s + "\u2081 = " + seg1 + "\u00b0, \u2220" + s + "\u2083 = " + seg3 + "\u00b0.\n\u2220" + s + "\u2081, \u2220" + s + "\u2082 en \u2220" + s + "\u2083 vormen een gestrekte hoek.\nBereken \u2220" + s + "\u2085 (overstaand aan \u2220" + s + "\u2082).",
     a: seg2,
     h: "Stap 1: \u2220" + s + "\u2082 = 180\u00b0 \u2212 " + seg1 + "\u00b0 \u2212 " + seg3 + "\u00b0 = " + seg2 + "\u00b0.\nStap 2: \u2220" + s + "\u2085 (overstaand) = \u2220" + s + "\u2082 = " + seg2 + "\u00b0",
-    svg: svgIntersectingLines(imgLines, imgAngles)
+    svg: svgIntersectingLines(imgLines, imgAngles, s)
   };
 }
 
