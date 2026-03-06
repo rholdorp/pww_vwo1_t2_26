@@ -56,6 +56,13 @@
     }).catch(e=>console.warn("[FB] pull failed:",e.message));
   }
 
+  function listUsers(){
+    return db.ref("users").once("value").then(snap=>{
+      if(!snap.exists())return[];
+      return Object.keys(snap.val());
+    }).catch(()=>[]);
+  }
+
   window.FB={db,getCurrentUser,setCurrentUser,trainerRef,studiePlanRef,
-             syncToFirebase,pullFromFirebase};
+             syncToFirebase,pullFromFirebase,listUsers};
 })();

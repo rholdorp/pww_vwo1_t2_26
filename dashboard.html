@@ -274,6 +274,8 @@ const[trSt,setTrSt]=useState(()=>loadAllTrainerStats());
 const[curUser,setCurUser]=useState(()=>window.FB?window.FB.getCurrentUser():"stijn");
 const[showPicker,setShowPicker]=useState(false);
 const[userInput,setUserInput]=useState("");
+const[allUsers,setAllUsers]=useState(["stijn"]);
+useEffect(()=>{if(showPicker&&window.FB)window.FB.listUsers().then(u=>{if(u.length)setAllUsers(u)});},[showPicker]);
 useEffect(()=>{save(ck,curUser)},[ck]);
 useEffect(()=>{fetchStudiePlan(curUser).then(fb=>{if(fb)setCk(fb);})},[curUser]);
 useEffect(()=>{fetchTrainerStats(curUser).then(setTrSt)},[view,curUser]);
@@ -300,7 +302,9 @@ const getTr=subj=>trSt[subj]||null;
 function switchUser(name){
   const safe=window.FB?window.FB.setCurrentUser(name):name;
   if(!safe)return;
-  setCurUser(safe);setShowPicker(false);setUserInput("");setCk(load()||{});
+  setCurUser(safe);setShowPicker(false);setUserInput("");
+  setCk({});
+  if(!allUsers.includes(safe))setAllUsers(u=>[...u,safe].sort());
 }
 
 const[toast,setToast]=useState(null);
@@ -359,10 +363,15 @@ React.createElement("div",{style:{background:"rgba(0,0,0,0.3)",backdropFilter:"b
     React.createElement("button",{style:{fontSize:"11px",color:"#4d96ff",background:"rgba(77,150,255,0.1)",border:"1px solid rgba(77,150,255,0.2)",borderRadius:"8px",padding:"3px 9px",cursor:"pointer",fontFamily:"inherit",fontWeight:700},onClick:()=>setShowPicker(v=>!v)},"👤 "+curUser),
     React.createElement("span",{style:{fontSize:"12px",color:"#666"}},"PW maart 2026"))),
 
-showPicker&&React.createElement("div",{style:{position:"fixed",top:"56px",right:"14px",zIndex:100,background:"#1a2035",border:"1px solid rgba(255,255,255,0.12)",borderRadius:"12px",padding:"14px",width:"200px",boxShadow:"0 8px 32px rgba(0,0,0,0.5)"}},
-  React.createElement("div",{style:{fontSize:"11px",color:"#888",marginBottom:"8px"}},"Wissel van gebruiker:"),
-  React.createElement("button",{style:{display:"block",width:"100%",textAlign:"left",padding:"8px 10px",borderRadius:"8px",border:"none",cursor:"pointer",marginBottom:"4px",background:curUser==="stijn"?"rgba(77,150,255,0.15)":"transparent",color:curUser==="stijn"?"#4d96ff":"#ccc",fontSize:"13px",fontWeight:700},onClick:()=>switchUser("stijn")},(curUser==="stijn"?"✓ ":"")+"stijn"),
-  React.createElement("input",{style:{width:"100%",marginTop:"8px",padding:"7px 10px",borderRadius:"8px",border:"1px solid rgba(255,255,255,0.1)",background:"rgba(255,255,255,0.05)",color:"#fff",fontSize:"13px",fontFamily:"inherit"},placeholder:"andere naam...",value:userInput,onChange:e=>setUserInput(e.target.value),onKeyDown:e=>e.key==="Enter"&&userInput&&switchUser(userInput)})),
+showPicker&&React.createElement("div",{style:{position:"fixed",top:"56px",right:"14px",zIndex:100,background:"#1a2035",border:"1px solid rgba(255,255,255,0.12)",borderRadius:"12px",padding:"14px",width:"220px",boxShadow:"0 8px 32px rgba(0,0,0,0.5)"}},
+  React.createElement("div",{style:{fontSize:"11px",color:"#888",marginBottom:"8px"}},"Gebruikers:"),
+  React.createElement("div",{style:{maxHeight:"180px",overflowY:"auto",marginBottom:"8px"}},
+    allUsers.map(u=>React.createElement("button",{key:u,style:{display:"block",width:"100%",textAlign:"left",padding:"8px 10px",borderRadius:"8px",border:"none",cursor:"pointer",marginBottom:"3px",background:curUser===u?"rgba(77,150,255,0.15)":"transparent",color:curUser===u?"#4d96ff":"#ccc",fontSize:"13px",fontWeight:700},onClick:()=>switchUser(u)},(curUser===u?"✓ ":"")+"👤 "+u))),
+  React.createElement("div",{style:{borderTop:"1px solid rgba(255,255,255,0.08)",paddingTop:"8px",marginTop:"4px"}},
+    React.createElement("div",{style:{fontSize:"11px",color:"#888",marginBottom:"6px"}},"Nieuwe gebruiker:"),
+    React.createElement("div",{style:{display:"flex",gap:"6px"}},
+      React.createElement("input",{style:{flex:1,padding:"7px 10px",borderRadius:"8px",border:"1px solid rgba(255,255,255,0.1)",background:"rgba(255,255,255,0.05)",color:"#fff",fontSize:"13px",fontFamily:"inherit"},placeholder:"naam...",value:userInput,onChange:e=>setUserInput(e.target.value),onKeyDown:e=>e.key==="Enter"&&userInput&&switchUser(userInput)}),
+      React.createElement("button",{style:{padding:"7px 12px",borderRadius:"8px",border:"none",background:"rgba(77,150,255,0.2)",color:"#4d96ff",fontSize:"13px",fontWeight:700,cursor:"pointer"},onClick:()=>userInput&&switchUser(userInput)},"→")))),
 React.createElement("div",{style:{maxWidth:"640px",margin:"0 auto",padding:"16px 14px 60px"}},
 // Hero stats
 React.createElement("div",{style:{background:cBg,borderRadius:"16px",padding:"18px",border:"1px solid "+bdr,marginBottom:"12px",textAlign:"center"}},
