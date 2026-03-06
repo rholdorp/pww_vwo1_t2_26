@@ -251,7 +251,7 @@ function App(){
     setQuestions(qs);setQIdx(0);setSelected(null);setScore({correct:0,total:0});setWrongAnswers([]);setMode("practice");
   }
   function nextQ(){
-    if(qIdx+1>=questions.length){setMode("results");return;}
+    if(qIdx+1>=questions.length){progress.saveLastQuiz(activeSec,score.correct,score.total);setMode("results");return;}
     setQIdx(q=>q+1);setSelected(null);
   }
   function handleAnswer(idx){
@@ -372,7 +372,7 @@ function App(){
 
   // ===== RESULTS =====
   if(mode==="results"){
-    const pct=score.total>0?Math.round(score.correct/score.total*100):0;const passed=pct>=80;
+    const pct=score.total>0?Math.round(score.correct/score.total*100):0;const passed=pct>=70;
     return React.createElement("div",{style:{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center"}},
       React.createElement("div",{style:{maxWidth:"400px",padding:"20px",textAlign:"center"}},
         React.createElement("div",{style:{fontSize:"64px",marginBottom:"16px"}},passed?"🎉":"💪"),

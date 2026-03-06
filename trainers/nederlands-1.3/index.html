@@ -209,6 +209,7 @@ function App() {
     if (qIdx + 1 < questions.length) {
       setQIdx(qIdx + 1); setAnswered(null);
     } else {
+      progress.saveLastQuiz(activeSec, score.correct, score.total);
       setMode("results");
     }
   };
@@ -376,7 +377,7 @@ function App() {
   // ===== RENDER RESULTS =====
   if (mode === "results") {
     const pct = score.total > 0 ? Math.round(score.correct / score.total * 100) : 0;
-    const passed = pct >= 80;
+    const passed = pct >= 70;
     return React.createElement("div", { style: { minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" } },
       React.createElement("div", { style: { maxWidth: "400px", padding: "20px", textAlign: "center" } },
         React.createElement("div", { style: { fontSize: "64px", marginBottom: "16px" } }, passed ? "🎉" : "💪"),

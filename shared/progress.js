@@ -91,10 +91,20 @@ class TrainerProgress {
     this._save();
   }
 
-  // Check if section is mastered (≥8 answers, ≥80% correct)
+  // Save last quiz result for a section
+  saveLastQuiz(sectionId, correct, total) {
+    const s = this.getSection(sectionId);
+    s.lastQuizCorrect = correct;
+    s.lastQuizTotal = total;
+    s.lastQuizPct = total > 0 ? Math.round(correct / total * 100) : 0;
+    this.data.sections[sectionId] = s;
+    this._save();
+  }
+
+  // Check if section is mastered (last quiz ≥70%)
   isMastered(sectionId) {
     const s = this.getSection(sectionId);
-    return s.total >= 8 && s.correct / s.total >= 0.8;
+    return (s.lastQuizPct || 0) >= 70;
   }
 
   // Get overall stats

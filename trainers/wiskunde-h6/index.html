@@ -202,7 +202,7 @@ function App(){
   const updateProg=(sid,ok)=>setProgress(p=>({...p,[sid]:{...p[sid],correct:p[sid].correct+(ok?1:0),total:p[sid].total+1,bestStreak:Math.max(p[sid].bestStreak,ok?streak+1:streak)}}));
   const markTheory=sid=>setProgress(p=>({...p,[sid]:{...p[sid],theoryDone:true}}));
   const getPct=sid=>{const s=progress[sid];return s.total>0?Math.round(s.correct/s.total*100):0};
-  const isMastered=sid=>{const s=progress[sid];return s.total>=8&&getPct(sid)>=80};
+  const isMastered=sid=>{const s=progress[sid];return(s.lastQuizPct||0)>=70};
   const totalMastered=SECTIONS.filter(s=>isMastered(s.id)).length;
 
   const startTheory=sid=>{setSection(sid);setTheoryStep(0);setTheoryAnswer("");setTheoryChecked(false);setScreen("theory")};
@@ -244,7 +244,7 @@ function App(){
   const nextTheory=()=>{if(theoryStep<theorySteps.length-1){setTheoryStep(s=>s+1);setTheoryAnswer("");setTheoryChecked(false)}else{markTheory(section);setScreen("home")}};
 
   const checkQuiz=()=>{if(!question)return;let ok=false;if(question.t==="choice")ok=answer===question.a;else if(question.t==="text")ok=answer.replace(/\s/g,"").toLowerCase()===String(question.a).replace(/\s/g,"").toLowerCase();else ok=parseFloat(answer.replace(",","."))=== question.a;setCorrect(ok);setChecked(true);if(!ok)setWrongAnswers(w=>[...w,{q:question.q,chosen:answer,correct:String(question.a)}]);setStreak(s=>ok?s+1:0);setSession(s=>({c:s.c+(ok?1:0),t:s.t+1}));updateProg(section,ok)};
-  const nextQuiz=()=>{if(session.t>=10)setScreen("results");else loadQ(section)};
+  const nextQuiz=()=>{if(session.t>=10){setProgress(p=>({...p,[section]:{...p[section],lastQuizPct:Math.round(session.c/session.t*100)}}));setScreen("results")}else loadQ(section)};
 
   const fmtBold=text=>{const parts=text.split(/(\*\*[^*]+\*\*)/g);return parts.map((p,i)=>p.startsWith("**")&&p.endsWith("**")?React.createElement("strong",{key:i,style:{color:"#fff",fontWeight:800}},p.slice(2,-2)):React.createElement("span",{key:i},p))};
 
@@ -285,7 +285,7 @@ function App(){
           ),
           React.createElement("div",{style:{display:"flex",gap:"6px",flexWrap:"wrap",marginTop:"10px"}},
             React.createElement("span",{style:{display:"inline-block",padding:"2px 8px",borderRadius:"6px",fontSize:"11px",fontWeight:700,background:(p.theoryDone?"#6bcb77":"#888")+"20",color:p.theoryDone?"#6bcb77":"#888"}},p.theoryDone?"✓ Theorie":"○ Theorie"),
-            React.createElement("span",{style:{display:"inline-block",padding:"2px 8px",borderRadius:"6px",fontSize:"11px",fontWeight:700,background:(pct>=80&&p.total>=8?"#6bcb77":"#888")+"20",color:pct>=80&&p.total>=8?"#6bcb77":"#888"}},p.total>0?p.correct+"/"+p.total+" ("+pct+"%)":"Nog niet geoefend"),
+            React.createElement("span",{style:{display:"inline-block",padding:"2px 8px",borderRadius:"6px",fontSize:"11px",fontWeight:700,background:(isMastered(sec.id)?"#6bcb77":"#888")+"20",color:isMastered(sec.id)?"#6bcb77":"#888"}},p.total>0?p.correct+"/"+p.total+" ("+pct+"%)":"Nog niet geoefend"),
             p.bestStreak>=3&&React.createElement("span",{style:{display:"inline-block",padding:"2px 8px",borderRadius:"6px",fontSize:"11px",fontWeight:700,background:"#ffd93d20",color:"#ffd93d"}},"🔥 "+p.bestStreak+"x")
           ),
           p.total>0&&React.createElement("div",{style:{height:"4px",borderRadius:"2px",background:"rgba(255,255,255,0.08)",marginTop:"8px",position:"relative",overflow:"hidden"}},
@@ -308,7 +308,7 @@ function App(){
           ),
           React.createElement("div",{style:{display:"flex",gap:"6px",flexWrap:"wrap",marginTop:"10px"}},
             React.createElement("span",{style:{display:"inline-block",padding:"2px 8px",borderRadius:"6px",fontSize:"11px",fontWeight:700,background:(p.theoryDone?"#6bcb77":"#888")+"20",color:p.theoryDone?"#6bcb77":"#888"}},p.theoryDone?"✓ Theorie":"○ Theorie"),
-            React.createElement("span",{style:{display:"inline-block",padding:"2px 8px",borderRadius:"6px",fontSize:"11px",fontWeight:700,background:(pct>=80&&p.total>=8?"#6bcb77":"#888")+"20",color:pct>=80&&p.total>=8?"#6bcb77":"#888"}},p.total>0?p.correct+"/"+p.total+" ("+pct+"%)":"Nog niet geoefend"),
+            React.createElement("span",{style:{display:"inline-block",padding:"2px 8px",borderRadius:"6px",fontSize:"11px",fontWeight:700,background:(isMastered(sec.id)?"#6bcb77":"#888")+"20",color:isMastered(sec.id)?"#6bcb77":"#888"}},p.total>0?p.correct+"/"+p.total+" ("+pct+"%)":"Nog niet geoefend"),
             p.bestStreak>=3&&React.createElement("span",{style:{display:"inline-block",padding:"2px 8px",borderRadius:"6px",fontSize:"11px",fontWeight:700,background:"#ffd93d20",color:"#ffd93d"}},"🔥 "+p.bestStreak+"x")
           ),
           p.total>0&&React.createElement("div",{style:{height:"4px",borderRadius:"2px",background:"rgba(255,255,255,0.08)",marginTop:"8px",position:"relative",overflow:"hidden"}},
@@ -424,7 +424,7 @@ function App(){
   }
 
   // RESULTS
-  if(screen==="results"){const sec=getSection(section),pct=Math.round(session.c/session.t*100),ok=pct>=80;
+  if(screen==="results"){const sec=getSection(section),pct=Math.round(session.c/session.t*100),ok=pct>=70;
     return React.createElement("div",{style:{minHeight:"100vh",background:"linear-gradient(160deg,#0c0c20,#141432 40%,#0e0e28)"}},
       React.createElement("div",{style:{background:"rgba(0,0,0,0.25)",padding:"14px 20px",borderBottom:"1px solid "+bdr}},React.createElement("div",{style:{fontSize:"18px",fontWeight:900,background:"linear-gradient(90deg,#ff6b6b,#feca57,#48dbfb)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",textAlign:"center"}},"Resultaten")),
       React.createElement("div",{style:{maxWidth:"640px",margin:"0 auto",padding:"20px 16px"}},
@@ -432,7 +432,7 @@ function App(){
           React.createElement("div",{style:{fontSize:"64px",marginBottom:"12px"}},ok?"🎉":"💪"),
           React.createElement("div",{style:{fontSize:"32px",fontWeight:900,color:ok?"#6bcb77":"#ffd93d"}},pct+"%"),
           React.createElement("div",{style:{fontSize:"18px",fontWeight:700,marginTop:"4px"}},session.c+" van "+session.t+" goed"),
-          React.createElement("div",{style:{fontSize:"14px",color:"#888",marginTop:"8px"}},ok?"§"+section+" beheerst! Ga door naar het volgende onderwerp.":"Je hebt ≥80% nodig. Bestudeer de theorie en probeer opnieuw!"),
+          React.createElement("div",{style:{fontSize:"14px",color:"#888",marginTop:"8px"}},ok?"§"+section+" beheerst! Ga door naar het volgende onderwerp.":"Je hebt ≥70% nodig. Bestudeer de theorie en probeer opnieuw!"),
           React.createElement("div",{style:{display:"flex",gap:"8px",marginTop:"20px",justifyContent:"center"}},
             React.createElement("button",{style:{padding:"10px 20px",borderRadius:"12px",border:"2px solid "+sec.color,background:"transparent",color:sec.color,fontSize:"14px",fontWeight:700,cursor:"pointer"},onClick:()=>startTheory(section)},"📖 Theorie"),
             React.createElement("button",{style:{padding:"10px 20px",borderRadius:"12px",border:"none",background:sec.color,color:"#fff",fontSize:"14px",fontWeight:700,cursor:"pointer"},onClick:()=>startQuiz(section)},"🔄 Opnieuw")

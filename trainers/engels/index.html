@@ -195,7 +195,7 @@ function App(){
     if(qIdx+1<questions.length){
       setQIdx(qIdx+1);setInput("");setResult(null);
       setTimeout(()=>{if(inputRef.current)inputRef.current.focus()},100);
-    } else setMode("results");
+    } else{progress.saveLastQuiz(activeSec,score.correct,score.total);setMode("results");}
   };
 
   const handleKey=(e)=>{
@@ -331,7 +331,7 @@ function App(){
 
   // ===== RESULTS =====
   if(mode==="results"){
-    const pct=score.total>0?Math.round(score.correct/score.total*100):0,passed=pct>=80;
+    const pct=score.total>0?Math.round(score.correct/score.total*100):0,passed=pct>=70;
     return React.createElement("div",{style:{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center"}},
       React.createElement("div",{style:{maxWidth:"400px",padding:"20px",textAlign:"center"}},
         React.createElement("div",{style:{fontSize:"64px",marginBottom:"16px"}},passed?"🎉":"💪"),

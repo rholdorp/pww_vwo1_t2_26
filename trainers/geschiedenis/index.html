@@ -204,7 +204,7 @@ function App(){
 
   const nextQ=()=>{
     if(qIdx<questions.length-1){setQIdx(q=>q+1);setSelected(null);}
-    else{refreshStats();setScreen("results");}
+    else{progress.saveLastQuiz(secId,score,questions.length);refreshStats();setScreen("results");}
   };
 
   const {tag, pBar} = window.TrainerUI;
@@ -317,11 +317,11 @@ function App(){
         React.createElement("div",{style:{fontSize:14,fontWeight:700,color:COL}},"Resultaat"),
         React.createElement("div",null)),
       React.createElement("div",{style:{maxWidth:640,margin:"0 auto",padding:"20px 14px"}},
-        React.createElement("div",{style:{background:cBg,borderRadius:16,padding:24,border:"1px solid "+(pct>=80?COL+"50":bdr),textAlign:"center",marginBottom:16}},
-          React.createElement("div",{style:{fontSize:48,marginBottom:8}},pct>=80?"\u{1F389}":"\u{1F4AA}"),
-          React.createElement("div",{style:{fontSize:36,fontWeight:900,color:pct>=80?COL:"#ffd93d"}},score+"/"+questions.length),
+        React.createElement("div",{style:{background:cBg,borderRadius:16,padding:24,border:"1px solid "+(pct>=70?COL+"50":bdr),textAlign:"center",marginBottom:16}},
+          React.createElement("div",{style:{fontSize:48,marginBottom:8}},pct>=70?"\u{1F389}":"\u{1F4AA}"),
+          React.createElement("div",{style:{fontSize:36,fontWeight:900,color:pct>=70?COL:"#ffd93d"}},score+"/"+questions.length),
           React.createElement("div",{style:{fontSize:14,color:"#888",marginBottom:12}},pct+"% goed"),
-          mastered?React.createElement("div",{style:{background:COL+"20",border:"1px solid "+COL+"40",borderRadius:10,padding:"10px 16px",color:COL,fontWeight:700,fontSize:14}},"\u2713 Sectie beheerst! (\u22658 vragen & \u226580%)"):React.createElement("div",{style:{fontSize:13,color:"#666"}},pct<80?"Nog even oefenen! Je hebt \u226580% nodig.":"Goed! Nog wat meer vragen nodig voor 'beheerst'.")),
+          mastered?React.createElement("div",{style:{background:COL+"20",border:"1px solid "+COL+"40",borderRadius:10,padding:"10px 16px",color:COL,fontWeight:700,fontSize:14}},"\u2713 Sectie beheerst! (\u226570% op laatste toets)"):React.createElement("div",{style:{fontSize:13,color:"#666"}},"Nog even oefenen! Je hebt \u226570% nodig op de laatste toets.")),
         React.createElement("div",{style:{marginBottom:16}},
           answers.map((a,i)=>React.createElement("div",{key:i,style:{background:a.ok?"rgba(107,203,119,0.08)":"rgba(255,107,107,0.08)",border:"1px solid "+(a.ok?"rgba(107,203,119,0.2)":"rgba(255,107,107,0.2)"),borderRadius:10,padding:"10px 14px",marginBottom:6}},
             React.createElement("div",{style:{fontSize:12,color:a.ok?"#6bcb77":"#ff6b6b",fontWeight:700,marginBottom:4}},a.ok?"\u2713 Goed":"\u2717 Fout"),
