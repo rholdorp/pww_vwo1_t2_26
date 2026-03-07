@@ -452,15 +452,15 @@ function g51() {
     };
   }
   if (t === 8) {
-    // Trick question: perp + perp on different lines, can't determine
+    // Both perpendicular to the same line → parallel
     return {
       q: ln + " \u22a5 " + ln2 + " en " + ln3 + " \u22a5 " + ln + ".\nWat geldt voor " + ln2 + " en " + ln3 + "?",
-      a: "Niets te zeggen",
+      a: ln2 + " // " + ln3,
       t: "choice",
       o: [ln2 + " // " + ln3, ln2 + " \u22a5 " + ln3, "Niets te zeggen", "Ze zijn gelijk"].sort(function () { return Math.random() - 0.5; }),
-      h: "Beide loodrecht op " + ln + " \u2192 " + ln2 + " // " + ln3 + "? Nee! Dat geldt alleen als ze op dezelfde lijn loodrecht staan. Hier staan ze allebei op " + ln + ", dus: " + ln2 + " // " + ln3 + ".\nWacht... ze staan beiden \u22a5 op " + ln + " dus " + ln2 + " // " + ln3 + "."
+      h: "Beide loodrecht op dezelfde lijn " + ln + " \u2192 " + ln2 + " // " + ln3,
+      svg: svgParallelPerp(ln, ln2, ln3, "perp", "perp")
     };
-    // Actually both perp to the same line DOES mean parallel. Let me fix:
   }
   if (t === 9) {
     return {
@@ -531,43 +531,37 @@ function g52() {
     };
   }
   if (t === 4) {
-    // Random tricky time with half hours
-    var halfHour = pick([1, 2, 3, 4, 5, 7, 8, 10, 11]);
-    var names = { 1: "half twee", 2: "half drie", 3: "half vier", 4: "half vijf", 5: "half zes", 7: "half acht", 8: "half negen", 10: "half elf", 11: "half twaalf" };
-    var h = halfHour, m = 30;
-    var angle = clockAngle(h, m);
+    // Angle classification: which is scherp/stomp/recht?
+    var angles = [pick([10, 25, 35, 45, 55, 65, 75, 89]), pick([91, 100, 120, 135, 150, 170, 179]), 180, 90];
+    var askType = pick(["scherp", "stomp"]);
+    var correctIdx = askType === "scherp" ? 0 : 1;
+    var opts = [angles[0] + "\u00b0", angles[1] + "\u00b0", angles[2] + "\u00b0", angles[3] + "\u00b0"].sort(function () { return Math.random() - 0.5; });
     return {
-      q: "Bereken de hoek tussen de wijzers om " + names[halfHour] + ".",
-      a: angle,
-      h: "Kleine wijzer: " + h + "\u00d730\u00b0 + 30\u00d70,5\u00b0 = " + (h * 30 + 15) + "\u00b0.\nGrote wijzer: 180\u00b0.\nVerschil: " + angle + "\u00b0",
-      svg: svgClock(h, m)
+      q: "Welke hoek is " + askType + "?",
+      a: angles[correctIdx] + "\u00b0",
+      t: "choice",
+      o: opts,
+      h: askType === "scherp" ? "Scherp = tussen 0\u00b0 en 90\u00b0 \u2192 " + angles[0] + "\u00b0" : "Stomp = tussen 90\u00b0 en 180\u00b0 \u2192 " + angles[1] + "\u00b0",
+      svg: svgAngle(angles[correctIdx], angles[correctIdx] + "\u00b0")
     };
   }
   if (t === 5) {
-    // Exact time like 2:20, 4:40 etc.
-    var h = pick([1, 2, 3, 4, 5, 7, 8, 10, 11]);
-    var m = pick([10, 15, 20, 25, 35, 40, 45, 50, 55]);
-    var angle = clockAngle(h, m);
-    var timeStr = h + ":" + (m < 10 ? "0" + m : m);
+    // Give an example of a stompe hoek → numeric, check 90 < answer < 180
     return {
-      q: "Bereken de hoek tussen de wijzers om " + timeStr + ".",
-      a: angle,
-      h: "Kleine wijzer: " + h + "\u00d730 + " + m + "\u00d70,5 = " + (h * 30 + m * 0.5) + "\u00b0.\nGrote wijzer: " + m + "\u00d76 = " + (m * 6) + "\u00b0.\nVerschil: " + angle + "\u00b0",
-      svg: svgClock(h, m)
+      q: "Geef een voorbeeld van een stompe hoek (vul een getal in graden in).",
+      a: "stomp_check",
+      t: "stomp_check",
+      h: "Een stompe hoek is groter dan 90\u00b0 en kleiner dan 180\u00b0."
     };
   }
   if (t === 6) {
-    // 24-hour time
-    var h24 = pick([13, 14, 15, 16, 17, 19, 20, 21, 22, 23]);
-    var m = pick([0, 15, 30, 45, 10, 20, 40, 50]);
-    var h12 = h24 - 12;
-    var angle = clockAngle(h12, m);
-    var timeStr = h24 + ":" + (m < 10 ? "0" + m : m);
+    // Complementary angles: ∠A + ∠B = 90°
+    var compA = pick([15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75]);
+    var compB = 90 - compA;
     return {
-      q: "Bereken de hoek tussen de wijzers om " + timeStr + ".",
-      a: angle,
-      h: h24 + ":" + (m < 10 ? "0" + m : m) + " = " + h12 + ":" + (m < 10 ? "0" + m : m) + "\nKleine wijzer: " + (h12 * 30 + m * 0.5) + "\u00b0, grote wijzer: " + (m * 6) + "\u00b0.\nVerschil: " + angle + "\u00b0",
-      svg: svgClock(h12, m)
+      q: "Twee complementaire hoeken tellen op tot 90\u00b0.\nAls \u2220A = " + compA + "\u00b0, hoeveel is \u2220B?",
+      a: compB,
+      h: "Complementair: \u2220B = 90\u00b0 \u2212 " + compA + "\u00b0 = " + compB + "\u00b0"
     };
   }
   if (t === 7) {
@@ -635,9 +629,9 @@ function g52() {
     };
   }
   // t === 12
-  // Combined: compute angle at a non-standard time
+  // Combined: compute angle at a non-standard time (only even minutes for whole-number angles)
   var h = pick([2, 3, 5, 7, 10, 11]);
-  var m = pick([5, 11, 17, 23, 37, 43, 53]);
+  var m = pick([4, 8, 10, 14, 16, 20, 22, 26, 34, 38, 40, 44, 46, 50, 52, 56]);
   var angle = clockAngle(h, m);
   var timeStr = h + ":" + (m < 10 ? "0" + m : m);
   return {
@@ -1107,10 +1101,18 @@ function g55() {
     var a3v = rand(20, 60);
     var a4v = 180 - a1v - a2v - a3v;
     if (a4v <= 5) return g55();
+    var imgLines10 = [{ deg: 0, name: "" }, { deg: a1v, name: "" }, { deg: a1v + a2v, name: "" }, { deg: a1v + a2v + a3v, name: "" }];
+    var imgAngles10 = [
+      { label: s + "\u2081", startDeg: 0, endDeg: a1v, value: a1v, color: "#3498db" },
+      { label: s + "\u2082", startDeg: a1v, endDeg: a1v + a2v, value: a2v, color: "#27ae60" },
+      { label: s + "\u2083", startDeg: a1v + a2v, endDeg: a1v + a2v + a3v, value: a3v, color: "#9b59b6" },
+      { label: s + "\u2084=?", startDeg: a1v + a2v + a3v, endDeg: 180, value: null, color: "#e74c3c" }
+    ];
     return {
       q: "Vier hoeken vormen samen een gestrekte hoek (180\u00b0).\n\u2220" + s + "\u2081 = " + a1v + "\u00b0, \u2220" + s + "\u2082 = " + a2v + "\u00b0, \u2220" + s + "\u2083 = " + a3v + "\u00b0.\nBereken \u2220" + s + "\u2084.",
       a: a4v,
-      h: "180\u00b0 \u2212 " + a1v + "\u00b0 \u2212 " + a2v + "\u00b0 \u2212 " + a3v + "\u00b0 = " + a4v + "\u00b0"
+      h: "180\u00b0 \u2212 " + a1v + "\u00b0 \u2212 " + a2v + "\u00b0 \u2212 " + a3v + "\u00b0 = " + a4v + "\u00b0",
+      svg: svgIntersectingLines(imgLines10, imgAngles10, s)
     };
   }
   if (t === 11) {
@@ -1119,10 +1121,17 @@ function g55() {
     var a1 = rand(20, 70);
     var a2rest = 90 - a1; // a2 forms a right angle with a1
     var a3 = 180 - a1 - a2rest; // =90, the remaining part of the gestrekte hoek
+    var imgLines11 = [{ deg: 0, name: "" }, { deg: a1, name: "" }, { deg: 90, name: "" }];
+    var imgAngles11 = [
+      { label: s + "\u2081", startDeg: 0, endDeg: a1, value: a1, color: "#3498db" },
+      { label: s + "\u2082=?", startDeg: a1, endDeg: 90, value: null, color: "#e74c3c" },
+      { label: s + "\u2083=?", startDeg: 90, endDeg: 180, value: null, color: "#f39c12" }
+    ];
     return {
       q: "\u2220" + s + "\u2081 = " + a1 + "\u00b0.\n\u2220" + s + "\u2081 en \u2220" + s + "\u2082 vormen een rechte hoek (90\u00b0).\n\u2220" + s + "\u2081, \u2220" + s + "\u2082 en \u2220" + s + "\u2083 vormen een gestrekte hoek (180\u00b0).\nBereken \u2220" + s + "\u2082 + \u2220" + s + "\u2083.",
       a: a2rest + a3,
-      h: "\u2220" + s + "\u2082 = 90\u00b0 \u2212 " + a1 + "\u00b0 = " + a2rest + "\u00b0.\n\u2220" + s + "\u2083 = 180\u00b0 \u2212 " + a1 + "\u00b0 \u2212 " + a2rest + "\u00b0 = " + a3 + "\u00b0.\nSom = " + a2rest + "\u00b0 + " + a3 + "\u00b0 = " + (a2rest + a3) + "\u00b0"
+      h: "\u2220" + s + "\u2082 = 90\u00b0 \u2212 " + a1 + "\u00b0 = " + a2rest + "\u00b0.\n\u2220" + s + "\u2083 = 180\u00b0 \u2212 " + a1 + "\u00b0 \u2212 " + a2rest + "\u00b0 = " + a3 + "\u00b0.\nSom = " + a2rest + "\u00b0 + " + a3 + "\u00b0 = " + (a2rest + a3) + "\u00b0",
+      svg: svgIntersectingLines(imgLines11, imgAngles11, s)
     };
   }
   // t === 12
@@ -1311,6 +1320,8 @@ function g56() {
     var r2 = rand(1, 4);
     var r3 = rand(1, 4);
     var r4 = rand(1, 4);
+    // Avoid trivial all-equal ratios (e.g. 1:1:1:1 or 2:2:2:2)
+    if (r1 === r2 && r2 === r3 && r3 === r4) return g56();
     var sum = r1 + r2 + r3 + r4;
     if (360 % sum !== 0) return g56();
     var unit = 360 / sum;

@@ -67,6 +67,8 @@ const THEORY={
 "5.3":[
   {type:"explain",title:"Hoeken meten met je geodriehoek",text:"**Werkschema:**\n\n**1.** Leg je geodriehoek op het hoekpunt.\nLeg het streepje bij de 0 op het hoekpunt.\n\n**2.** Leg de lange kant langs één been van de hoek.\nZorg dat het andere been onder de gradenboog ligt.\n\n**3.** Lees het aantal graden af bij het andere been.\nEr staan **TWEE** getallen — kies het juiste!\n\n**4.** Kies scherp of stomp:\n• Scherpe hoek → kies het kleinere getal\n• Stompe hoek → kies het grotere getal\n\nVoorbeeld: je leest af 53° en 127°.\nDe hoek is scherp → ∠A = 53°.\n\n💡 De twee getallen tellen altijd op tot **180°**!"},
   {type:"check",q:"De twee getallen bij een streepje op de geodriehoek tellen op tot...",answer:180,hint:"Ze tellen altijd op tot 180°"},
+  {type:"check",q:"Je ziet een scherpe hoek. Je leest 35° en 145° af. Welk getal kies je?",answer:35,hint:"Scherpe hoek → kies het kleinere getal = 35°"},
+  {type:"check",q:"Je ziet een stompe hoek. Je leest 62° en 118° af. Welk getal kies je?",answer:118,hint:"Stompe hoek → kies het grotere getal = 118°"},
 ],
 "5.4":[
   {type:"explain",title:"Hoeken tekenen met je geodriehoek",text:"**Werkschema** voor het tekenen van een hoek van 130°:\n\n**1.** Teken een punt A en een been van de hoek.\n\n**2.** Leg de lange kant langs het been.\nLeg het 0-streepje op punt A.\n\n**3.** Zoek het getal 130 op de gradenboog.\n130° is stomp → kies de kant die een stompe hoek oplevert.\nZet daar een stip.\n\n**4.** Teken het tweede been door de stip.\n\n💡 **Driehoeken tekenen:**\nAls je twee hoeken en de zijde ertussen kent:\n1. Teken de zijde\n2. Teken de ene hoek bij het ene eindpunt\n3. Teken de andere hoek bij het andere eindpunt\n4. Waar de benen snijden = het derde hoekpunt"},
@@ -144,21 +146,52 @@ const THEORY={
 ],
 };
 
+// ========== HELPERS ==========
+// Normalize algebra expressions for comparison: strip spaces, split terms, sort alphabetically
+function normalizeAlgebra(s){
+  s=String(s).replace(/\s/g,"").toLowerCase();
+  // Split on + and - while keeping the sign
+  var terms=[];var cur="";
+  for(var i=0;i<s.length;i++){
+    if(i>0&&(s[i]==="+"||s[i]==="\u2212"||s[i]==="-")){terms.push(cur);cur=s[i]==="+"?"":s[i]}
+    else cur+=s[i];
+  }
+  if(cur)terms.push(cur);
+  terms.sort();
+  return terms.join("+").replace(/\+\u2212/g,"\u2212").replace(/\+-/g,"-");
+}
+
 // ========== QUESTION GENERATORS (loaded from generators-h5.js and generators-h6.js) ==========
 // g51-g66 are global functions, no level parameter (diagnostic only)
-function genQ(section){
+function genQ(section,difficulty){
   const g={"5.1":g51,"5.2":g52,"5.3":g53,"5.4":g54,"5.5":g55,"5.6":g56,"6.1":g61,"6.2":g62,"6.3":g63,"6.4":g64,"6.5":g65,"6.6":g66};
+  if(difficulty){
+    // Progressive difficulty: constrain the type (t) selection in generators
+    // All generators start with var t = rand(1, N) as first rand call
+    const maxTypes={"5.2":12,"5.5":12,"5.6":12};
+    const maxT=maxTypes[section]||10;
+    let lo,hi;
+    if(difficulty===1){lo=1;hi=Math.min(4,maxT)}
+    else if(difficulty===2){lo=Math.min(3,maxT);hi=Math.min(8,maxT)}
+    else{lo=Math.min(6,maxT);hi=maxT}
+    const origRand=window.rand;
+    let first=true;
+    window.rand=function(a,b){if(first&&a===1&&b>=8){first=false;return origRand(lo,hi)}first=false;return origRand(a,b)};
+    const q=g[section]();
+    window.rand=origRand;
+    return q;
+  }
   return g[section]();
 }
 // Generate a unique question (not in the usedSet)
-function genUniqueQ(section,usedSet,maxTries){
+function genUniqueQ(section,usedSet,maxTries,difficulty){
   maxTries=maxTries||30;
   for(var i=0;i<maxTries;i++){
-    var q=genQ(section);
+    var q=genQ(section,difficulty);
     var key=q.q+"|"+String(q.a);
     if(!usedSet.has(key)){usedSet.add(key);return q;}
   }
-  return genQ(section); // fallback
+  return genQ(section,difficulty); // fallback
 }
 
 // ========== APP ==========
@@ -186,6 +219,7 @@ function App(){
   const[wrongAnswers,setWrongAnswers]=useState([]);
   const[streak,setStreak]=useState(0);
   const[animKey,setAnimKey]=useState(0);
+  const[almostCorrect,setAlmostCorrect]=useState(null);
   // Proeftoets state
   const[ptQuestions,setPtQuestions]=useState([]);
   const[ptIndex,setPtIndex]=useState(0);
@@ -206,8 +240,8 @@ function App(){
   const totalMastered=SECTIONS.filter(s=>isMastered(s.id)).length;
 
   const startTheory=sid=>{setSection(sid);setTheoryStep(0);setTheoryAnswer("");setTheoryChecked(false);setScreen("theory")};
-  const startQuiz=(sid)=>{setSection(sid);usedQsRef.current=new Set();setQNum(0);setSession({c:0,t:0});setWrongAnswers([]);setStreak(0);setScreen("quiz");loadQ(sid)};
-  const loadQ=(sec)=>{setQuestion(genUniqueQ(sec||section,usedQsRef.current));setAnswer("");setChecked(false);setQNum(n=>n+1);setAnimKey(k=>k+1)};
+  const startQuiz=(sid)=>{setSection(sid);usedQsRef.current=new Set();setQNum(0);setSession({c:0,t:0});setWrongAnswers([]);setStreak(0);setAlmostCorrect(null);setScreen("quiz");loadQ(sid,0)};
+  const loadQ=(sec,qNumOverride)=>{const num=qNumOverride!==undefined?qNumOverride:qNum;const diff=num<3?1:num<7?2:3;setQuestion(genUniqueQ(sec||section,usedQsRef.current,30,diff));setAnswer("");setChecked(false);setAlmostCorrect(null);setQNum(n=>n+1);setAnimKey(k=>k+1)};
 
   // Proeftoets
   const startProeftoets=(useTimer)=>{
@@ -219,7 +253,7 @@ function App(){
     else{setPtTimeLeft(0)}
     setScreen("proeftoets");
   };
-  const checkPt=()=>{if(!question)return;let ok=false;if(question.t==="choice")ok=answer===question.a;else if(question.t==="text")ok=answer.replace(/\s/g,"").toLowerCase()===String(question.a).replace(/\s/g,"").toLowerCase();else ok=parseFloat(answer.replace(",","."))=== question.a;setCorrect(ok);setChecked(true);const cur=ptQuestions[ptIndex];setPtAnswers(a=>[...a,{sectionId:cur.sectionId,sectionName:cur.sectionName,q:question.q,chosen:answer,correctAns:String(question.a),ok}]);updateProg(cur.sectionId,ok)};
+  const checkPt=()=>{if(!question)return;let ok=false;if(question.t==="choice")ok=answer===question.a;else if(question.t==="stomp_check"){const v=parseFloat(answer.replace(",","."));ok=!isNaN(v)&&v>90&&v<180}else if(question.t==="text"){const ua=answer.replace(/\s/g,"").toLowerCase(),ca=String(question.a).replace(/\s/g,"").toLowerCase();ok=ua===ca;if(!ok)ok=normalizeAlgebra(answer)===normalizeAlgebra(String(question.a))}else ok=parseFloat(answer.replace(",","."))=== question.a;setCorrect(ok);setChecked(true);const cur=ptQuestions[ptIndex];setPtAnswers(a=>[...a,{sectionId:cur.sectionId,sectionName:cur.sectionName,q:question.q,chosen:answer,correctAns:String(question.a),ok}]);updateProg(cur.sectionId,ok)};
   const nextPt=()=>{if(ptIndex>=ptQuestions.length-1){if(timerRef.current)clearInterval(timerRef.current);setScreen("pt-results")}else{const ni=ptIndex+1;setPtIndex(ni);setQuestion(ptQuestions[ni]);setAnswer("");setChecked(false);setAnimKey(k=>k+1)}};
   // Cleanup timer on unmount
   useEffect(()=>()=>{if(timerRef.current)clearInterval(timerRef.current)},[]);
@@ -243,8 +277,13 @@ function App(){
   const checkTheory=()=>{if(!curStep)return;let ok=false;if(curStep.type2==="choice")ok=theoryAnswer===String(curStep.answer);else if(curStep.type2==="text")ok=theoryAnswer.replace(/\s/g,"").toLowerCase()===String(curStep.answer).replace(/\s/g,"").toLowerCase();else ok=parseFloat(theoryAnswer.replace(",","."))=== curStep.answer;setTheoryCorrect(ok);setTheoryChecked(true)};
   const nextTheory=()=>{if(theoryStep<theorySteps.length-1){setTheoryStep(s=>s+1);setTheoryAnswer("");setTheoryChecked(false)}else{markTheory(section);setScreen("home")}};
 
-  const checkQuiz=()=>{if(!question)return;let ok=false;if(question.t==="choice")ok=answer===question.a;else if(question.t==="text")ok=answer.replace(/\s/g,"").toLowerCase()===String(question.a).replace(/\s/g,"").toLowerCase();else ok=parseFloat(answer.replace(",","."))=== question.a;setCorrect(ok);setChecked(true);if(!ok)setWrongAnswers(w=>[...w,{q:question.q,chosen:answer,correct:String(question.a)}]);setStreak(s=>ok?s+1:0);setSession(s=>({c:s.c+(ok?1:0),t:s.t+1}));updateProg(section,ok)};
-  const nextQuiz=()=>{if(session.t>=10){setProgress(p=>({...p,[section]:{...p[section],lastQuizPct:Math.round(session.c/session.t*100)}}));setScreen("results")}else loadQ(section)};
+  const checkQuiz=()=>{if(!question)return;let ok=false;setAlmostCorrect(null);
+    if(question.t==="choice")ok=answer===question.a;
+    else if(question.t==="stomp_check"){const v=parseFloat(answer.replace(",","."));ok=!isNaN(v)&&v>90&&v<180}
+    else if(question.t==="text"){const ua=answer.replace(/\s/g,"").toLowerCase(),ca=String(question.a).replace(/\s/g,"").toLowerCase();ok=ua===ca;if(!ok)ok=normalizeAlgebra(answer)===normalizeAlgebra(String(question.a))}
+    else{const num=parseFloat(answer.replace(",","."));ok=num===question.a;if(!ok&&!isNaN(num)){const diff=Math.abs(num-question.a);if(diff<=2&&diff>0)setAlmostCorrect(diff)}}
+    setCorrect(ok);setChecked(true);if(!ok)setWrongAnswers(w=>[...w,{q:question.q,chosen:answer,correct:String(question.a)}]);setStreak(s=>ok?s+1:0);setSession(s=>({c:s.c+(ok?1:0),t:s.t+1}));updateProg(section,ok)};
+  const nextQuiz=()=>{if(session.t>=10){setProgress(p=>({...p,[section]:{...p[section],lastQuizPct:Math.round(session.c/session.t*100)}}));setScreen("results")}else loadQ(section,session.t)};
 
   const fmtBold=text=>{const parts=text.split(/(\*\*[^*]+\*\*)/g);return parts.map((p,i)=>p.startsWith("**")&&p.endsWith("**")?React.createElement("strong",{key:i,style:{color:"#fff",fontWeight:800}},p.slice(2,-2)):React.createElement("span",{key:i},p))};
 
@@ -413,7 +452,7 @@ function App(){
             React.createElement("button",{style:{width:"100%",padding:"14px",borderRadius:"12px",border:"none",background:"#4d96ff",color:"#fff",fontSize:"16px",fontWeight:700,cursor:"pointer",marginTop:"14px",opacity:answer?1:0.4},onClick:checkQuiz,disabled:!answer},"Controleer")
             :React.createElement("div",null,
               React.createElement("div",{style:{padding:"16px",borderRadius:"14px",background:correct?"rgba(107,203,119,0.1)":"rgba(255,107,107,0.1)",border:"1px solid "+(correct?"#6bcb7730":"#ff6b6b30"),marginTop:"14px"}},
-                React.createElement("div",{style:{fontSize:"17px",fontWeight:800,color:correct?"#6bcb77":"#ff6b6b",marginBottom:"6px"}},correct?pick(["Goed zo! 🎉","Correct! ✅","Top! 💪"]):"Antwoord: "+question.a),
+                React.createElement("div",{style:{fontSize:"17px",fontWeight:800,color:correct?"#6bcb77":"#ff6b6b",marginBottom:"6px"}},correct?(question.t==="stomp_check"?"Goed! "+answer+"° is een stompe hoek ✅":pick(["Goed zo! 🎉","Correct! ✅","Top! 💪"])):(almostCorrect?"Bijna! Je zat er "+almostCorrect+"° naast. Antwoord: "+question.a:"Antwoord: "+question.a)),
                 React.createElement("div",{style:{whiteSpace:"pre-line",fontSize:"14px",color:"#aaa",fontFamily:"monospace",lineHeight:1.6}},question.h)
               ),
               React.createElement("button",{style:{width:"100%",padding:"14px",borderRadius:"12px",border:"none",background:"#6bcb77",color:"#fff",fontSize:"16px",fontWeight:700,cursor:"pointer",marginTop:"14px"},onClick:nextQuiz},session.t>=10?"📊 Resultaten":"Volgende →")
