@@ -117,10 +117,13 @@ const THEORY={
 ],
 "6.3":[
   {type:"explain",title:"De grafiek van een kwadratische formule",text:"De grafiek van een kwadratische formule (met x²) is altijd een **parabool** — een U-vorm.\n\nDe grafiek van een lineaire formule (zonder x²) is altijd een **rechte lijn**.\n\n**Parabool tekenen:**\n1. Maak een tabel met **7 punten**\n2. Teken de punten\n3. Teken een **vloeiende kromme**"},
-  {type:"example",title:"Tabel invullen",text:"y = x² − 2:\n\nx = −3: y = 9−2 = **7**\nx = −2: y = 4−2 = **2**\nx = −1: y = 1−2 = **−1**\nx = 0: y = 0−2 = **−2**\nx = 1: y = 1−2 = **−1**\nx = 2: y = 4−2 = **2**\nx = 3: y = 9−2 = **7**\n\nx=3 en x=−3 geven dezelfde y!"},
+  {type:"example",title:"Tabel invullen",text:"y = x² − 2:\n\nx = −3: y = 9−2 = **7**\nx = −2: y = 4−2 = **2**\nx = −1: y = 1−2 = **−1**\nx = 0: y = 0−2 = **−2**\nx = 1: y = 1−2 = **−1**\nx = 2: y = 4−2 = **2**\nx = 3: y = 9−2 = **7**\n\nx=3 en x=−3 geven dezelfde y! (symmetrie)"},
   {type:"check",q:"y = x² + 1\nBereken y voor x = −2",answer:5,hint:"y = (−2)² + 1 = 4 + 1 = 5"},
   {type:"explain",title:"Lineair vs kwadratisch",text:"**Lineair**: geen x² → rechte lijn\ny = 2x − 1, y = 0,5x + 1\n\n**Kwadratisch**: bevat x² → parabool\ny = x² − 1, y = −x² + 4\n\n**Trucje**: staat er x² in? → kwadratisch!"},
   {type:"check",q:"Is y = 3x + 7 lineair of kwadratisch?",answer:"lineair",type2:"choice",options:["lineair","kwadratisch"],hint:"Geen x² → lineair!"},
+  {type:"explain",title:"Toepassingen van parabolen",text:"Parabolen komen overal voor:\n\n**Tunnels & hangars**: doorsnede = bergparabool\ny = −ax² + c → hoogte c, breedte via y = 0\n\n**Hangbruggen**: kabels = dalparabool\ny = ax² + c → c is laagste punt\n\n**Vallende voorwerpen**: h = −5t² + h₀\nh₀ = starthoogte, t = tijd in seconden\n\n**Snijpunten**: parabool = lijn\nGelijkstellen en oplossen!"},
+  {type:"example",title:"Tunnel: past het erin?",text:"Tunnel: y = −0,5x² + 8\nVrachtwagen: 4 m breed, 6 m hoog\n\n**Stap 1**: halve breedte = 2 m\n**Stap 2**: y(2) = −0,5·4 + 8 = **6 m**\n**Stap 3**: 6 ≥ 6 → Past er **net** in!"},
+  {type:"check",q:"Hangbrug: y = 0,005x² + 10\nBereken de kabelhoogte op x = 20",answer:12,hint:"y = 0,005 · 400 + 10 = 2 + 10 = 12 m"},
   {type:"check",q:"Is y = (x − 4)² lineair of kwadratisch?",answer:"kwadratisch",type2:"choice",options:["lineair","kwadratisch"],hint:"Er staat ² → kwadratisch!"},
 ],
 "6.4":[
@@ -171,12 +174,19 @@ function genQ(section,difficulty){
   if(difficulty){
     // Progressive difficulty: constrain the type (t) selection in generators
     // All generators start with var t = rand(1, N) as first rand call
-    const maxTypes={"5.2":12,"5.5":22,"5.6":20};
+    const maxTypes={"5.2":12,"5.5":22,"5.6":20,"6.3":40};
     const maxT=maxTypes[section]||10;
     let lo,hi;
-    if(difficulty===1){lo=1;hi=Math.min(4,maxT)}
-    else if(difficulty===2){lo=Math.min(3,maxT);hi=Math.min(8,maxT)}
-    else{lo=Math.min(6,maxT);hi=maxT}
+    if(maxT>20){
+      // Large generators (6.3 with 40 types): wider ranges
+      if(difficulty===1){lo=1;hi=Math.min(10,maxT)}
+      else if(difficulty===2){lo=Math.min(8,maxT);hi=Math.min(25,maxT)}
+      else{lo=Math.min(20,maxT);hi=maxT}
+    } else {
+      if(difficulty===1){lo=1;hi=Math.min(4,maxT)}
+      else if(difficulty===2){lo=Math.min(3,maxT);hi=Math.min(8,maxT)}
+      else{lo=Math.min(6,maxT);hi=maxT}
+    }
     const origRand=window.rand;
     let first=true;
     window.rand=function(a,b){if(first&&a===1&&b>=8){first=false;return origRand(lo,hi)}first=false;return origRand(a,b)};

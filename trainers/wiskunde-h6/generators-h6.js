@@ -75,6 +75,34 @@ function svgParabola(cfg) {
     svg += '<polyline points="' + pts.join(' ') + '" fill="none" stroke="' + color + '" stroke-width="2.5" stroke-linecap="round"/>';
   }
 
+  // Optional second parabola (for comparison questions)
+  if (cfg.parabola2) {
+    var p2 = cfg.parabola2;
+    var p2a = p2.a, p2c = p2.c || 0, p2col = p2.color || "#e67e22";
+    var pts2 = [];
+    for (var pi = 0; pi <= steps; pi++) {
+      var p2x = xMin + (xMax - xMin) * pi / steps;
+      var p2y = p2a * p2x * p2x + p2c;
+      if (p2y >= yMin - 1 && p2y <= yMax + 1) {
+        pts2.push(sx(p2x).toFixed(1) + ',' + sy(p2y).toFixed(1));
+      }
+    }
+    if (pts2.length > 1) {
+      svg += '<polyline points="' + pts2.join(' ') + '" fill="none" stroke="' + p2col + '" stroke-width="2" stroke-dasharray="6,3" stroke-linecap="round"/>';
+    }
+  }
+
+  // Optional straight line y = mx + b (for intersection questions)
+  if (cfg.line) {
+    var ln = cfg.line;
+    var lm = ln.m || 0, lb = ln.b || 0, lcol = ln.color || "#e67e22";
+    var ly1 = lm * xMin + lb, ly2 = lm * xMax + lb;
+    svg += '<line x1="' + sx(xMin) + '" y1="' + sy(ly1) + '" x2="' + sx(xMax) + '" y2="' + sy(ly2) + '" stroke="' + lcol + '" stroke-width="2" stroke-dasharray="6,3"/>';
+    if (ln.label) {
+      svg += '<text x="' + (sx(xMax) - 4) + '" y="' + (sy(ly2) - 5) + '" fill="' + lcol + '" font-size="11" text-anchor="end">' + ln.label + '</text>';
+    }
+  }
+
   // Optional horizontal line
   if (hLine) {
     var hc = hLine.color || "#e67e22";
@@ -114,6 +142,77 @@ function svgParabola(cfg) {
   // Optional main label
   if (label) {
     svg += '<text x="' + (W / 2) + '" y="20" fill="#ccc" font-size="12" text-anchor="middle">' + label + '</text>';
+  }
+
+  svg += '</svg>';
+  return svg;
+}
+
+// ========== SVG BRIDGE HELPER ==========
+function svgBridge(cfg) {
+  var a = cfg.a, c = cfg.c || 0; // y = ax² + c (cable/arch shape)
+  var span = cfg.span || 100; // half-span of bridge
+  var towerH = cfg.towerH || (a * span * span + c); // tower height
+  var roadH = cfg.roadH || c; // road/deck height
+  var staven = cfg.staven || []; // vertical bars at x positions
+  var highlights = cfg.highlights || [];
+  var label = cfg.label || "";
+  var W = 420, H = 260, pad = 35;
+  var plotW = W - 2 * pad, plotH = H - 2 * pad;
+  var yMin = -2, yMax = Math.max(towerH, a * span * span + c) * 1.15;
+  var xMin = -span * 1.15, xMax = span * 1.15;
+
+  function sx(x) { return pad + (x - xMin) / (xMax - xMin) * plotW; }
+  function sy(y) { return pad + (yMax - y) / (yMax - yMin) * plotH; }
+
+  var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;background:rgba(0,0,0,0.2);border-radius:8px">';
+
+  // Water/ground
+  svg += '<rect x="0" y="' + sy(0) + '" width="' + W + '" height="' + (H - sy(0)) + '" fill="rgba(52,152,219,0.15)"/>';
+
+  // Road/deck
+  if (roadH != null) {
+    svg += '<line x1="' + sx(-span) + '" y1="' + sy(roadH) + '" x2="' + sx(span) + '" y2="' + sy(roadH) + '" stroke="#aaa" stroke-width="3"/>';
+  }
+
+  // Cable/arch curve
+  var pts = [];
+  for (var i = 0; i <= 80; i++) {
+    var px = -span + 2 * span * i / 80;
+    var py = a * px * px + c;
+    if (py >= yMin && py <= yMax) pts.push(sx(px).toFixed(1) + ',' + sy(py).toFixed(1));
+  }
+  if (pts.length > 1) {
+    svg += '<polyline points="' + pts.join(' ') + '" fill="none" stroke="#3498db" stroke-width="2.5"/>';
+  }
+
+  // Towers
+  svg += '<line x1="' + sx(-span) + '" y1="' + sy(0) + '" x2="' + sx(-span) + '" y2="' + sy(towerH) + '" stroke="#e67e22" stroke-width="3"/>';
+  svg += '<line x1="' + sx(span) + '" y1="' + sy(0) + '" x2="' + sx(span) + '" y2="' + sy(towerH) + '" stroke="#e67e22" stroke-width="3"/>';
+
+  // Vertical bars/staven (hangers)
+  for (var si = 0; si < staven.length; si++) {
+    var bx = staven[si].x, by1 = staven[si].y1 || roadH, by2 = staven[si].y2 || (a * bx * bx + c);
+    var bc = staven[si].color || "#27ae60";
+    svg += '<line x1="' + sx(bx) + '" y1="' + sy(by1) + '" x2="' + sx(bx) + '" y2="' + sy(by2) + '" stroke="' + bc + '" stroke-width="1.5" stroke-dasharray="4,2"/>';
+    if (staven[si].label) {
+      svg += '<text x="' + (sx(bx) + 4) + '" y="' + (sy((by1 + by2) / 2)) + '" fill="' + bc + '" font-size="10">' + staven[si].label + '</text>';
+    }
+  }
+
+  // Highlight points
+  for (var hi = 0; hi < highlights.length; hi++) {
+    var hp = highlights[hi];
+    var hpc = hp.color || "#e74c3c";
+    svg += '<circle cx="' + sx(hp.x) + '" cy="' + sy(hp.y) + '" r="4" fill="' + hpc + '" stroke="#fff" stroke-width="1"/>';
+    if (hp.label) {
+      svg += '<text x="' + (sx(hp.x) + 6) + '" y="' + (sy(hp.y) - 6) + '" fill="' + hpc + '" font-size="10">' + hp.label + '</text>';
+    }
+  }
+
+  // Label
+  if (label) {
+    svg += '<text x="' + (W / 2) + '" y="16" fill="#ccc" font-size="11" text-anchor="middle">' + label + '</text>';
   }
 
   svg += '</svg>';
@@ -324,7 +423,7 @@ function g62() {
 }
 
 function g63() {
-  var t = rand(1, 20);
+  var t = rand(1, 40);
 
   // Helper: format formula string for y = ax² + c
   function fmtAC(a, c) {
@@ -485,10 +584,10 @@ function g63() {
         highlights: [{x: x10, y: y10, label: "(" + x10 + "," + y10 + ")"}, {x: -x10, y: y10, label: "(\u2212" + x10 + "," + y10 + ")", color: "#e67e22"}]})};
   }
 
-  // ===== TYPES 11-20: Toepassingsvragen (boekstijl) =====
+  // ===== TYPES 9-16: Tunnels, hangars, bruggen =====
 
-  // 11: Tunnel hoogte — "Hoe hoog is de tunnel?"
-  if (t === 11) {
+  // 9: Tunnel hoogte — "Hoe hoog is de tunnel?"
+  if (t === 9) {
     var aT = pick([0.5, 0.25, 0.2, 0.1]);
     var cT = pick([4, 4.5, 5, 6, 8]);
     var breedteT = Math.sqrt(cT / aT);
@@ -500,14 +599,13 @@ function g63() {
         label: "Doorsnede tunnel"})};
   }
 
-  // 12: Tunnel/hangar breedte — "Bereken de breedte"
-  if (t === 12) {
-    // Choose a/c so that sqrt(c/a) is a nice number
-    var combos12 = [{a: 0.5, c: 4.5, w: 3}, {a: 0.25, c: 4, w: 4}, {a: 0.5, c: 8, w: 4},
+  // 10: Tunnel breedte — "Bereken de breedte"
+  if (t === 10) {
+    var combos10 = [{a: 0.5, c: 4.5, w: 3}, {a: 0.25, c: 4, w: 4}, {a: 0.5, c: 8, w: 4},
       {a: 0.2, c: 5, w: 5}, {a: 0.1, c: 6.4, w: 8}, {a: 0.25, c: 9, w: 6},
       {a: 0.5, c: 2, w: 2}, {a: 0.1, c: 10, w: 10}];
-    var cb12 = pick(combos12);
-    var aB = cb12.a, cB = cb12.c, wB = cb12.w;
+    var cb10 = pick(combos10);
+    var aB = cb10.a, cB = cb10.c, wB = cb10.w;
     return {q: "Een tunnel heeft de doorsnede:\ny = \u2212" + aB + "x\u00b2 + " + cB + "\nBereken de breedte van de tunnel (op grondniveau).",
       a: 2 * wB,
       h: "y = 0: " + aB + "x\u00b2 = " + cB + " \u2192 x\u00b2 = " + nf(cB / aB) + " \u2192 x = \u00b1" + wB + "\nBreedte = 2 \u00d7 " + wB + " = " + (2 * wB) + " meter",
@@ -517,149 +615,535 @@ function g63() {
         label: "Breedte tunnel"})};
   }
 
-  // 13: Past het erin? — vrachtwagen door tunnel
-  if (t === 13) {
-    var combos13 = [
-      {a: 0.5, c: 4.5, vw: 3, vh: 3.5}, // y(1.5)=4.5-0.5*2.25=4.5-1.125=3.375 < 3.5 → nee
-      {a: 0.5, c: 4.5, vw: 2, vh: 3},    // y(1)=4.5-0.5=4.0 > 3 → ja
-      {a: 0.25, c: 5, vw: 4, vh: 3},      // y(2)=5-0.25*4=4 > 3 → ja
-      {a: 0.25, c: 5, vw: 4, vh: 4.5},    // y(2)=4 < 4.5 → nee
-      {a: 0.5, c: 8, vw: 3, vh: 6},       // y(1.5)=8-0.5*2.25=6.875 > 6 → ja
-      {a: 0.5, c: 8, vw: 4, vh: 6}        // y(2)=8-2=6 ≥ 6 → ja (net)
+  // 11: Past het erin? — vrachtwagen door tunnel
+  if (t === 11) {
+    var combos11 = [
+      {a: 0.5, c: 4.5, vw: 3, vh: 3.5},
+      {a: 0.5, c: 4.5, vw: 2, vh: 3},
+      {a: 0.25, c: 5, vw: 4, vh: 3},
+      {a: 0.25, c: 5, vw: 4, vh: 4.5},
+      {a: 0.5, c: 8, vw: 3, vh: 6},
+      {a: 0.5, c: 8, vw: 4, vh: 6}
     ];
-    var cb13 = pick(combos13);
-    var a13 = cb13.a, c13 = cb13.c, vw13 = cb13.vw, vh13 = cb13.vh;
-    var halfW = vw13 / 2;
-    var yAtEdge = -a13 * halfW * halfW + c13;
-    var yAtEdgeR = Math.round(yAtEdge * 100) / 100;
-    var past = yAtEdgeR >= vh13 ? "Ja" : "Nee";
-    var breedteMax = Math.sqrt(c13 / a13);
-    return {q: "Een tunnel: y = \u2212" + a13 + "x\u00b2 + " + c13 + "\nEen vrachtwagen is " + vw13 + " m breed en " + vh13 + " m hoog.\nPast de vrachtwagen door de tunnel?",
-      a: past, t: "choice", o: ["Ja", "Nee"],
-      h: "Op x = " + nf(halfW) + " (halve breedte): y = \u2212" + a13 + "\u00b7" + nf(halfW * halfW) + " + " + c13 + " = " + nf(yAtEdgeR) + "\n" + nf(yAtEdgeR) + (yAtEdgeR >= vh13 ? " \u2265 " : " < ") + vh13 + " \u2192 " + past,
-      svg: svgParabola({a: -a13, c: c13, xMin: -(breedteMax + 1), xMax: breedteMax + 1, yMin: -1, yMax: c13 + 2,
-        rect: {halfW: halfW, h: vh13, color: yAtEdgeR >= vh13 ? "#27ae60" : "#e74c3c"},
-        highlights: [{x: halfW, y: yAtEdgeR, label: nf(yAtEdgeR) + " m"}],
+    var cb11 = pick(combos11);
+    var a11 = cb11.a, c11 = cb11.c, vw11 = cb11.vw, vh11 = cb11.vh;
+    var halfW11 = vw11 / 2;
+    var yE11 = -a11 * halfW11 * halfW11 + c11;
+    var yER11 = Math.round(yE11 * 100) / 100;
+    var past11 = yER11 >= vh11 ? "Ja" : "Nee";
+    var brMax11 = Math.sqrt(c11 / a11);
+    return {q: "Een tunnel: y = \u2212" + a11 + "x\u00b2 + " + c11 + "\nEen vrachtwagen is " + vw11 + " m breed en " + vh11 + " m hoog.\nPast de vrachtwagen door de tunnel?",
+      a: past11, t: "choice", o: ["Ja", "Nee"],
+      h: "Op x = " + nf(halfW11) + " (halve breedte): y = \u2212" + a11 + "\u00b7" + nf(halfW11 * halfW11) + " + " + c11 + " = " + nf(yER11) + "\n" + nf(yER11) + (yER11 >= vh11 ? " \u2265 " : " < ") + vh11 + " \u2192 " + past11,
+      svg: svgParabola({a: -a11, c: c11, xMin: -(brMax11 + 1), xMax: brMax11 + 1, yMin: -1, yMax: c11 + 2,
+        rect: {halfW: halfW11, h: vh11, color: yER11 >= vh11 ? "#27ae60" : "#e74c3c"},
+        highlights: [{x: halfW11, y: yER11, label: nf(yER11) + " m"}],
         label: "Past de vrachtwagen?"})};
   }
 
-  // 14: Hangbrug — hoogte op x
-  if (t === 14) {
-    var aBr = pick([0.002, 0.005, 0.01]);
-    var cBr = pick([10, 12, 15, 20]);
-    var xBr = pick([10, 20, 30, 40]);
-    var yBr = aBr * xBr * xBr + cBr;
-    var yBrR = Math.round(yBr * 10) / 10;
-    var xRange = Math.max(xBr + 10, 50);
-    return {q: "De kabels van een hangbrug volgen:\ny = " + aBr + "x\u00b2 + " + cBr + "\nBereken de hoogte van de kabel op x = " + xBr + ".",
-      a: yBrR,
-      h: aBr + " \u00b7 " + xBr + "\u00b2 + " + cBr + " = " + aBr + " \u00b7 " + (xBr * xBr) + " + " + cBr + " = " + nf(yBrR),
-      svg: svgParabola({a: aBr, c: cBr, xMin: -xRange, xMax: xRange, yMin: 0, yMax: Math.max(yBrR + 10, cBr + 20),
-        highlights: [{x: xBr, y: yBrR, label: "(" + xBr + ", " + nf(yBrR) + ")"}],
-        label: "Kabels hangbrug"})};
+  // 12: Hangar F-14 Tomcat — hoogte op afstand + past vliegtuig erin
+  if (t === 12) {
+    var combos12 = [
+      {a: 0.02, c: 12, sw: 9.65, sh: 4.88, name: "F-14 Tomcat"},
+      {a: 0.025, c: 10, sw: 9.65, sh: 4.88, name: "F-14 Tomcat"},
+      {a: 0.015, c: 15, sw: 9.65, sh: 4.88, name: "F-14 Tomcat"}
+    ];
+    var cb12 = pick(combos12);
+    var xPlane = cb12.sw / 2;
+    var yAtPlane = -cb12.a * xPlane * xPlane + cb12.c;
+    var yAP12 = Math.round(yAtPlane * 100) / 100;
+    var past12 = yAP12 >= cb12.sh ? "Ja" : "Nee";
+    var brH12 = Math.sqrt(cb12.c / cb12.a);
+    return {q: "Een hangar heeft doorsnede:\ny = \u2212" + cb12.a + "x\u00b2 + " + cb12.c + "\nEen " + cb12.name + " heeft een spanwijdte van " + cb12.sw + " m en is " + cb12.sh + " m hoog.\nPast het vliegtuig in de hangar?",
+      a: past12, t: "choice", o: ["Ja", "Nee"],
+      h: "Halve spanwijdte = " + nf(xPlane) + " m\ny(" + nf(xPlane) + ") = \u2212" + cb12.a + " \u00b7 " + nf(xPlane * xPlane) + " + " + cb12.c + " = " + nf(yAP12) + " m\n" + nf(yAP12) + (yAP12 >= cb12.sh ? " \u2265 " : " < ") + cb12.sh + " \u2192 " + past12,
+      svg: svgParabola({a: -cb12.a, c: cb12.c, xMin: -(brH12 + 2), xMax: brH12 + 2, yMin: -1, yMax: cb12.c + 2,
+        rect: {halfW: xPlane, h: cb12.sh, color: yAP12 >= cb12.sh ? "#27ae60" : "#e74c3c"},
+        highlights: [{x: xPlane, y: yAP12, label: nf(yAP12) + " m"}],
+        label: "Hangar: " + cb12.name})};
   }
 
-  // 15: Klifduiken hoogte — "hoogte na t seconden"
+  // 13: Hangbrug kabelhoogte — y berekenen op x
+  if (t === 13) {
+    var aBr = pick([0.002, 0.005, 0.01, 0.003]);
+    var cBr = pick([10, 12, 15, 20]);
+    var xBr = pick([10, 20, 30, 40, 50]);
+    var yBr = aBr * xBr * xBr + cBr;
+    var yBrR = Math.round(yBr * 10) / 10;
+    var spanBr = Math.max(xBr + 20, 60);
+    return {q: "De kabels van een hangbrug volgen:\ny = " + aBr + "x\u00b2 + " + cBr + "\nBereken de hoogte van de kabel op x = " + xBr + " m.",
+      a: yBrR,
+      h: aBr + " \u00b7 " + xBr + "\u00b2 + " + cBr + " = " + aBr + " \u00b7 " + (xBr * xBr) + " + " + cBr + " = " + nf(yBrR),
+      svg: svgBridge({a: aBr, c: cBr, span: spanBr, towerH: aBr * spanBr * spanBr + cBr, roadH: cBr,
+        highlights: [{x: xBr, y: yBrR, label: "(" + xBr + ", " + nf(yBrR) + ")"}],
+        label: "Hangbrug: kabelhoogte"})};
+  }
+
+  // 14: Clifton Suspension Bridge — staaflengte berekenen
+  if (t === 14) {
+    var aCl = pick([0.003, 0.004, 0.005]);
+    var cCl = pick([5, 8, 10]);
+    var roadCl = cCl;
+    var xStaaf = pick([10, 20, 30, 40]);
+    var yKabel = aCl * xStaaf * xStaaf + cCl;
+    var staafLen = Math.round((yKabel - roadCl) * 10) / 10;
+    var spanCl = 60;
+    return {q: "De Clifton Suspension Bridge heeft kabels:\ny = " + aCl + "x\u00b2 + " + cCl + "\nHet wegdek hangt op hoogte " + cCl + " m.\nHoe lang is de staaf op x = " + xStaaf + " m?",
+      a: staafLen,
+      h: "Kabelhoogte: y(" + xStaaf + ") = " + aCl + " \u00b7 " + (xStaaf * xStaaf) + " + " + cCl + " = " + nf(yKabel) + "\nStaaflengte = " + nf(yKabel) + " \u2212 " + cCl + " = " + nf(staafLen) + " m",
+      svg: svgBridge({a: aCl, c: cCl, span: spanCl, towerH: aCl * spanCl * spanCl + cCl, roadH: roadCl,
+        staven: [{x: xStaaf, y1: roadCl, y2: yKabel, label: nf(staafLen) + " m", color: "#e74c3c"}],
+        highlights: [{x: xStaaf, y: yKabel, label: "kabel"}],
+        label: "Clifton Suspension Bridge"})};
+  }
+
+  // 15: Dom Luís I Porto — tabel invullen + wegdek hoogte
   if (t === 15) {
+    var aDL = pick([0.005, 0.004, 0.003]);
+    var cDL = pick([8, 10, 12]);
+    var xDL = pick([10, 20, 30]);
+    var yDL = aDL * xDL * xDL + cDL;
+    var yDLR = Math.round(yDL * 10) / 10;
+    var spanDL = 50;
+    return {q: "De brug Dom Luís I in Porto heeft bogen:\ny = " + aDL + "x\u00b2 + " + cDL + "\nBereken de hoogte van de boog op x = " + xDL + " m.",
+      a: yDLR,
+      h: "y = " + aDL + " \u00b7 " + (xDL * xDL) + " + " + cDL + " = " + nf(aDL * xDL * xDL) + " + " + cDL + " = " + nf(yDLR),
+      svg: svgBridge({a: aDL, c: cDL, span: spanDL, towerH: aDL * spanDL * spanDL + cDL, roadH: cDL,
+        staven: [{x: xDL, y1: cDL, y2: yDLR, color: "#e67e22"}],
+        highlights: [{x: xDL, y: yDLR, label: nf(yDLR) + " m"}],
+        label: "Dom Lu\u00eds I, Porto"})};
+  }
+
+  // 16: Spoorbrug — breedte boog berekenen
+  if (t === 16) {
+    var combos16 = [{a: 0.04, c: 9, w: 15}, {a: 0.01, c: 16, w: 40}, {a: 0.025, c: 10, w: 20}];
+    var cb16 = pick(combos16);
+    var aSp = cb16.a, cSp = cb16.c, wSp = cb16.w;
+    // y = -a*x² + c, y=0: x = sqrt(c/a)
+    var halfSp = Math.round(Math.sqrt(cSp / aSp));
+    return {q: "Een spoorbrug heeft de boogvorm:\ny = \u2212" + aSp + "x\u00b2 + " + cSp + "\nBereken de breedte van de boog (op grondniveau).",
+      a: 2 * halfSp,
+      h: "y = 0: " + aSp + "x\u00b2 = " + cSp + " \u2192 x\u00b2 = " + nf(cSp / aSp) + " \u2192 x = \u00b1" + halfSp + "\nBreedte = 2 \u00d7 " + halfSp + " = " + (2 * halfSp) + " m",
+      svg: svgBridge({a: -aSp, c: cSp, span: halfSp, towerH: cSp, roadH: 0,
+        highlights: [{x: -halfSp, y: 0, label: "\u2212" + halfSp}, {x: halfSp, y: 0, label: "" + halfSp}],
+        label: "Spoorbrug: breedte"})};
+  }
+
+  // ===== TYPES 17-24: Toepassingen — Verhalen =====
+
+  // 17: Klifduiken hoogte na t seconden
+  if (t === 17) {
     var aK = 5, h0K = pick([20, 45, 80]);
     var tK = pick([1, 2, 3]);
     var hK = -aK * tK * tK + h0K;
-    // Make sure height is positive
     if (hK < 0) { tK = 1; hK = -aK * tK * tK + h0K; }
-    var tMax = Math.sqrt(h0K / aK);
-    return {q: "Een klifduiker springt van een rots.\nDe hoogte is: h = \u22125t\u00b2 + " + h0K + "\nBereken de hoogte na " + tK + " seconde" + (tK > 1 ? "n" : "") + ".",
+    var tMaxK = Math.sqrt(h0K / aK);
+    return {q: "Een klifduiker springt van een rots.\nh = \u22125t\u00b2 + " + h0K + "\nBereken de hoogte na " + tK + " seconde" + (tK > 1 ? "n" : "") + ".",
       a: hK,
-      h: "h = \u22125 \u00b7 " + tK + "\u00b2 + " + h0K + " = \u22125 \u00b7 " + (tK * tK) + " + " + h0K + " = " + (-aK * tK * tK) + " + " + h0K + " = " + hK,
-      svg: svgParabola({a: -aK, c: h0K, xMin: -0.5, xMax: Math.ceil(tMax) + 1, yMin: -5, yMax: h0K + 5,
+      h: "h = \u22125 \u00b7 " + tK + "\u00b2 + " + h0K + " = \u22125 \u00b7 " + (tK * tK) + " + " + h0K + " = " + hK,
+      svg: svgParabola({a: -aK, c: h0K, xMin: -0.5, xMax: Math.ceil(tMaxK) + 1, yMin: -5, yMax: h0K + 5,
         highlights: [{x: tK, y: hK, label: "t=" + tK + ": h=" + hK}],
         label: "Klifduiken: hoogte"})};
   }
 
-  // 16: Klifduiken afstand — "hoeveel meter in de 2e seconde?"
-  if (t === 16) {
-    var aK2 = 5, h0K2 = pick([45, 80]);
-    var tStart = pick([1, 2]);
+  // 18: Klifduiken afstand in n-de seconde
+  if (t === 18) {
+    var aK2 = 5, h0K2 = pick([45, 80, 125]);
+    var tStart = pick([1, 2, 3]);
     var tEnd = tStart + 1;
     var hStart = -aK2 * tStart * tStart + h0K2;
     var hEnd = -aK2 * tEnd * tEnd + h0K2;
-    var afstand = hStart - hEnd;
-    var tMax2 = Math.sqrt(h0K2 / aK2);
+    if (hEnd < 0) { tStart = 1; tEnd = 2; hStart = -aK2 + h0K2; hEnd = -aK2 * 4 + h0K2; }
+    var afstand18 = hStart - hEnd;
+    var tMaxK2 = Math.sqrt(h0K2 / aK2);
     return {q: "h = \u22125t\u00b2 + " + h0K2 + "\nHoeveel meter valt de duiker tussen t = " + tStart + " en t = " + tEnd + "?",
-      a: afstand,
-      h: "h(" + tStart + ") = " + hStart + ", h(" + tEnd + ") = " + hEnd + "\nVerschil: " + hStart + " \u2212 " + hEnd + " = " + afstand + " meter",
-      svg: svgParabola({a: -aK2, c: h0K2, xMin: -0.5, xMax: Math.ceil(tMax2) + 1, yMin: -5, yMax: h0K2 + 5,
+      a: afstand18,
+      h: "h(" + tStart + ") = " + hStart + ", h(" + tEnd + ") = " + hEnd + "\nVerschil: " + hStart + " \u2212 " + hEnd + " = " + afstand18 + " meter",
+      svg: svgParabola({a: -aK2, c: h0K2, xMin: -0.5, xMax: Math.ceil(tMaxK2) + 1, yMin: -5, yMax: h0K2 + 5,
         highlights: [{x: tStart, y: hStart, label: "h(" + tStart + ")=" + hStart}, {x: tEnd, y: hEnd, label: "h(" + tEnd + ")=" + hEnd, color: "#e67e22"}],
         label: "Klifduiken: afstand"})};
   }
 
-  // 17: Tabel invullen — één waarde ontbreekt
-  if (t === 17) {
-    var a17 = pick([1, 2, -1, -2]), c17 = pick([0, 3, -2, 5]);
-    var xs17 = [-3, -2, -1, 0, 1, 2, 3];
-    var ys17 = xs17.map(function(x) { return a17 * x * x + c17; });
-    var misIdx = rand(0, 6);
-    var misX = xs17[misIdx], misY = ys17[misIdx];
-    var tabelX = "x: ", tabelY = "y: ";
-    for (var ti = 0; ti < xs17.length; ti++) {
-      tabelX += (ti > 0 ? ", " : "") + xs17[ti];
-      tabelY += (ti > 0 ? ", " : "") + (ti === misIdx ? "?" : ys17[ti]);
-    }
-    return {q: fmtAC(a17, c17) + "\n" + tabelX + "\n" + tabelY + "\nWat is y voor x = " + misX + "?",
-      a: misY,
-      h: "y = " + (a17 === 1 ? "" : a17 === -1 ? "\u2212" : a17 + "\u00b7") + "(" + misX + ")\u00b2" + (c17 >= 0 ? " + " + c17 : " \u2212 " + Math.abs(c17)) + " = " + misY,
-      svg: svgParabola({a: a17, c: c17, xMin: -5, xMax: 5,
-        yMin: Math.min.apply(null, ys17) - 2, yMax: Math.max.apply(null, ys17) + 2,
-        highlights: [{x: misX, y: misY, label: "(" + misX + ", ?)"}]})};
-  }
-
-  // 18: Top van parabool — coördinaten top
-  if (t === 18) {
-    var a18 = pick([-2, -1, -3, 2, 3]), c18 = pick([0, 4, 8, 12, 18]);
-    var soort18 = a18 > 0 ? "dalparabool" : "bergparabool";
-    var correct18 = "(0, " + c18 + ")";
-    var wrong1 = "(" + c18 + ", 0)";
-    var wrong2 = "(0, " + (-c18) + ")";
-    var wrong3 = "(" + (a18 > 0 ? -2 : 2) + ", " + (a18 * 4 + c18) + ")";
-    var opts18 = [correct18, wrong1, wrong2, wrong3].sort(function() { return Math.random() - 0.5; });
-    var lo18 = a18 > 0 ? Math.min(c18 - 1, -1) : Math.min(c18 - 15, -2);
-    var hi18 = a18 > 0 ? Math.max(c18 + 15, 5) : Math.max(c18 + 1, 5);
-    return {q: fmtAC(a18, c18) + "\nWat zijn de coördinaten van de top?",
-      a: correct18, t: "choice", o: opts18,
-      h: "Vorm y = ax\u00b2 + c \u2192 top = (0, c) = (0, " + c18 + ")\n" + soort18 + " \u2192 top is " + (a18 > 0 ? "laagste" : "hoogste") + " punt",
-      svg: svgParabola({a: a18, c: c18, xMin: -5, xMax: 5, yMin: lo18, yMax: hi18,
-        highlights: [{x: 0, y: c18, label: "top " + correct18}]})};
-  }
-
-  // 19: Hoogte hangar op afstand van midden
+  // 19: Klifduiken — wanneer raakt water?
   if (t === 19) {
-    var aH = pick([0.025, 0.05, 0.02]);
-    var cH = pick([6, 8, 10, 12]);
-    var xH = pick([4, 6, 8, 10]);
-    var yH = -aH * xH * xH + cH;
-    var yHR = Math.round(yH * 100) / 100;
-    var breedteH = Math.sqrt(cH / aH);
-    return {q: "De doorsnede van een hangar:\ny = \u2212" + aH + "x\u00b2 + " + cH + "\nBereken de hoogte op " + xH + " meter van het midden.",
-      a: yHR,
-      h: "y = \u2212" + aH + " \u00b7 " + xH + "\u00b2 + " + cH + " = \u2212" + aH + " \u00b7 " + (xH * xH) + " + " + cH + " = \u2212" + nf(aH * xH * xH) + " + " + cH + " = " + nf(yHR),
-      svg: svgParabola({a: -aH, c: cH, xMin: -(breedteH + 2), xMax: breedteH + 2, yMin: -1, yMax: cH + 2,
-        highlights: [{x: xH, y: yHR, label: "(" + xH + ", " + nf(yHR) + ")"}],
-        vLines: [{x: xH, y1: 0, y2: yHR, color: "#e67e22"}],
-        label: "Doorsnede hangar"})};
+    var combos19 = [{a: 5, h0: 20, tw: 2}, {a: 5, h0: 45, tw: 3}, {a: 5, h0: 80, tw: 4}, {a: 5, h0: 125, tw: 5}];
+    var cb19 = pick(combos19);
+    return {q: "Een duiker springt van een klif.\nh = \u2212" + cb19.a + "t\u00b2 + " + cb19.h0 + "\nNa hoeveel seconden raakt de duiker het water (h = 0)?",
+      a: cb19.tw,
+      h: "h = 0: " + cb19.a + "t\u00b2 = " + cb19.h0 + " \u2192 t\u00b2 = " + nf(cb19.h0 / cb19.a) + " \u2192 t = " + cb19.tw + " s",
+      svg: svgParabola({a: -cb19.a, c: cb19.h0, xMin: -0.5, xMax: cb19.tw + 1.5, yMin: -5, yMax: cb19.h0 + 5,
+        highlights: [{x: 0, y: cb19.h0, label: "start: " + cb19.h0 + " m"}, {x: cb19.tw, y: 0, label: "t=" + cb19.tw + ": water!"}],
+        hLine: {y: 0, label: "water", color: "#3498db"},
+        label: "Klifduiken"})};
   }
 
-  // 20: Wanneer raakt het water? — t bij h = 0
-  // Choose h0 and a so that t = sqrt(h0/a) is a nice integer
-  var combos20 = [{a: 5, h0: 20, t: 2}, {a: 5, h0: 45, t: 3}, {a: 5, h0: 80, t: 4},
-    {a: 5, h0: 125, t: 5}, {a: 4.9, h0: 44.1, t: 3}];
-  var cb20 = pick(combos20);
-  var a20 = cb20.a, h20 = cb20.h0, t20 = cb20.t;
-  return {q: "Een duiker springt van een klif.\nh = \u2212" + a20 + "t\u00b2 + " + h20 + "\nNa hoeveel seconden raakt de duiker het water (h = 0)?",
-    a: t20,
-    h: "h = 0: " + a20 + "t\u00b2 = " + h20 + " \u2192 t\u00b2 = " + nf(h20 / a20) + " \u2192 t = " + t20 + " seconden",
-    svg: svgParabola({a: -a20, c: h20, xMin: -0.5, xMax: t20 + 1.5, yMin: -5, yMax: h20 + 5,
-      highlights: [{x: 0, y: h20, label: "start: " + nf(h20) + " m"}, {x: t20, y: 0, label: "t=" + t20 + ": water!"}],
-      hLine: {y: 0, label: "water", color: "#3498db"},
-      label: "Klifduiken"})};
+  // 20: Drone opstijgen — hoogte na t seconden
+  if (t === 20) {
+    var aD = pick([2, 3, 4, 5]);
+    var tD = pick([2, 3, 4, 5]);
+    var hD = aD * tD * tD;
+    return {q: "Een drone stijgt op. De hoogte is:\nh = " + aD + "t\u00b2\nBereken de hoogte na " + tD + " seconden.",
+      a: hD,
+      h: "h = " + aD + " \u00b7 " + tD + "\u00b2 = " + aD + " \u00b7 " + (tD * tD) + " = " + hD + " meter",
+      svg: svgParabola({a: aD, c: 0, xMin: -0.5, xMax: tD + 2, yMin: -2, yMax: hD + 10,
+        highlights: [{x: tD, y: hD, label: "t=" + tD + ": " + hD + " m"}],
+        label: "Drone: hoogte"})};
+  }
+
+  // 21: Drone — stijging per seconde vergelijken
+  if (t === 21) {
+    var aD2 = pick([2, 3, 4]);
+    var t1D = pick([1, 2, 3]), t2D = t1D + 1;
+    var h1D = aD2 * t1D * t1D, h2D = aD2 * t2D * t2D;
+    var stijg = h2D - h1D;
+    return {q: "Een drone stijgt op: h = " + aD2 + "t\u00b2\nHoeveel meter stijgt de drone tussen t = " + t1D + " en t = " + t2D + "?",
+      a: stijg,
+      h: "h(" + t1D + ") = " + h1D + ", h(" + t2D + ") = " + h2D + "\nStijging = " + h2D + " \u2212 " + h1D + " = " + stijg + " m",
+      svg: svgParabola({a: aD2, c: 0, xMin: -0.5, xMax: t2D + 2, yMin: -2, yMax: h2D + 10,
+        highlights: [{x: t1D, y: h1D, label: h1D + " m"}, {x: t2D, y: h2D, label: h2D + " m", color: "#e67e22"}],
+        label: "Drone: stijging"})};
+  }
+
+  // 22: Zonneoven — formule afleiden uit afmetingen
+  if (t === 22) {
+    var diepte = pick([5, 8, 10, 12]);
+    var breedte = pick([20, 30, 40]);
+    var halfB = breedte / 2;
+    // y = ax², diepte = a * halfB² → a = diepte / halfB²
+    var aZon = diepte / (halfB * halfB);
+    var aZonR = Math.round(aZon * 1000) / 1000;
+    return {q: "Een zonneoven is " + breedte + " cm breed en " + diepte + " cm diep.\nDe vorm is een parabool: y = ax\u00b2\nBereken a.",
+      a: aZonR,
+      h: "De rand: x = " + halfB + ", y = " + diepte + "\n" + diepte + " = a \u00b7 " + halfB + "\u00b2 = a \u00b7 " + (halfB * halfB) + "\na = " + diepte + " / " + (halfB * halfB) + " = " + nf(aZonR),
+      svg: svgParabola({a: aZonR, c: 0, xMin: -(halfB + 5), xMax: halfB + 5, yMin: -2, yMax: diepte + 5,
+        highlights: [{x: halfB, y: diepte, label: "(" + halfB + ", " + diepte + ")"}, {x: -halfB, y: diepte, label: "(\u2212" + halfB + ", " + diepte + ")"}],
+        label: "Zonneoven"})};
+  }
+
+  // 23: Hangar verlichting op hoogte h — x berekenen
+  if (t === 23) {
+    var aH23 = pick([0.02, 0.025, 0.05]);
+    var cH23 = pick([8, 10, 12]);
+    var hLamp = pick([4, 5, 6]);
+    // y = -a*x² + c = hLamp → x² = (c - hLamp)/a → x = sqrt(...)
+    var x2val = (cH23 - hLamp) / aH23;
+    var xLamp = Math.round(Math.sqrt(x2val) * 10) / 10;
+    var brH23 = Math.sqrt(cH23 / aH23);
+    return {q: "Een hangar: y = \u2212" + aH23 + "x\u00b2 + " + cH23 + "\nOp welke afstand van het midden hangt een lamp op " + hLamp + " m hoogte?",
+      a: xLamp,
+      h: hLamp + " = \u2212" + aH23 + "x\u00b2 + " + cH23 + "\n" + aH23 + "x\u00b2 = " + (cH23 - hLamp) + "\nx\u00b2 = " + nf(x2val) + "\nx = " + nf(xLamp) + " m",
+      svg: svgParabola({a: -aH23, c: cH23, xMin: -(brH23 + 2), xMax: brH23 + 2, yMin: -1, yMax: cH23 + 2,
+        highlights: [{x: xLamp, y: hLamp, label: "lamp: " + nf(xLamp) + " m"}],
+        hLine: {y: hLamp, label: hLamp + " m", color: "#f1c40f"},
+        label: "Hangar: lamp positie"})};
+  }
+
+  // 24: Fontein/waterstraal — hoogte + breedte
+  if (t === 24) {
+    var aFo = pick([0.5, 0.25, 1]);
+    var cFo = pick([4, 6, 8, 9, 16]);
+    var xFo = pick([1, 2, 3]);
+    var yFo = -aFo * xFo * xFo + cFo;
+    var brFo = Math.round(Math.sqrt(cFo / aFo) * 10) / 10;
+    return {q: "Een fontein spuit water in een boog:\ny = \u2212" + aFo + "x\u00b2 + " + cFo + "\nHoe hoog is het water op " + xFo + " m van het midden?\nHoe breed is de waterstraal?",
+      a: nf(yFo) + " m hoog, " + nf(2 * brFo) + " m breed", t: "text",
+      h: "Hoogte: y(" + xFo + ") = \u2212" + aFo + "\u00b7" + (xFo * xFo) + " + " + cFo + " = " + nf(yFo) + " m\nBreedte: y=0 \u2192 x=\u00b1" + nf(brFo) + " \u2192 2\u00d7" + nf(brFo) + " = " + nf(2 * brFo) + " m",
+      svg: svgParabola({a: -aFo, c: cFo, xMin: -(brFo + 2), xMax: brFo + 2, yMin: -1, yMax: cFo + 2,
+        highlights: [{x: xFo, y: yFo, label: nf(yFo) + " m"}, {x: brFo, y: 0, label: nf(brFo)}, {x: -brFo, y: 0, label: "\u2212" + nf(brFo)}],
+        label: "Fontein"})};
+  }
+
+  // ===== TYPES 25-32: Multi-step & combinatie =====
+
+  // 25: Tabel invullen met meerdere ontbrekende waarden
+  if (t === 25) {
+    var a25 = pick([1, 2, -1, -2]), c25 = pick([0, 3, -2, 5]);
+    var xs25 = [-3, -2, -1, 0, 1, 2, 3];
+    var ys25 = xs25.map(function(x) { return a25 * x * x + c25; });
+    var mis1 = rand(0, 2), mis2 = rand(4, 6);
+    var tX25 = "x: ", tY25 = "y: ";
+    for (var i25 = 0; i25 < xs25.length; i25++) {
+      tX25 += (i25 > 0 ? ", " : "") + xs25[i25];
+      tY25 += (i25 > 0 ? ", " : "") + (i25 === mis1 || i25 === mis2 ? "?" : ys25[i25]);
+    }
+    return {q: fmtAC(a25, c25) + "\n" + tX25 + "\n" + tY25 + "\nVul de twee ontbrekende waarden in.",
+      a: ys25[mis1] + " en " + ys25[mis2], t: "text",
+      h: "y(" + xs25[mis1] + ") = " + ys25[mis1] + "\ny(" + xs25[mis2] + ") = " + ys25[mis2],
+      svg: svgParabola({a: a25, c: c25, xMin: -5, xMax: 5,
+        yMin: Math.min.apply(null, ys25) - 2, yMax: Math.max.apply(null, ys25) + 2,
+        highlights: [{x: xs25[mis1], y: ys25[mis1], label: "?"}, {x: xs25[mis2], y: ys25[mis2], label: "?", color: "#e67e22"}]})};
+  }
+
+  // 26: Snijpunten parabool + lijn
+  if (t === 26) {
+    // y = x² + c1 en y = mx + c2, snijpunten bij gehele x
+    var combos26 = [
+      {a: 1, c1: 0, m: 2, c2: 0, x1: 0, x2: 2},    // x²=2x → x=0,2
+      {a: 1, c1: 0, m: 3, c2: 0, x1: 0, x2: 3},    // x²=3x → x=0,3
+      {a: 1, c1: -3, m: 0, c2: 1, x1: -2, x2: 2},  // x²-3=1 → x²=4
+      {a: 1, c1: 0, m: 4, c2: -3, x1: 1, x2: 3}    // x²=4x-3 → x²-4x+3=0 → (x-1)(x-3)
+    ];
+    var cb26 = pick(combos26);
+    var lijnStr = "y = " + (cb26.m !== 0 ? cb26.m + "x" : "") + (cb26.c2 > 0 ? (cb26.m !== 0 ? " + " : "") + cb26.c2 : cb26.c2 < 0 ? " \u2212 " + Math.abs(cb26.c2) : (cb26.m === 0 ? "0" : ""));
+    var y1_26 = cb26.a * cb26.x1 * cb26.x1 + cb26.c1, y2_26 = cb26.a * cb26.x2 * cb26.x2 + cb26.c1;
+    return {q: "Bepaal de snijpunten van:\n" + fmtAC(cb26.a, cb26.c1) + " en " + lijnStr,
+      a: "(" + cb26.x1 + ", " + y1_26 + ") en (" + cb26.x2 + ", " + y2_26 + ")", t: "text",
+      h: "Gelijkstellen: ax\u00b2 + c = mx + b\nOplossen geeft x = " + cb26.x1 + " en x = " + cb26.x2,
+      svg: svgParabola({a: cb26.a, c: cb26.c1, xMin: Math.min(cb26.x1, cb26.x2) - 3, xMax: Math.max(cb26.x1, cb26.x2) + 3,
+        yMin: Math.min(y1_26, y2_26, cb26.c1) - 3, yMax: Math.max(y1_26, y2_26) + 5,
+        line: {m: cb26.m, b: cb26.c2, color: "#e67e22", label: lijnStr},
+        highlights: [{x: cb26.x1, y: y1_26, label: "(" + cb26.x1 + "," + y1_26 + ")"}, {x: cb26.x2, y: y2_26, label: "(" + cb26.x2 + "," + y2_26 + ")", color: "#e67e22"}]})};
+  }
+
+  // 27: Vergelijk twee parabolen — welke is hoger op x?
+  if (t === 27) {
+    var a27a = pick([1, 2]), c27a = pick([0, 1, 3]);
+    var a27b = pick([1, 2, 3]), c27b = pick([0, 2, 5]);
+    if (a27a === a27b && c27a === c27b) c27b += 2;
+    var x27 = pick([2, 3, 4]);
+    var y27a = a27a * x27 * x27 + c27a, y27b = a27b * x27 * x27 + c27b;
+    var hogere = y27a > y27b ? fmtAC(a27a, c27a) : y27b > y27a ? fmtAC(a27b, c27b) : "gelijk";
+    return {q: "Welke parabool is hoger bij x = " + x27 + "?\n" + fmtAC(a27a, c27a) + "\n" + fmtAC(a27b, c27b),
+      a: hogere, t: "choice", o: [fmtAC(a27a, c27a), fmtAC(a27b, c27b)],
+      h: fmtAC(a27a, c27a) + ": y(" + x27 + ") = " + y27a + "\n" + fmtAC(a27b, c27b) + ": y(" + x27 + ") = " + y27b,
+      svg: svgParabola({a: a27a, c: c27a, xMin: -(x27 + 2), xMax: x27 + 2,
+        yMin: Math.min(c27a, c27b, -1), yMax: Math.max(y27a, y27b) + 3,
+        parabola2: {a: a27b, c: c27b, color: "#e67e22"},
+        highlights: [{x: x27, y: y27a, label: "" + y27a}, {x: x27, y: y27b, label: "" + y27b, color: "#e67e22"}]})};
+  }
+
+  // 28: Hangar: breedte berekenen + controleren of voertuig past (2-staps)
+  if (t === 28) {
+    var aH28 = pick([0.02, 0.025, 0.05]);
+    var cH28 = pick([8, 10, 12]);
+    var vH28 = pick([3, 4, 5]); // voertuig hoogte
+    var vW28 = pick([4, 5, 6]); // voertuig breedte
+    // Op hoogte vH28: x² = (cH28 - vH28)/aH28
+    var x2H28 = (cH28 - vH28) / aH28;
+    var breedteH28 = Math.round(2 * Math.sqrt(x2H28) * 10) / 10;
+    var past28 = breedteH28 >= vW28 ? "Ja" : "Nee";
+    var brMax28 = Math.sqrt(cH28 / aH28);
+    return {q: "Een hangar: y = \u2212" + aH28 + "x\u00b2 + " + cH28 + "\nEen vrachtwagen is " + vW28 + " m breed en " + vH28 + " m hoog.\nStap 1: Bereken hoe breed de hangar is op " + vH28 + " m hoogte.\nStap 2: Past de vrachtwagen erin?",
+      a: nf(breedteH28) + " m breed, " + past28, t: "text",
+      h: "Op y = " + vH28 + ": " + aH28 + "x\u00b2 = " + (cH28 - vH28) + " \u2192 x = \u00b1" + nf(Math.sqrt(x2H28)) + "\nBreedte = " + nf(breedteH28) + " m\n" + nf(breedteH28) + (breedteH28 >= vW28 ? " \u2265 " : " < ") + vW28 + " \u2192 " + past28,
+      svg: svgParabola({a: -aH28, c: cH28, xMin: -(brMax28 + 2), xMax: brMax28 + 2, yMin: -1, yMax: cH28 + 2,
+        rect: {halfW: vW28 / 2, h: vH28, color: past28 === "Ja" ? "#27ae60" : "#e74c3c"},
+        hLine: {y: vH28, label: vH28 + " m", color: "#f1c40f"},
+        label: "Hangar: 2-staps"})};
+  }
+
+  // 29: Hangbrug: welke x hoort bij hoogte y? (omgekeerd)
+  if (t === 29) {
+    var aBr29 = pick([0.002, 0.005, 0.01]);
+    var cBr29 = pick([10, 12, 15]);
+    var yTarget = pick([14, 15, 18, 20, 22]);
+    // y = a*x² + c → x² = (y-c)/a → x = sqrt(...)
+    var xSq29 = (yTarget - cBr29) / aBr29;
+    if (xSq29 <= 0) { yTarget = cBr29 + 5; xSq29 = 5 / aBr29; }
+    var xBr29 = Math.round(Math.sqrt(xSq29) * 10) / 10;
+    return {q: "Kabels hangbrug: y = " + aBr29 + "x\u00b2 + " + cBr29 + "\nOp welke afstand x is de kabel " + yTarget + " m hoog?",
+      a: xBr29,
+      h: yTarget + " = " + aBr29 + "x\u00b2 + " + cBr29 + "\n" + aBr29 + "x\u00b2 = " + (yTarget - cBr29) + "\nx\u00b2 = " + nf(xSq29) + "\nx = " + nf(xBr29) + " m",
+      svg: svgBridge({a: aBr29, c: cBr29, span: Math.max(xBr29 + 20, 50), towerH: yTarget + 10, roadH: cBr29,
+        highlights: [{x: xBr29, y: yTarget, label: "(" + nf(xBr29) + ", " + yTarget + ")"}],
+        label: "Hangbrug: x bij hoogte"})};
+  }
+
+  // 30: Formule matchen aan grafiek (4 opties incl. lijn+parabool)
+  if (t === 30) {
+    var a30 = pick([-2, -1, 1, 2, 3]);
+    var c30 = pick([-3, 0, 2, 4, 6]);
+    var correctF30 = fmtAC(a30, c30);
+    var wrongA30 = -a30;
+    var wrongC30 = c30 === 0 ? 3 : -c30;
+    var lin30 = "y = " + (a30 > 0 ? a30 : a30 === -1 ? "\u22121" : a30) + "x" + (c30 > 0 ? " + " + c30 : c30 < 0 ? " \u2212 " + Math.abs(c30) : "");
+    var opts30 = [correctF30, fmtAC(wrongA30, c30), fmtAC(a30, wrongC30), lin30];
+    var uniq30 = []; for (var o30 = 0; o30 < opts30.length; o30++) { if (uniq30.indexOf(opts30[o30]) === -1) uniq30.push(opts30[o30]); }
+    while (uniq30.length < 4) uniq30.push(fmtAC(pick([-1, 2]), pick([1, 5])));
+    opts30 = uniq30.slice(0, 4).sort(function() { return Math.random() - 0.5; });
+    var lo30 = a30 > 0 ? Math.min(c30 - 1, -2) : Math.min(c30 - 15, -2);
+    var hi30 = a30 > 0 ? Math.max(c30 + 15, 5) : Math.max(c30 + 2, 5);
+    return {q: "Welke formule hoort bij deze grafiek?",
+      a: correctF30, t: "choice", o: opts30,
+      h: (a30 > 0 ? "Dalparabool" : "Bergparabool") + ", top bij (0, " + c30 + ") \u2192 " + correctF30,
+      svg: svgParabola({a: a30, c: c30, xMin: -5, xMax: 5, yMin: lo30, yMax: hi30,
+        highlights: [{x: 0, y: c30, label: "(0, " + c30 + ")"}]})};
+  }
+
+  // 31: Gebouw met parabolisch dak — hoogte + breedte
+  if (t === 31) {
+    var aGeb = pick([0.1, 0.2, 0.25]);
+    var cGeb = pick([6, 8, 10, 12]);
+    var xGeb = pick([2, 3, 4]);
+    var yGeb = -aGeb * xGeb * xGeb + cGeb;
+    var yGebR = Math.round(yGeb * 100) / 100;
+    var brGeb = Math.round(Math.sqrt(cGeb / aGeb) * 10) / 10;
+    return {q: "Een gebouw heeft een parabolisch dak:\ny = \u2212" + aGeb + "x\u00b2 + " + cGeb + "\nBereken de hoogte op " + xGeb + " m van het midden en de totale breedte.",
+      a: nf(yGebR) + " m hoog, " + nf(2 * brGeb) + " m breed", t: "text",
+      h: "Hoogte: y(" + xGeb + ") = " + nf(yGebR) + " m\nBreedte: y=0 \u2192 x=\u00b1" + nf(brGeb) + " \u2192 " + nf(2 * brGeb) + " m",
+      svg: svgParabola({a: -aGeb, c: cGeb, xMin: -(brGeb + 2), xMax: brGeb + 2, yMin: -1, yMax: cGeb + 2,
+        highlights: [{x: xGeb, y: yGebR, label: nf(yGebR) + " m"}],
+        vLines: [{x: xGeb, y1: 0, y2: yGebR, color: "#e67e22"}],
+        label: "Gebouw met parabolisch dak"})};
+  }
+
+  // 32: Twee tunnels vergelijken — welke is breder/hoger?
+  if (t === 32) {
+    var combos32 = [
+      {a1: 0.5, c1: 8, a2: 0.25, c2: 4},
+      {a1: 0.25, c1: 9, a2: 0.5, c2: 8},
+      {a1: 0.2, c1: 5, a2: 0.1, c2: 4}
+    ];
+    var cb32 = pick(combos32);
+    var w32a = Math.round(2 * Math.sqrt(cb32.c1 / cb32.a1) * 10) / 10;
+    var w32b = Math.round(2 * Math.sqrt(cb32.c2 / cb32.a2) * 10) / 10;
+    var hoger = cb32.c1 > cb32.c2 ? "Tunnel A" : cb32.c2 > cb32.c1 ? "Tunnel B" : "even hoog";
+    var breder = w32a > w32b ? "Tunnel A" : w32b > w32a ? "Tunnel B" : "even breed";
+    return {q: "Tunnel A: y = \u2212" + cb32.a1 + "x\u00b2 + " + cb32.c1 + "\nTunnel B: y = \u2212" + cb32.a2 + "x\u00b2 + " + cb32.c2 + "\nWelke tunnel is hoger? Welke is breder?",
+      a: hoger + " is hoger, " + breder + " is breder", t: "text",
+      h: "A: hoogte " + cb32.c1 + " m, breedte " + nf(w32a) + " m\nB: hoogte " + cb32.c2 + " m, breedte " + nf(w32b) + " m",
+      svg: svgParabola({a: -cb32.a1, c: cb32.c1, xMin: -10, xMax: 10, yMin: -1, yMax: Math.max(cb32.c1, cb32.c2) + 2,
+        parabola2: {a: -cb32.a2, c: cb32.c2, color: "#e67e22"},
+        label: "Tunnel A (blauw) vs B (oranje)"})};
+  }
+
+  // ===== TYPES 33-40: Diagnostische toets niveau =====
+
+  // 33: Tabel invullen + dal/berg + top (3 deelvragen)
+  if (t === 33) {
+    var a33 = pick([-2, -1, 1, 2, 3]), c33 = pick([0, 3, -2, 5]);
+    var xs33 = [-3, -2, -1, 0, 1, 2, 3];
+    var ys33 = xs33.map(function(x) { return a33 * x * x + c33; });
+    var soort33 = a33 > 0 ? "dalparabool" : "bergparabool";
+    var misI33 = rand(1, 5);
+    return {q: fmtAC(a33, c33) + "\nx: " + xs33.join(", ") + "\ny: " + ys33.map(function(y, i) { return i === misI33 ? "?" : y; }).join(", ") + "\na) Vul de ontbrekende waarde in.\nb) Is dit een dal- of bergparabool?\nc) Wat is de top?",
+      a: ys33[misI33] + ", " + soort33 + ", (0, " + c33 + ")", t: "text",
+      h: "a) y(" + xs33[misI33] + ") = " + ys33[misI33] + "\nb) " + (a33 > 0 ? "a > 0 \u2192 dal" : "a < 0 \u2192 berg") + "\nc) top = (0, " + c33 + ")",
+      svg: svgParabola({a: a33, c: c33, xMin: -5, xMax: 5,
+        yMin: Math.min.apply(null, ys33) - 2, yMax: Math.max.apply(null, ys33) + 2,
+        highlights: [{x: 0, y: c33, label: "top (0," + c33 + ")"}]})};
+  }
+
+  // 34: Brug + staaflengte op meerdere punten
+  if (t === 34) {
+    var aBr34 = pick([0.003, 0.004, 0.005]);
+    var cBr34 = pick([5, 8, 10]);
+    var x1_34 = pick([10, 15]), x2_34 = pick([25, 30]);
+    var y1_34 = aBr34 * x1_34 * x1_34 + cBr34;
+    var y2_34 = aBr34 * x2_34 * x2_34 + cBr34;
+    var s1_34 = Math.round((y1_34 - cBr34) * 10) / 10;
+    var s2_34 = Math.round((y2_34 - cBr34) * 10) / 10;
+    return {q: "Hangbrug: y = " + aBr34 + "x\u00b2 + " + cBr34 + "\nHet wegdek is op " + cBr34 + " m.\nBereken de staaflengte op x = " + x1_34 + " en x = " + x2_34 + ".",
+      a: nf(s1_34) + " m en " + nf(s2_34) + " m", t: "text",
+      h: "x=" + x1_34 + ": kabel op " + nf(y1_34) + " m, staaf = " + nf(s1_34) + " m\nx=" + x2_34 + ": kabel op " + nf(y2_34) + " m, staaf = " + nf(s2_34) + " m",
+      svg: svgBridge({a: aBr34, c: cBr34, span: 60, towerH: aBr34 * 3600 + cBr34, roadH: cBr34,
+        staven: [{x: x1_34, y1: cBr34, y2: y1_34, label: nf(s1_34) + " m"}, {x: x2_34, y1: cBr34, y2: y2_34, label: nf(s2_34) + " m", color: "#e67e22"}],
+        label: "Hangbrug: staven"})};
+  }
+
+  // 35: Hangar F-14: spanwijdte op hoogte, past het? (meerstaps)
+  if (t === 35) {
+    var aH35 = pick([0.02, 0.025, 0.015]);
+    var cH35 = pick([10, 12, 15]);
+    var planeH = 4.88, planeSW = 19.55;
+    // Op hoogte planeH: x² = (c-planeH)/a
+    var x2_35 = (cH35 - planeH) / aH35;
+    var breedteH35 = Math.round(2 * Math.sqrt(x2_35) * 10) / 10;
+    var past35 = breedteH35 >= planeSW ? "Ja" : "Nee";
+    var brMax35 = Math.sqrt(cH35 / aH35);
+    return {q: "Hangar: y = \u2212" + aH35 + "x\u00b2 + " + cH35 + "\nEen F-14 Tomcat (spanwijdte " + planeSW + " m, hoogte " + planeH + " m).\nStap 1: Hoe breed is de hangar op " + planeH + " m hoogte?\nStap 2: Past de F-14 met gespreide vleugels?",
+      a: nf(breedteH35) + " m, " + past35, t: "text",
+      h: "Op y = " + planeH + ": x = \u00b1" + nf(Math.sqrt(x2_35)) + "\nBreedte = " + nf(breedteH35) + " m\n" + nf(breedteH35) + (breedteH35 >= planeSW ? " \u2265 " : " < ") + planeSW + " \u2192 " + past35,
+      svg: svgParabola({a: -aH35, c: cH35, xMin: -(brMax35 + 2), xMax: brMax35 + 2, yMin: -1, yMax: cH35 + 2,
+        rect: {halfW: planeSW / 2, h: planeH, color: past35 === "Ja" ? "#27ae60" : "#e74c3c"},
+        hLine: {y: planeH, label: planeH + " m", color: "#f1c40f"},
+        label: "Hangar: F-14 Tomcat"})};
+  }
+
+  // 36: Snijpunten vinden + interpreteren
+  if (t === 36) {
+    var combos36 = [
+      {a: 1, c1: 0, m: 5, c2: -6, x1: 2, x2: 3},    // x²=5x-6 → x²-5x+6=0
+      {a: 1, c1: -4, m: 0, c2: 0, x1: -2, x2: 2},    // x²-4=0
+      {a: 1, c1: 1, m: 2, c2: 1, x1: 0, x2: 2}       // x²+1=2x+1 → x²-2x=0
+    ];
+    var cb36 = pick(combos36);
+    var y1_36 = cb36.a * cb36.x1 * cb36.x1 + cb36.c1;
+    var y2_36 = cb36.a * cb36.x2 * cb36.x2 + cb36.c1;
+    var lijn36 = cb36.m !== 0 ? cb36.m + "x" : "";
+    lijn36 += cb36.c2 > 0 ? (lijn36 ? " + " : "") + cb36.c2 : cb36.c2 < 0 ? " \u2212 " + Math.abs(cb36.c2) : (lijn36 ? "" : "0");
+    return {q: "Bepaal de snijpunten van " + fmtAC(cb36.a, cb36.c1) + " en y = " + lijn36 + ".\nGeef de co\u00f6rdinaten.",
+      a: "(" + cb36.x1 + ", " + y1_36 + ") en (" + cb36.x2 + ", " + y2_36 + ")", t: "text",
+      h: "Gelijkstellen en oplossen:\nx = " + cb36.x1 + " \u2192 y = " + y1_36 + "\nx = " + cb36.x2 + " \u2192 y = " + y2_36,
+      svg: svgParabola({a: cb36.a, c: cb36.c1, xMin: Math.min(cb36.x1, -2) - 2, xMax: Math.max(cb36.x2, 2) + 2,
+        yMin: Math.min(y1_36, y2_36, cb36.c1) - 3, yMax: Math.max(y1_36, y2_36) + 5,
+        line: {m: cb36.m, b: cb36.c2, color: "#e67e22", label: "y=" + lijn36},
+        highlights: [{x: cb36.x1, y: y1_36, label: "(" + cb36.x1 + "," + y1_36 + ")"}, {x: cb36.x2, y: y2_36, label: "(" + cb36.x2 + "," + y2_36 + ")", color: "#e67e22"}]})};
+  }
+
+  // 37: Zonneoven formule afleiden + controleren
+  if (t === 37) {
+    var brZ37 = pick([30, 40, 50, 60]);
+    var diepZ37 = pick([5, 10, 15, 20]);
+    var halfZ37 = brZ37 / 2;
+    var aZ37 = diepZ37 / (halfZ37 * halfZ37);
+    var aZ37R = Math.round(aZ37 * 10000) / 10000;
+    var xCheck = pick([5, 10]);
+    var yCheck = Math.round(aZ37R * xCheck * xCheck * 100) / 100;
+    return {q: "Een parabolische zonneoven is " + brZ37 + " cm breed en " + diepZ37 + " cm diep.\na) Stel de formule op (y = ax\u00b2).\nb) Hoe diep is de oven op " + xCheck + " cm van het midden?",
+      a: "a = " + nf(aZ37R) + ", diepte = " + nf(yCheck) + " cm", t: "text",
+      h: "a) " + diepZ37 + " = a \u00b7 " + (halfZ37 * halfZ37) + " \u2192 a = " + nf(aZ37R) + "\nb) y(" + xCheck + ") = " + nf(aZ37R) + " \u00b7 " + (xCheck * xCheck) + " = " + nf(yCheck) + " cm",
+      svg: svgParabola({a: aZ37R, c: 0, xMin: -(halfZ37 + 5), xMax: halfZ37 + 5, yMin: -2, yMax: diepZ37 + 5,
+        highlights: [{x: halfZ37, y: diepZ37, label: "rand"}, {x: xCheck, y: yCheck, label: nf(yCheck) + " cm", color: "#e67e22"}],
+        label: "Zonneoven"})};
+  }
+
+  // 38: Drone hoogte + tijd vergelijken
+  if (t === 38) {
+    var aD38a = pick([2, 3]), aD38b = pick([4, 5]);
+    var tD38 = pick([3, 4, 5]);
+    var h38a = aD38a * tD38 * tD38, h38b = aD38b * tD38 * tD38;
+    return {q: "Drone A: h = " + aD38a + "t\u00b2\nDrone B: h = " + aD38b + "t\u00b2\nNa " + tD38 + " seconden: welke is hoger en hoeveel verschil?",
+      a: "Drone B, verschil " + (h38b - h38a) + " m", t: "text",
+      h: "A: " + aD38a + "\u00b7" + (tD38 * tD38) + " = " + h38a + " m\nB: " + aD38b + "\u00b7" + (tD38 * tD38) + " = " + h38b + " m\nVerschil: " + (h38b - h38a) + " m",
+      svg: svgParabola({a: aD38a, c: 0, xMin: -0.5, xMax: tD38 + 2, yMin: -2, yMax: h38b + 10,
+        parabola2: {a: aD38b, c: 0, color: "#e67e22"},
+        highlights: [{x: tD38, y: h38a, label: "A: " + h38a}, {x: tD38, y: h38b, label: "B: " + h38b, color: "#e67e22"}],
+        label: "Drone A (blauw) vs B (oranje)"})};
+  }
+
+  // 39: Hangbrug: vogel op hoogte h, welke x?
+  if (t === 39) {
+    var aBr39 = pick([0.002, 0.005, 0.01]);
+    var cBr39 = pick([8, 10, 12]);
+    var hVogel = cBr39 + pick([2, 4, 6, 8]);
+    var xSq39 = (hVogel - cBr39) / aBr39;
+    var xVogel = Math.round(Math.sqrt(xSq39) * 10) / 10;
+    return {q: "Hangbrug: y = " + aBr39 + "x\u00b2 + " + cBr39 + "\nEen vogel zit op de kabel op " + hVogel + " m hoogte.\nOp welke afstand van het midden zit de vogel?",
+      a: xVogel,
+      h: hVogel + " = " + aBr39 + "x\u00b2 + " + cBr39 + "\nx\u00b2 = " + nf(xSq39) + "\nx = " + nf(xVogel) + " m",
+      svg: svgBridge({a: aBr39, c: cBr39, span: Math.max(xVogel + 15, 40), towerH: hVogel + 5, roadH: cBr39,
+        highlights: [{x: xVogel, y: hVogel, label: "vogel: " + nf(xVogel) + " m"}],
+        label: "Hangbrug: vogel"})};
+  }
+
+  // 40: Combi: lineair + kwadratisch — wanneer haalt de lijn de parabool in?
+  var combos40 = [
+    {a: 1, c1: 0, m: 6, c2: -8, xi: 2},    // x²=6x-8 → x²-6x+8=0 → (x-2)(x-4), eerste bij x=2
+    {a: 1, c1: 0, m: 4, c2: -3, xi: 1},    // x²=4x-3 → (x-1)(x-3), eerste bij x=1
+    {a: 1, c1: 0, m: 8, c2: -15, xi: 3},   // x²=8x-15 → (x-3)(x-5), eerste bij x=3
+    {a: 1, c1: 0, m: 5, c2: -4, xi: 1}     // x²=5x-4 → (x-1)(x-4), eerste bij x=1
+  ];
+  var cb40 = pick(combos40);
+  var ySnij = cb40.a * cb40.xi * cb40.xi + cb40.c1;
+  var lijn40 = cb40.m + "x" + (cb40.c2 >= 0 ? " + " + cb40.c2 : " \u2212 " + Math.abs(cb40.c2));
+  return {q: "Vanaf x = 0 groeien beide:\n" + fmtAC(cb40.a, cb40.c1) + " en y = " + lijn40 + "\nBij welke (positieve) x snijden ze elkaar het eerst?",
+    a: cb40.xi,
+    h: "Gelijkstellen: x\u00b2 = " + lijn40 + "\nOplossen geeft o.a. x = " + cb40.xi,
+    svg: svgParabola({a: cb40.a, c: cb40.c1, xMin: -1, xMax: cb40.xi + 4, yMin: -2, yMax: ySnij + 10,
+      line: {m: cb40.m, b: cb40.c2, color: "#e67e22", label: "y=" + lijn40},
+      highlights: [{x: cb40.xi, y: ySnij, label: "(" + cb40.xi + "," + ySnij + ")"}],
+      label: "Wanneer snijden ze?"})};
 }
 
 function g64() {
