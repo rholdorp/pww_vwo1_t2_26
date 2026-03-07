@@ -101,10 +101,11 @@ class TrainerProgress {
     this._save();
   }
 
-  // Check if section is mastered (last quiz ≥70%)
+  // Check if section is mastered (last quiz ≥70%, or ≥5 answers with ≥70% cumulative)
   isMastered(sectionId) {
     const s = this.getSection(sectionId);
-    return (s.lastQuizPct || 0) >= 70;
+    if ((s.lastQuizPct || 0) >= 70) return true;
+    return (s.total || 0) >= 5 && s.total > 0 && Math.round((s.correct || 0) / s.total * 100) >= 70;
   }
 
   // Get overall stats

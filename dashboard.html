@@ -46,7 +46,7 @@ async function fetchTrainerStats(user){
       Object.entries(secs).forEach(([sid,s])=>{
         if(!s)return;
         totA+=s.total||0;totC+=s.correct||0;
-        const m=(s.lastQuizPct||0)>=70;
+        const m=(s.lastQuizPct||0)>=70||((s.total||0)>=5&&s.total>0&&Math.round((s.correct||0)/s.total*100)>=70);
         if(m)mastered++;
         secData[sid]={correct:s.correct||0,total:s.total||0,pct:s.total>0?Math.round((s.correct||0)/s.total*100):0,mastered:m};
       });
@@ -129,7 +129,7 @@ function loadAllTrainerStats(){
       Object.entries(secs).forEach(([sid,s])=>{
         if(!s)return;
         totA+=s.total||0;totC+=s.correct||0;
-        const m=(s.lastQuizPct||0)>=70;
+        const m=(s.lastQuizPct||0)>=70||((s.total||0)>=5&&s.total>0&&Math.round((s.correct||0)/s.total*100)>=70);
         if(m)mastered++;
         secData[sid]={correct:s.correct||0,total:s.total||0,pct:s.total>0?Math.round((s.correct||0)/s.total*100):0,mastered:m};
       });
