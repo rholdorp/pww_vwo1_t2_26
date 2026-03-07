@@ -39,7 +39,7 @@ const SECTIONS=[
   {id:"5.2",name:"Hoeken en graden",icon:"📐",color:"#20B2AA",desc:"Rechte, scherpe, stompe en gestrekte hoek",ch:5},
   {id:"5.3",name:"Hoeken meten",icon:"📏",color:"#9370DB",desc:"Geodriehoek gebruiken, hoeken aflezen",ch:5},
   {id:"5.4",name:"Hoeken tekenen",icon:"✏️",color:"#FF69B4",desc:"Hoeken en driehoeken tekenen met geodriehoek",ch:5},
-  {id:"5.5",name:"Hoeken berekenen",icon:"🔢",color:"#FF8C00",desc:"Rechte hoek, gestrekte hoek, overstaande hoeken",ch:5},
+  {id:"5.5",name:"Hoeken berekenen",icon:"🔢",color:"#FF8C00",desc:"Rechte hoek, gestrekte hoek, overstaande hoeken, F/Z-hoeken",ch:5},
   {id:"5.6",name:"Hoeken in figuren",icon:"🔺",color:"#32CD32",desc:"Hoekensom driehoek (180°) en vierhoek (360°)",ch:5},
   {id:"6.1",name:"Kwadraten",icon:"²",color:"#E74C3C",desc:"Kwadraten, negatieve getallen, wortels, rekenvolgorde",ch:6},
   {id:"6.2",name:"Kwadratische formules",icon:"x²",color:"#3498DB",desc:"Rekenen met y = ax² + b en y = (x−p)²",ch:6},
@@ -79,6 +79,9 @@ const THEORY={
   {type:"example",title:"Voorbeeld",text:"Gegeven: ∠A₁ = 42° en ∠A₃ = 90°.\n∠A₁₂₃ is een gestrekte hoek (180°).\n\nBereken ∠A₂:\n∠A₂ = 180° − 42° − 90° = **48°** (gestrekte hoek)\n\nBereken ∠A₄:\n∠A₄ = ∠A₁ = **42°** (overstaande hoeken)\n\nBereken ∠A₅:\n∠A₅ = ∠A₂₃ = 48° + 90° = **138°** (overstaande hoeken)\n\n💡 Zet bij elke berekening de gebruikte regel tussen haakjes!"},
   {type:"check",q:"∠A₁ = 42° en vormt samen met ∠A₂ een gestrekte hoek. ∠A₂ = ?",answer:138,hint:"180° − 42° = 138°"},
   {type:"check",q:"∠B₁ = 53° en vormt samen met ∠B₂ een rechte hoek. ∠B₂ = ?",answer:37,hint:"90° − 53° = 37°"},
+  {type:"explain",title:"F-hoeken en Z-hoeken",text:"Bij twee **evenwijdige lijnen** met een **snijlijn** ontstaan 8 hoeken (4 bij elk snijpunt).\n\n**F-hoeken** (ook: corresponderende hoeken)\nHoeken op dezelfde positie bij beide snijpunten.\nBijv. ∠1 en ∠5, of ∠2 en ∠6.\n→ F-hoeken zijn **even groot**.\n\n**Z-hoeken** (ook: alternatieve hoeken)\nHoeken die kruislings liggen (aan verschillende kanten van de snijlijn).\nBijv. ∠2 en ∠8, of ∠3 en ∠5.\n→ Z-hoeken zijn **even groot**.\n\n💡 Alle 8 hoeken zijn óf α óf 180°−α.\nHoeken 1, 3, 5, 7 zijn gelijk. Hoeken 2, 4, 6, 8 zijn gelijk."},
+  {type:"check",q:"l // m met snijlijn k. ∠1 = 65°. Hoe groot is ∠5 (F-hoek)?",answer:65,hint:"F-hoeken zijn gelijk: ∠5 = ∠1 = 65°"},
+  {type:"check",q:"l // m met snijlijn k. ∠1 = 110°. Hoe groot is ∠6 (gestrekte hoek met F-hoek)?",answer:70,hint:"∠5 = ∠1 = 110° (F-hoek). ∠6 = 180° − 110° = 70°"},
 ],
 "5.6":[
   {type:"explain",title:"Hoekensom driehoek",text:"In elke driehoek is de som van de drie hoeken **180°**.\n\n∠D + ∠E + ∠F = 180° (hoekensom driehoek)\n\nAls je twee hoeken kent → bereken de derde.\n\nVoorbeeld:\nVan △DEF: ∠D = 40° en ∠F = 60°.\n∠E = 180° − 40° − 60° = **80°** (hoekensom driehoek)"},
@@ -168,7 +171,7 @@ function genQ(section,difficulty){
   if(difficulty){
     // Progressive difficulty: constrain the type (t) selection in generators
     // All generators start with var t = rand(1, N) as first rand call
-    const maxTypes={"5.2":12,"5.5":12,"5.6":12};
+    const maxTypes={"5.2":12,"5.5":22,"5.6":20};
     const maxT=maxTypes[section]||10;
     let lo,hi;
     if(difficulty===1){lo=1;hi=Math.min(4,maxT)}

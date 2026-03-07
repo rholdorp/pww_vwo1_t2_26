@@ -362,6 +362,132 @@ function svgParallelPerp(ln1, ln2, ln3, rel12, rel23) {
 
 // ========== GENERATOR g51 - Lijnen (diagnostic only) ==========
 
+function svgParallelLines(angles, options) {
+  var opt = options || {};
+  var W = 300, H = 220;
+  var y1 = 70, y2 = 150;
+  var tiltDeg = opt.tilt || pick([55, 60, 65, 70, 75]);
+  var tiltRad = tiltDeg * Math.PI / 180;
+
+  var svg = '';
+  svg += '<line x1="20" y1="' + y1 + '" x2="280" y2="' + y1 + '" stroke="#aaa" stroke-width="2"/>';
+  svg += '<line x1="20" y1="' + y2 + '" x2="280" y2="' + y2 + '" stroke="#aaa" stroke-width="2"/>';
+  svg += '<text x="50" y="' + (y1 - 6) + '" fill="#888" font-size="10">\u203a\u203a</text>';
+  svg += '<text x="50" y="' + (y2 - 6) + '" fill="#888" font-size="10">\u203a\u203a</text>';
+
+  if (opt.lineLabels) {
+    svg += '<text x="285" y="' + (y1 + 4) + '" fill="#fff" font-size="12">' + (opt.lineLabels[0] || 'l') + '</text>';
+    svg += '<text x="285" y="' + (y2 + 4) + '" fill="#fff" font-size="12">' + (opt.lineLabels[1] || 'm') + '</text>';
+  }
+
+  var ix1 = 150, iy1 = y1;
+  var ix2 = ix1 + (y2 - y1) / Math.tan(tiltRad), iy2 = y2;
+
+  var dx = ix2 - ix1, dy = iy2 - iy1;
+  var len = Math.sqrt(dx * dx + dy * dy);
+  var ext = 40;
+  svg += '<line x1="' + (ix1 - dx / len * ext) + '" y1="' + (iy1 - dy / len * ext) + '" x2="' + (ix2 + dx / len * ext) + '" y2="' + (iy2 + dy / len * ext) + '" stroke="#aaa" stroke-width="2"/>';
+
+  if (opt.transversalLabel) {
+    svg += '<text x="' + (ix1 - dx / len * ext - 5) + '" y="' + (iy1 - dy / len * ext - 8) + '" fill="#fff" font-size="12">' + opt.transversalLabel + '</text>';
+  }
+
+  var arcR = 22;
+  function drawAngleArc(cx, cy, startDeg, endDeg, color, label, value) {
+    var span = endDeg - startDeg;
+    if (span < 0) span += 360;
+    var sRad = startDeg * Math.PI / 180;
+    var eRad = endDeg * Math.PI / 180;
+    var sx = cx + arcR * Math.cos(sRad);
+    var sy = cy - arcR * Math.sin(sRad);
+    var ex = cx + arcR * Math.cos(eRad);
+    var ey = cy - arcR * Math.sin(eRad);
+    var large = span > 180 ? 1 : 0;
+    var result = '<path d="M ' + sx + ' ' + sy + ' A ' + arcR + ' ' + arcR + ' 0 ' + large + ' 0 ' + ex + ' ' + ey + '" fill="none" stroke="' + color + '" stroke-width="2"/>';
+    var midDeg = startDeg + span / 2;
+    var midRad = midDeg * Math.PI / 180;
+    var lx = cx + (arcR + 14) * Math.cos(midRad);
+    var ly = cy - (arcR + 14) * Math.sin(midRad);
+    if (label) {
+      result += '<text x="' + lx + '" y="' + (ly + 4) + '" fill="' + color + '" font-size="10" font-weight="bold" text-anchor="middle">' + label + '</text>';
+    }
+    if (value !== undefined && value !== null) {
+      var vx = cx + (arcR + 24) * Math.cos(midRad);
+      var vy = cy - (arcR + 24) * Math.sin(midRad);
+      result += '<text x="' + vx + '" y="' + (vy + 4) + '" fill="' + color + '" font-size="9" text-anchor="middle">' + value + '\u00b0</text>';
+    }
+    return result;
+  }
+
+  var transUp = 180 - tiltDeg;
+  var transDown = 360 - tiltDeg;
+
+  var posMap = {
+    1: {cx: ix1, cy: iy1, start: transUp, end: 180},
+    2: {cx: ix1, cy: iy1, start: 0, end: transUp},
+    3: {cx: ix1, cy: iy1, start: transDown, end: 360},
+    4: {cx: ix1, cy: iy1, start: 180, end: transDown},
+    5: {cx: ix2, cy: iy2, start: transUp, end: 180},
+    6: {cx: ix2, cy: iy2, start: 0, end: transUp},
+    7: {cx: ix2, cy: iy2, start: transDown, end: 360},
+    8: {cx: ix2, cy: iy2, start: 180, end: transDown}
+  };
+
+  if (angles) {
+    for (var i = 0; i < angles.length; i++) {
+      var ai = angles[i];
+      var pm = posMap[ai.pos];
+      if (pm) {
+        svg += drawAngleArc(pm.cx, pm.cy, pm.start, pm.end, ai.color || "#3498db", ai.label, ai.value);
+      }
+    }
+  }
+
+  svg += '<circle cx="' + ix1 + '" cy="' + iy1 + '" r="3" fill="#fff"/>';
+  svg += '<circle cx="' + ix2 + '" cy="' + iy2 + '" r="3" fill="#fff"/>';
+
+  return '<svg viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" xmlns="http://www.w3.org/2000/svg">' + svg + '</svg>';
+}
+
+function svgDak(dakHoek, nokHoek) {
+  var W = 280, H = 160;
+  var baseY = 130, peakY = 30;
+  var leftX = 40, rightX = 240, peakX = 140;
+
+  var svg = '';
+  svg += '<line x1="' + leftX + '" y1="' + baseY + '" x2="' + rightX + '" y2="' + baseY + '" stroke="#666" stroke-width="1.5" stroke-dasharray="4,3"/>';
+  svg += '<line x1="' + leftX + '" y1="' + baseY + '" x2="' + peakX + '" y2="' + peakY + '" stroke="#aaa" stroke-width="2.5"/>';
+  svg += '<line x1="' + rightX + '" y1="' + baseY + '" x2="' + peakX + '" y2="' + peakY + '" stroke="#aaa" stroke-width="2.5"/>';
+  svg += '<path d="M ' + (leftX + 30) + ' ' + baseY + ' A 30 30 0 0 0 ' + (leftX + 20) + ' ' + (baseY - 22) + '" fill="none" stroke="#3498db" stroke-width="2"/>';
+  svg += '<text x="' + (leftX + 38) + '" y="' + (baseY - 12) + '" fill="#3498db" font-size="11" font-weight="bold">' + dakHoek + '\u00b0</text>';
+  svg += '<path d="M ' + (peakX - 16) + ' ' + (peakY + 20) + ' A 20 20 0 0 1 ' + (peakX + 16) + ' ' + (peakY + 20) + '" fill="none" stroke="#e74c3c" stroke-width="2"/>';
+  svg += '<text x="' + peakX + '" y="' + (peakY + 38) + '" fill="#e74c3c" font-size="11" font-weight="bold" text-anchor="middle">' + nokHoek + '\u00b0</text>';
+  svg += '<text x="' + leftX + '" y="' + (baseY + 16) + '" fill="#888" font-size="10" text-anchor="middle">A</text>';
+  svg += '<text x="' + rightX + '" y="' + (baseY + 16) + '" fill="#888" font-size="10" text-anchor="middle">B</text>';
+  svg += '<text x="' + peakX + '" y="' + (peakY - 8) + '" fill="#888" font-size="10" text-anchor="middle">nok</text>';
+
+  return '<svg viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" xmlns="http://www.w3.org/2000/svg">' + svg + '</svg>';
+}
+
+function svgVerkeersbord(angles, labels) {
+  var W = 200, H = 200;
+  var svg = '';
+  svg += '<path d="M 100 20 L 30 170 L 170 170 Z" fill="none" stroke="#e74c3c" stroke-width="3"/>';
+  var positions = [{x: 100, y: 52}, {x: 55, y: 152}, {x: 145, y: 152}];
+  for (var i = 0; i < 3; i++) {
+    var text = angles[i] !== null ? angles[i] + "\u00b0" : "?";
+    var col = angles[i] !== null ? "#3498db" : "#e74c3c";
+    svg += '<text x="' + positions[i].x + '" y="' + positions[i].y + '" fill="' + col + '" font-size="12" font-weight="bold" text-anchor="middle">' + text + '</text>';
+  }
+  if (labels) {
+    var labelPos = [{x: 100, y: 14}, {x: 20, y: 180}, {x: 180, y: 180}];
+    for (var j = 0; j < labels.length; j++) {
+      svg += '<text x="' + labelPos[j].x + '" y="' + labelPos[j].y + '" fill="#fff" font-size="11" text-anchor="middle">' + labels[j] + '</text>';
+    }
+  }
+  return '<svg viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" xmlns="http://www.w3.org/2000/svg">' + svg + '</svg>';
+}
+
 function g51() {
   var ln = pick(["k", "l", "m", "n", "p", "q", "r", "s"]);
   var ln2; do { ln2 = pick(["k", "l", "m", "n", "p", "q", "r", "s"]); } while (ln2 === ln);
@@ -886,7 +1012,7 @@ function g54() {
 
 function g55() {
   var letters = pick([["A", "B", "C"], ["P", "Q", "R"], ["S", "T", "U"], ["D", "E", "F"]]);
-  var t = rand(1, 12);
+  var t = rand(1, 22);
 
   if (t === 1) {
     // Two lines intersect at S. Four angles formed. Given one, find others via overstaande + gestrekte hoek.
@@ -1134,27 +1260,155 @@ function g55() {
       svg: svgIntersectingLines(imgLines11, imgAngles11, s)
     };
   }
-  // t === 12
-  // Hard multi-step: three lines at a point, given 2 angles on one side, find an angle on the other side
-  var s = pick(["S", "A", "P"]);
-  var seg1 = rand(25, 55);
-  var seg2 = rand(25, 55);
-  var seg3 = 180 - seg1 - seg2;
-  if (seg3 <= 10) return g55();
-  // On the other half: seg4=seg1, seg5=seg2, seg6=seg3 (overstaand)
-  // Given seg1 and seg3, ask for seg5
-  var imgLines = [{ deg: 0, name: "" }, { deg: seg1, name: "" }, { deg: seg1 + seg2, name: "" }];
-  var imgAngles = [
-    { label: s + "\u2081=" + seg1 + "\u00b0", startDeg: 0, endDeg: seg1, value: seg1, color: "#3498db" },
-    { label: s + "\u2082=?", startDeg: seg1, endDeg: seg1 + seg2, value: null, color: "#888" },
-    { label: s + "\u2083=" + seg3 + "\u00b0", startDeg: seg1 + seg2, endDeg: 180, value: seg3, color: "#27ae60" },
-    { label: s + "\u2085=?", startDeg: 180 + seg1, endDeg: 180 + seg1 + seg2, value: null, color: "#e74c3c" }
-  ];
+  if (t === 12) {
+    // Hard multi-step: three lines at a point, given 2 angles on one side, find an angle on the other side
+    var s = pick(["S", "A", "P"]);
+    var seg1 = rand(25, 55);
+    var seg2 = rand(25, 55);
+    var seg3 = 180 - seg1 - seg2;
+    if (seg3 <= 10) return g55();
+    var imgLines = [{ deg: 0, name: "" }, { deg: seg1, name: "" }, { deg: seg1 + seg2, name: "" }];
+    var imgAngles = [
+      { label: s + "\u2081=" + seg1 + "\u00b0", startDeg: 0, endDeg: seg1, value: seg1, color: "#3498db" },
+      { label: s + "\u2082=?", startDeg: seg1, endDeg: seg1 + seg2, value: null, color: "#888" },
+      { label: s + "\u2083=" + seg3 + "\u00b0", startDeg: seg1 + seg2, endDeg: 180, value: seg3, color: "#27ae60" },
+      { label: s + "\u2085=?", startDeg: 180 + seg1, endDeg: 180 + seg1 + seg2, value: null, color: "#e74c3c" }
+    ];
+    return {
+      q: "Drie lijnen snijden in punt " + s + ".\n\u2220" + s + "\u2081 = " + seg1 + "\u00b0, \u2220" + s + "\u2083 = " + seg3 + "\u00b0.\n\u2220" + s + "\u2081, \u2220" + s + "\u2082 en \u2220" + s + "\u2083 vormen een gestrekte hoek.\nBereken \u2220" + s + "\u2085 (overstaand aan \u2220" + s + "\u2082).",
+      a: seg2,
+      h: "Stap 1: \u2220" + s + "\u2082 = 180\u00b0 \u2212 " + seg1 + "\u00b0 \u2212 " + seg3 + "\u00b0 = " + seg2 + "\u00b0.\nStap 2: \u2220" + s + "\u2085 (overstaand) = \u2220" + s + "\u2082 = " + seg2 + "\u00b0",
+      svg: svgIntersectingLines(imgLines, imgAngles, s)
+    };
+  }
+
+  // ===== F/Z-HOEKEN (types 13-22) =====
+  var alpha = rand(35, 145);
+  var beta = 180 - alpha;
+
+  if (t === 13) {
+    // F-hoek basis: gegeven hoek 1, bereken hoek 5
+    return {
+      q: "Lijnen l en m zijn evenwijdig. Een snijlijn kruist beide.\n\u2220\u2081 = " + alpha + "\u00b0\n\nBereken \u2220\u2085 (F-hoek van \u2220\u2081).",
+      a: alpha,
+      h: "F-hoeken bij evenwijdige lijnen zijn gelijk.\n\u2220\u2085 = \u2220\u2081 = " + alpha + "\u00b0",
+      svg: svgParallelLines([
+        {pos: 1, value: alpha, color: "#3498db", label: "\u22201"},
+        {pos: 5, value: null, color: "#e74c3c", label: "\u22205=?"}
+      ], {lineLabels: ["l", "m"], transversalLabel: "k"})
+    };
+  }
+  if (t === 14) {
+    // Z-hoek basis: gegeven hoek 2, bereken hoek 8
+    return {
+      q: "Lijnen l en m zijn evenwijdig. Een snijlijn kruist beide.\n\u2220\u2082 = " + alpha + "\u00b0\n\nBereken \u2220\u2088 (Z-hoek van \u2220\u2082).",
+      a: alpha,
+      h: "Z-hoeken bij evenwijdige lijnen zijn gelijk.\n\u2220\u2088 = \u2220\u2082 = " + alpha + "\u00b0",
+      svg: svgParallelLines([
+        {pos: 2, value: alpha, color: "#3498db", label: "\u22202"},
+        {pos: 8, value: null, color: "#e74c3c", label: "\u22208=?"}
+      ], {lineLabels: ["l", "m"], transversalLabel: "k"})
+    };
+  }
+  if (t === 15) {
+    // Gestrekte hoek + F-hoek combo: gegeven hoek 1, bereken hoek 6
+    return {
+      q: "l // m, snijlijn k kruist beide.\n\u2220\u2081 = " + alpha + "\u00b0\n\nBereken \u2220\u2086.",
+      a: beta,
+      h: "\u2220\u2085 = \u2220\u2081 = " + alpha + "\u00b0 (F-hoeken)\n\u2220\u2086 = 180\u00b0 \u2212 \u2220\u2085 = 180\u00b0 \u2212 " + alpha + "\u00b0 = " + beta + "\u00b0 (gestrekte hoek)",
+      svg: svgParallelLines([
+        {pos: 1, value: alpha, color: "#3498db", label: "\u22201"},
+        {pos: 6, value: null, color: "#e74c3c", label: "\u22206=?"}
+      ], {lineLabels: ["l", "m"], transversalLabel: "k"})
+    };
+  }
+  if (t === 16) {
+    // Alle 8 hoeken: gegeven 1 hoek, bereken willekeurige andere
+    var askPos = pick([3, 4, 6, 7, 8]);
+    var expectedAngles = {1: alpha, 2: beta, 3: alpha, 4: beta, 5: alpha, 6: beta, 7: alpha, 8: beta};
+    return {
+      q: "l // m, snijlijn k.\n\u2220\u2081 = " + alpha + "\u00b0\n\nBereken \u2220" + String.fromCharCode(8320 + askPos) + ".",
+      a: expectedAngles[askPos],
+      h: "Hoeken 1, 3, 5, 7 = " + alpha + "\u00b0 (overstaand/F-hoeken)\nHoeken 2, 4, 6, 8 = " + beta + "\u00b0 (gestrekte hoek)\n\u2220" + String.fromCharCode(8320 + askPos) + " = " + expectedAngles[askPos] + "\u00b0",
+      svg: svgParallelLines([
+        {pos: 1, value: alpha, color: "#3498db", label: "\u22201"},
+        {pos: askPos, value: null, color: "#e74c3c", label: "\u2220" + String.fromCharCode(8320 + askPos) + "=?"}
+      ], {lineLabels: ["l", "m"], transversalLabel: "k"})
+    };
+  }
+  if (t === 17) {
+    // Herkenningsvraag: welk type hoek? (multiple choice)
+    var types = [
+      {pair: "1 en 5", type: "F-hoeken", h: "Zelfde positie bij de twee snijpunten \u2192 F-hoeken"},
+      {pair: "2 en 8", type: "Z-hoeken", h: "Kruislings aan verschillende kanten \u2192 Z-hoeken"},
+      {pair: "1 en 3", type: "overstaande hoeken", h: "Tegenover elkaar bij \u00e9\u00e9n snijpunt \u2192 overstaand"},
+      {pair: "1 en 2", type: "nevenhoeken", h: "Naast elkaar bij \u00e9\u00e9n snijpunt \u2192 nevenhoeken (samen 180\u00b0)"},
+      {pair: "3 en 5", type: "Z-hoeken", h: "Kruislings \u2192 Z-hoeken"},
+      {pair: "4 en 6", type: "Z-hoeken", h: "Kruislings \u2192 Z-hoeken"},
+      {pair: "2 en 6", type: "F-hoeken", h: "Zelfde positie \u2192 F-hoeken"}
+    ];
+    var ch = pick(types);
+    return {
+      q: "l // m met snijlijn k.\n\u2220" + ch.pair.split(" en ")[0] + " en \u2220" + ch.pair.split(" en ")[1] + " zijn:",
+      a: ch.type,
+      t: "choice",
+      o: ["F-hoeken", "Z-hoeken", "overstaande hoeken", "nevenhoeken"],
+      h: ch.h
+    };
+  }
+  if (t === 18) {
+    // Driehoek met evenwijdige lijn
+    var angB = rand(30, 70);
+    var angC = rand(30, 70);
+    var angA = 180 - angB - angC;
+    if (angA <= 10) return g55();
+    return {
+      q: "In \u25b3ABC loopt door A een lijn l evenwijdig aan BC.\n\u2220B = " + angB + "\u00b0 en \u2220C = " + angC + "\u00b0.\n\nBereken \u2220A.",
+      a: angA,
+      h: "Hoekensom driehoek:\n\u2220A = 180\u00b0 \u2212 " + angB + "\u00b0 \u2212 " + angC + "\u00b0 = " + angA + "\u00b0\n\n(Check via Z-hoeken bij de evenwijdige lijn:\nLinks van A bij l = " + angB + "\u00b0 (Z-hoek met \u2220B)\nRechts van A bij l = " + angC + "\u00b0 (Z-hoek met \u2220C))"
+    };
+  }
+  if (t === 19) {
+    // Twee snijlijnen + driehoek
+    var ang1 = rand(40, 75);
+    var ang2 = rand(40, 75);
+    var angBetween = 180 - ang1 - ang2;
+    if (angBetween <= 10 || angBetween >= 170) return g55();
+    return {
+      q: "Lijnen l en m zijn evenwijdig.\nSnijlijn k\u2081 maakt een hoek van " + ang1 + "\u00b0 met l.\nSnijlijn k\u2082 maakt een hoek van " + ang2 + "\u00b0 met l.\nk\u2081 en k\u2082 snijden elkaar tussen l en m.\n\nHoe groot is de hoek tussen k\u2081 en k\u2082 bij het snijpunt?",
+      a: angBetween,
+      h: "Bij het snijpunt vormen k\u2081 en k\u2082 een driehoek met lijn l.\nDe hoeken bij l zijn " + ang1 + "\u00b0 en " + ang2 + "\u00b0 (F-hoeken).\nDe hoek bij het snijpunt = 180\u00b0 \u2212 " + ang1 + "\u00b0 \u2212 " + ang2 + "\u00b0 = " + angBetween + "\u00b0"
+    };
+  }
+  if (t === 20) {
+    // Parallellogram
+    var angP = rand(40, 140);
+    var angQ = 180 - angP;
+    return {
+      q: "ABCD is een parallellogram (AB // DC en AD // BC).\n\u2220A = " + angP + "\u00b0\n\nBereken \u2220B.",
+      a: angQ,
+      h: "In een parallellogram zijn naastliggende hoeken samen 180\u00b0.\n\u2220B = 180\u00b0 \u2212 " + angP + "\u00b0 = " + angQ + "\u00b0"
+    };
+  }
+  if (t === 21) {
+    // Spoorwegovergang
+    var railAngle = rand(50, 80);
+    var complement = 180 - railAngle;
+    return {
+      q: "Bij een spoorwegovergang kruist een weg de rails.\nDe rails zijn evenwijdig. De weg maakt een hoek van " + railAngle + "\u00b0 met de linkse rail.\n\nWelke hoek maakt de weg met de rechtse rail aan dezelfde kant?",
+      a: complement,
+      h: "De hoeken aan dezelfde kant van de snijlijn tussen evenwijdige lijnen zijn samen 180\u00b0.\n" + railAngle + "\u00b0 + ? = 180\u00b0\n? = " + complement + "\u00b0"
+    };
+  }
+  // t === 22: Hulplijn evenwijdig aan basis
+  var angBase1 = rand(35, 65);
+  var angBase2 = rand(35, 65);
+  var angTop = 180 - angBase1 - angBase2;
+  if (angTop <= 10) return g55();
   return {
-    q: "Drie lijnen snijden in punt " + s + ".\n\u2220" + s + "\u2081 = " + seg1 + "\u00b0, \u2220" + s + "\u2083 = " + seg3 + "\u00b0.\n\u2220" + s + "\u2081, \u2220" + s + "\u2082 en \u2220" + s + "\u2083 vormen een gestrekte hoek.\nBereken \u2220" + s + "\u2085 (overstaand aan \u2220" + s + "\u2082).",
-    a: seg2,
-    h: "Stap 1: \u2220" + s + "\u2082 = 180\u00b0 \u2212 " + seg1 + "\u00b0 \u2212 " + seg3 + "\u00b0 = " + seg2 + "\u00b0.\nStap 2: \u2220" + s + "\u2085 (overstaand) = \u2220" + s + "\u2082 = " + seg2 + "\u00b0",
-    svg: svgIntersectingLines(imgLines, imgAngles, s)
+    q: "In \u25b3PQR is PQ de basis. Door R loopt lijn s // PQ.\n\u2220P = " + angBase1 + "\u00b0.\n\nDe hoek die PR maakt met lijn s is gelijk aan \u2220P (Z-hoeken).\nBereken \u2220Q als je weet dat \u2220R = " + angTop + "\u00b0.",
+    a: angBase2,
+    h: "\u2220Q = 180\u00b0 \u2212 \u2220P \u2212 \u2220R = 180\u00b0 \u2212 " + angBase1 + "\u00b0 \u2212 " + angTop + "\u00b0 = " + angBase2 + "\u00b0\n\n(Check via Z-hoeken bij s//PQ:\nLinks van R bij s: Z-hoek met \u2220P = " + angBase1 + "\u00b0\nRechts van R bij s: Z-hoek met \u2220Q = " + angBase2 + "\u00b0)"
   };
 }
 
@@ -1164,7 +1418,7 @@ function g55() {
 function g56() {
   var triNames = pick([["D", "E", "F"], ["A", "B", "C"], ["P", "Q", "R"], ["K", "L", "M"]]);
   var quadNames = pick([["P", "Q", "R", "S"], ["A", "B", "C", "D"], ["K", "L", "M", "N"]]);
-  var t = rand(1, 12);
+  var t = rand(1, 20);
 
   if (t === 1) {
     // Simple: hoekensom driehoek
@@ -1340,20 +1594,117 @@ function g56() {
       svg: svgQuadrilateral(null, [a, b, c, d], quadNames, askIdx)
     };
   }
-  // t === 12
-  // Rechthoekige driehoek with follow-up
-  var a = rand(15, 75);
-  var b = 90;
-  var c = 90 - a;
+  if (t === 12) {
+    // Rechthoekige driehoek with follow-up
+    var a = rand(15, 75);
+    var c = 90 - a;
+    return {
+      q: "In rechthoekige \u25b3" + triNames.join("") + ": \u2220" + triNames[1] + " = 90\u00b0 en \u2220" + triNames[0] + " = " + a + "\u00b0.\nBereken \u2220" + triNames[2] + ".\nIs \u2220" + triNames[2] + " scherp of stomp?",
+      a: c,
+      h: "\u2220" + triNames[2] + " = 180\u00b0 \u2212 90\u00b0 \u2212 " + a + "\u00b0 = " + c + "\u00b0.\n" + c + "\u00b0 < 90\u00b0 \u2192 scherp.\n(In een rechthoekige driehoek zijn de twee andere hoeken altijd scherp.)",
+      svg: svgTriangle(
+        [{ x: 30, y: 170 }, { x: 30, y: 30 }, { x: 250, y: 170 }],
+        [a, 90, c],
+        triNames,
+        2
+      )
+    };
+  }
+
+  // ===== VERHAALSOMMEN (types 13-20) =====
+
+  if (t === 13) {
+    // Dakconstructie: gelijkbenig dak, bereken nokhoek
+    var dakHoek = pick([30, 35, 40, 45, 50, 55, 60]);
+    var nokHoek = 180 - 2 * dakHoek;
+    if (nokHoek <= 0) return g56();
+    return {
+      q: "Een dak is gelijkbenig (linker- en rechterkant even lang).\nDe hoek die het dak maakt met het plafond is " + dakHoek + "\u00b0.\n\nHoe groot is de nokhoek (de hoek bovenaan)?",
+      a: nokHoek,
+      h: "Gelijkbenig dak: beide basishoeken = " + dakHoek + "\u00b0\nNokhoek = 180\u00b0 \u2212 2 \u00d7 " + dakHoek + "\u00b0 = 180\u00b0 \u2212 " + (2 * dakHoek) + "\u00b0 = " + nokHoek + "\u00b0",
+      svg: svgDak(dakHoek, nokHoek)
+    };
+  }
+  if (t === 14) {
+    // Dakconstructie omgekeerd: gegeven nokhoek, bereken dakhoek
+    var nok = pick([40, 50, 60, 70, 80, 90, 100]);
+    var dak = (180 - nok) / 2;
+    if (dak !== Math.floor(dak)) return g56();
+    return {
+      q: "Een gelijkbenig dak heeft een nokhoek van " + nok + "\u00b0.\n\nHoe groot is de hoek die het dak maakt met het plafond?",
+      a: dak,
+      h: "Basishoek = (180\u00b0 \u2212 " + nok + "\u00b0) \u00f7 2 = " + (180 - nok) + "\u00b0 \u00f7 2 = " + dak + "\u00b0",
+      svg: svgDak(dak, nok)
+    };
+  }
+  if (t === 15) {
+    // Verkeersbord: gelijkbenig driehoekig waarschuwingsbord
+    var topHoek = pick([50, 55, 60, 65, 70]);
+    var basisHoek = (180 - topHoek) / 2;
+    if (basisHoek !== Math.floor(basisHoek)) return g56();
+    return {
+      q: "Een driehoekig verkeersbord is gelijkbenig.\nDe tophoek is " + topHoek + "\u00b0.\n\nHoe groot zijn de basishoeken?",
+      a: basisHoek,
+      h: "Basishoek = (180\u00b0 \u2212 " + topHoek + "\u00b0) \u00f7 2 = " + basisHoek + "\u00b0",
+      svg: svgVerkeersbord([topHoek, null, null], ["A", "B", "C"])
+    };
+  }
+  if (t === 16) {
+    // Klok: hoek tussen wijzers
+    var uur = pick([1, 2, 3, 4, 5, 7, 8, 10, 11]);
+    var minuut = pick([0, 15, 30]);
+    var urenPos = uur * 30 + minuut * 0.5;
+    var minPos = minuut * 6;
+    var hoek = Math.abs(urenPos - minPos);
+    if (hoek > 180) hoek = 360 - hoek;
+    if (hoek !== Math.round(hoek)) return g56();
+    var tijdStr = uur + ":" + (minuut < 10 ? "0" : "") + minuut;
+    return {
+      q: "Hoe groot is de hoek tussen de uren- en minutenwijzer om " + tijdStr + " uur?\n\n(De urenwijzer draait 0,5\u00b0 per minuut.\nDe minutenwijzer draait 6\u00b0 per minuut.)",
+      a: hoek,
+      h: "Urenwijzer: " + uur + " \u00d7 30\u00b0 + " + minuut + " \u00d7 0,5\u00b0 = " + urenPos + "\u00b0\nMinutenwijzer: " + minuut + " \u00d7 6\u00b0 = " + minPos + "\u00b0\nVerschil: |" + urenPos + " \u2212 " + minPos + "| = " + hoek + "\u00b0",
+      svg: svgClock(uur, minuut)
+    };
+  }
+  if (t === 17) {
+    // Vlaggemast: hoek touw-mast
+    var touwHoek = pick([25, 30, 35, 40, 45, 50, 55, 60]);
+    var derdeHoek = 90 - touwHoek;
+    return {
+      q: "Een vlaggemast staat loodrecht op de grond.\nEen touw loopt van de top van de mast naar de grond.\nHet touw maakt een hoek van " + touwHoek + "\u00b0 met de grond.\n\nHoe groot is de hoek tussen het touw en de mast?",
+      a: derdeHoek,
+      h: "Driehoek: mast \u22a5 grond = 90\u00b0\nTouw-grond = " + touwHoek + "\u00b0\nTouw-mast = 90\u00b0 \u2212 " + touwHoek + "\u00b0 = " + derdeHoek + "\u00b0"
+    };
+  }
+  if (t === 18) {
+    // Taartpunten
+    var aantalPunten = pick([5, 6, 8, 9, 10, 12]);
+    var puntHoek = 360 / aantalPunten;
+    if (puntHoek !== Math.round(puntHoek)) return g56();
+    return {
+      q: "Een taart wordt in " + aantalPunten + " gelijke punten gesneden.\n\nHoe groot is de hoek van elke taartpunt (bij het middelpunt)?",
+      a: puntHoek,
+      h: "360\u00b0 \u00f7 " + aantalPunten + " = " + puntHoek + "\u00b0"
+    };
+  }
+  if (t === 19) {
+    // Scherp/stomp herkennen in context
+    var hoek19 = pick([35, 45, 55, 72, 90, 105, 120, 135, 150]);
+    var soort = hoek19 < 90 ? "scherp" : hoek19 === 90 ? "recht" : "stomp";
+    return {
+      q: "Een speler staat bij de hoekschop. De hoek tussen de twee zijlijnen is " + hoek19 + "\u00b0.\n\nIs dit een scherpe, rechte of stompe hoek?",
+      a: soort,
+      t: "choice",
+      o: ["scherp", "recht", "stomp"],
+      h: hoek19 + "\u00b0 " + (hoek19 < 90 ? "< 90\u00b0 \u2192 scherp" : hoek19 === 90 ? "= 90\u00b0 \u2192 recht" : "> 90\u00b0 \u2192 stomp")
+    };
+  }
+  // t === 20: Trap-trede hoek
+  var trapHoek = pick([30, 35, 40, 45]);
+  var derdeH = 90 - trapHoek;
   return {
-    q: "In rechthoekige \u25b3" + triNames.join("") + ": \u2220" + triNames[1] + " = 90\u00b0 en \u2220" + triNames[0] + " = " + a + "\u00b0.\nBereken \u2220" + triNames[2] + ".\nIs \u2220" + triNames[2] + " scherp of stomp?",
-    a: c,
-    h: "\u2220" + triNames[2] + " = 180\u00b0 \u2212 90\u00b0 \u2212 " + a + "\u00b0 = " + c + "\u00b0.\n" + c + "\u00b0 < 90\u00b0 \u2192 scherp.\n(In een rechthoekige driehoek zijn de twee andere hoeken altijd scherp.)",
-    svg: svgTriangle(
-      [{ x: 30, y: 170 }, { x: 30, y: 30 }, { x: 250, y: 170 }],
-      [a, 90, c],
-      triNames,
-      2
-    )
+    q: "Een trap maakt een hoek van " + trapHoek + "\u00b0 met de vloer.\nElke trede is horizontaal (loodrecht op de stijl).\n\nHoe groot is de hoek tussen de trap en de trede?",
+    a: derdeH,
+    h: "De trede is horizontaal, de vloer ook \u2192 trede // vloer.\nDe trap is de snijlijn.\nHoek trap-trede = 90\u00b0 \u2212 " + trapHoek + "\u00b0 = " + derdeH + "\u00b0"
   };
 }
