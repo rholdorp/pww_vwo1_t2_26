@@ -27,12 +27,12 @@
       return React.createElement("a", {
         href: backUrl(dashDate),
         style: { color: "#4d96ff", textDecoration: "none", fontSize: "13px", fontWeight: 700 }
-      }, "\u2190 Planning");
+      }, "\u2190 Studieplan");
     }
     return React.createElement("a", {
-      href: "../../index.html",
-      style: { color: "#666", textDecoration: "none", fontSize: "13px" }
-    }, "\u2190 Terug");
+      href: "../../dashboard.html",
+      style: { color: "#4d96ff", textDecoration: "none", fontSize: "13px", fontWeight: 700 }
+    }, "\u2190 Studieplan");
   }
 
   function checkoffButton(dashTaskId, dashDate, pct) {
