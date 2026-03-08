@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Nederlands 1.3 – Lezen Trainer</title>
+<title>Nederlands Lezen – Trainer</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📖</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../shared/trainer-base.css">
@@ -22,7 +22,7 @@
 const{useState,useEffect,useRef}=React;
 
 // Initialize progress tracker
-const progress = new TrainerProgress("nederlands_1.3", "Nederlands par 1.3", {
+const progress = new TrainerProgress("nederlands_1.3", "Nederlands Lezen", {
   subject: "Nederlands", color: "#E67E22", icon: "📖"
 });
 
@@ -32,6 +32,12 @@ const SECTIONS = [
   { id: "onderwerp_deelonderwerp", title: "Onderwerp en deelonderwerp", icon: "🎯" },
   { id: "alinea", title: "Alinea", icon: "📝" },
   { id: "tekst_analyse", title: "Tekstanalyse", icon: "🔍" },
+  { id: "feiten_meningen", title: "§2.3 Feiten & meningen", icon: "⚖️" },
+  { id: "tekstverbanden", title: "§2.3 Tekstverbanden & signaalwoorden", icon: "🔗" },
+  { id: "tekstopbouw", title: "§3.3 Tekstopbouw & kernzin", icon: "🏗️" },
+  { id: "hoofdgedachte", title: "§3.3 Hoofdgedachte & verwijswoorden", icon: "💡" },
+  { id: "tekstdoel_tekstvorm", title: "§4.3 Tekstdoel, tekstvorm & leespubliek", icon: "🎯" },
+  { id: "betoog_overtuigen", title: "§5.3 Betoog & overtuigen", icon: "📢" },
 ];
 
 // ===== THEORY CONTENT =====
@@ -67,6 +73,52 @@ const THEORY = {
     { type: "explain", title: "Woordbetekenis uit context", text: "Als je een moeilijk woord tegenkomt, kun je de **context** gebruiken om de betekenis te raden. Kijk naar de zinnen **rondom** het woord.\n\nAls dat niet lukt, zoek het op in een (online) woordenboek." },
     { type: "example", title: "Voorbeeld: context gebruiken", text: "Zin: *'Ze kan dat door hard werken tot op zekere hoogte **compenseren**.'*\n\nContext: iemand heeft weinig talent → hard werken → compenseren\n\nBetekenis: **goedmaken**, inhalen wat je mist." },
     { type: "check", question: "Wat doe je als je een woord niet begrijpt uit de context?", options: ["Het woord overslaan", "De hele tekst opnieuw lezen", "Het opzoeken in een woordenboek", "De docent bellen"], correct: 2 },
+  ],
+  feiten_meningen: [
+    { type: "explain", title: "Feiten", text: "Een **feit** is iets wat werkelijk zo is of wat werkelijk is gebeurd. Je kunt een feit **controleren**.\n\nVoorbeeld: *Het is een feit dat een flatgebouw 165 meter hoog is.* → Je kunt dit nameten." },
+    { type: "explain", title: "Meningen", text: "Een **mening** is wat iemand ergens van vindt. Meningen kunnen **verschillen**.\n\nVoorbeeld: *De een vindt een flatgebouw mooi, de ander vindt het juist lelijk.*\n\nAndere woorden voor mening zijn: **standpunt**, **oordeel**, **opinie** en **opvatting**." },
+    { type: "check", question: "Wat is het verschil tussen een feit en een mening?", options: ["Een feit is altijd positief", "Een feit kun je controleren, een mening niet", "Een mening is altijd waar", "Er is geen verschil"], correct: 1 },
+    { type: "explain", title: "Moeilijkewoordenwijzer", text: "Als je een moeilijk woord tegenkomt:\n\n1. Vraag je eerst af of het woord **belangrijk** is\n2. Is het belangrijk? Probeer de betekenis af te leiden uit de **context** (de tekst eromheen)\n3. Lukt dat niet? Zoek het op in een **woordenboek**\n\nDeze leesstrategie heet **zoekend lezen**." },
+    { type: "check", question: "Wat doe je EERST als je een moeilijk woord tegenkomt?", options: ["Direct opzoeken in het woordenboek", "Het woord overslaan", "Kijken of je de betekenis kunt afleiden uit de context", "De docent vragen"], correct: 2 },
+  ],
+  tekstverbanden: [
+    { type: "explain", title: "Wat zijn tekstverbanden?", text: "Een goed geschreven tekst zit logisch in elkaar. De onderdelen vertonen **samenhang**. Dit verband tussen woorden, zinnen en alinea's noemen we een **tekstverband**.\n\nEen schrijver maakt vaak gebruik van **signaalwoorden** om tekstverbanden aan te geven." },
+    { type: "explain", title: "Opsommend tekstverband", text: "Bij een **opsommend** tekstverband geeft de schrijver een opsomming van zinnen of alinea's.\n\n**Signaalwoorden:** ook, tevens, bovendien, daarnaast, niet alleen ... maar ook, verder, ten eerste, ten slotte\n\nVoorbeeld: *Ik ga niet buitenspelen, om diverse redenen. Om te beginnen wil ik mijn bijbaantje niet ophalen. Daarnaast lijkt het me doodeng. Ten slotte kost het me te veel geld.*" },
+    { type: "explain", title: "Tijdsvolgorde tekstverband", text: "Bij een **tijdsvolgorde** tekstverband geeft de schrijver aan in welke volgorde gebeurtenissen plaatsvinden.\n\n**Signaalwoorden:** eerst, intussen, terwijl, toen, vervolgens, daarna, voordat, nadat, zodra, ten slotte\n\nVoorbeeld: *Meteen nadat hij betrapt was, ging de inbreker ervandoor. Daarna hebben we hem niet meer gezien.*" },
+    { type: "explain", title: "Tegenstellend tekstverband", text: "Bij een **tegenstellend** tekstverband geeft de schrijver aan welke tekstdelen een tegenstelling vormen.\n\n**Signaalwoorden:** maar, echter, evenwel, toch, daarentegen, integendeel, enerzijds ... anderzijds, daar staat tegenover\n\nVoorbeeld: *Zij speelt wel piano, maar geen gitaar.*" },
+    { type: "check", question: "Welk signaalwoord hoort bij een opsommend tekstverband?", options: ["maar", "nadat", "bovendien", "toch"], correct: 2 },
+    { type: "check", question: "'Meteen nadat hij betrapt was, ging de inbreker ervandoor.' Welk tekstverband is dit?", options: ["Opsommend", "Tijdsvolgorde", "Tegenstellend", "Geen verband"], correct: 1 },
+  ],
+  tekstopbouw: [
+    { type: "explain", title: "Tekstopbouw", text: "In een goed geschreven tekst staat de informatie in een logische volgorde. Dit noemen we de **tekstopbouw**.\n\nEr zijn twee manieren om een tekst op te bouwen:\n\n• **Tweedeling**: inleiding - kern (bijv. nieuwsbericht)\n• **Driedeling**: inleiding - kern - slot (bijv. artikel)" },
+    { type: "explain", title: "Inleiding, kern en slot", text: "Een **inleiding** is kort en bevat meestal informatie over het onderwerp.\n\nDe **kern** is het langste deel van de tekst en behandelt het onderwerp. In de kern kun je vaak deelonderwerpen onderscheiden.\n\nHet **slot** bevat meestal een samenvatting of conclusie. Het bevat **geen nieuwe informatie**." },
+    { type: "check", question: "Wat bevat het slot van een tekst NIET?", options: ["Een samenvatting", "Een conclusie", "Nieuwe informatie", "Een afsluiting"], correct: 2 },
+    { type: "explain", title: "Opbouw van alinea's & kernzin", text: "Alinea's hebben meestal een duidelijke opbouw. Ze bestaan uit de belangrijkste zin (de **kernzin**) en een uitleg of uitwerking.\n\nIn veel alinea's is de kernzin de **eerste zin**, maar het kan ook de **tweede** of de **laatste zin** zijn.\n\nDe kernzin noemt het onderwerp van de alinea of bevat de belangrijkste informatie." },
+    { type: "check", question: "Waar staat de kernzin van een alinea meestal?", options: ["Altijd in het midden", "Vaak de eerste zin, maar het kan ook de tweede of laatste zijn", "Altijd de laatste zin", "Er is geen kernzin"], correct: 1 },
+  ],
+  hoofdgedachte: [
+    { type: "explain", title: "De hoofdgedachte", text: "De **hoofdgedachte** is het belangrijkste wat de schrijver over het onderwerp zegt.\n\nVaak benoemt de schrijver de hoofdgedachte in de **titel**, de **inleiding** en/of de **slotalinea**.\n\nZo formuleer je de hoofdgedachte:\n1. Zoek het **onderwerp** van de tekst\n2. Bedenk wat het **belangrijkste** is dat de schrijver erover zegt\n3. Combineer het onderwerp en de belangrijkste mededeling tot **een zin**" },
+    { type: "check", question: "Waar vind je de hoofdgedachte vaak?", options: ["Alleen in de titel", "In de titel, inleiding en/of slotalinea", "Alleen in de laatste zin", "In elke alinea"], correct: 1 },
+    { type: "explain", title: "Hoofd- en bijzaken", text: "Niet alle informatie in een tekst is even belangrijk.\n\n**Hoofdzaken** = het belangrijkste wat er over het onderwerp wordt gezegd. Dit neem je op in een samenvatting.\n\n**Bijzaken** = minder belangrijke informatie. Die laat je weg bij het samenvatten.\n\nTip: gebruik de **kernzinnen** van de alinea's om de hoofdzaken te vinden." },
+    { type: "explain", title: "Verwijswoorden", text: "**Verwijswoorden** vervangen woorden die eerder in de tekst zijn genoemd. Zo hoeft de schrijver niet steeds dezelfde woorden te herhalen.\n\nVoorbeelden: *die, dat, hij, zij, we, dit, deze, het*\n\nOm te vinden waar een verwijswoord naar verwijst, stel je een vraag met **wie, wat, waar** of **welke**.\n\nVoorbeeld: *Mijn zus Sietske is gek op tennissen. Ze wil ooit Wimbledon winnen.*\nWie wil Wimbledon winnen? → *Ze* = mijn zus Sietske" },
+    { type: "check", question: "'De hond liep weg. Hij was bang voor het onweer.' Waar verwijst 'hij' naar?", options: ["Het onweer", "De hond", "De eigenaar", "De straat"], correct: 1 },
+  ],
+  tekstdoel_tekstvorm: [
+    { type: "explain", title: "Studerend lezen", text: "**Studerend lezen** is de derde leesstrategie. Je gebruikt deze als je een theorietekst uit een schoolboek leest. Je leest dan met het doel de informatie te **onthouden**.\n\nStuderend lezen doe je zo:\n1. Zoek de **hoofdzaken** in elke alinea: let op de kernzinnen en de vetgedrukte woorden\n2. Maak eventueel een **schematische samenvatting** van de inhoud\n3. Controleer of je de tekst kent: laat je **overhoren** of probeer de inhoud na te vertellen" },
+    { type: "explain", title: "Tekstdoelen", text: "Bij elke tekst kun je je afvragen: wat wil de schrijver? Dit noemen we het **tekstdoel**.\n\nEr zijn vier tekstdoelen:\n• **Informeren**: de lezer informatie geven (nieuwsbericht, schoolboektekst)\n• **Amuseren**: de lezer vermaken (leesboek, stripverhaal)\n• **Overtuigen**: de lezer je mening laten overnemen (filmrecensie, klachtenbrief)\n• **Activeren**: de lezer tot actie laten overgaan (advertentie, reclamefolder)" },
+    { type: "check", question: "Een reclame voor een nieuw product heeft als tekstdoel:", options: ["Informeren", "Amuseren", "Overtuigen", "Activeren"], correct: 3 },
+    { type: "explain", title: "Tekstsoort en tekstvorm", text: "**Tekstsoort** is een verzamelnaam voor teksten met hetzelfde tekstdoel:\n• Informatieve teksten (informeren)\n• Betogende teksten (overtuigen)\n• Activerende teksten (activeren)\n• Amuserende teksten (amuseren)\n\nElke tekstsoort heeft verschillende **tekstvormen**. Een nieuwsbericht en een handleiding zijn allebei informatieve teksten, maar het zijn verschillende tekstvormen." },
+    { type: "explain", title: "Leespubliek", text: "Een schrijver schrijft zijn tekst voor een **leespubliek** (zijn lezers). Om na te gaan voor wie een tekst is bedoeld, let je op:\n\n• De **bron** (waar komt de tekst vandaan?)\n• Het **onderwerp** (voor wie is dit interessant?)\n• Het **taalgebruik** (makkelijk of moeilijk?)\n• De **aanspreekvorm** (*u* of *jij*?)\n• **Afbeeldingen** (wel of geen, soort afbeeldingen)" },
+    { type: "explain", title: "Uitleggend tekstverband", text: "Het **uitleggend tekstverband** komt vaak voor in informatieve teksten. Uitleg geven kan op verschillende manieren, bijvoorbeeld door **voorbeelden** te geven.\n\n**Signaalwoorden:** bijvoorbeeld, dat wil zeggen, met andere woorden, zoals, onder andere\n\nVoorbeeld: *Hij draait er altijd omheen, met andere woorden hij is een echte politicus.*" },
+    { type: "check", question: "Welk signaalwoord hoort bij een uitleggend tekstverband?", options: ["maar", "bovendien", "bijvoorbeeld", "nadat"], correct: 2 },
+  ],
+  betoog_overtuigen: [
+    { type: "explain", title: "Betogende tekst", text: "In een **betogende tekst** of **betoog** geeft de schrijver zijn mening over een onderwerp. Hij probeert je er met een **argument** van te overtuigen dat zijn mening juist is.\n\nVeel betogen hebben een driedeling:\n• **Inleiding**: de schrijver geeft zijn mening\n• **Kern**: hij ondersteunt zijn mening met argumenten\n• **Slot**: hij trekt een conclusie of vat het belangrijkste samen" },
+    { type: "check", question: "Wat is het verschil tussen een mening en een argument?", options: ["Er is geen verschil", "Een argument onderbouwt de mening", "Een mening is altijd waar", "Een argument is altijd een feit"], correct: 1 },
+    { type: "explain", title: "Redengevend tekstverband", text: "Bij een **redengevend** tekstverband geeft de schrijver een reden (oorzaak) en een gevolg.\n\n**Signaalwoorden:** want, omdat, daarom, immers, namelijk\n\nVoorbeeld: *Wij korfballen elke dag, want wij willen naar de Spelen.*\nReden: wij willen naar de Spelen\nGevolg: wij korfballen elke dag" },
+    { type: "explain", title: "Concluderend tekstverband", text: "Bij een **concluderend** tekstverband trekt de schrijver een conclusie.\n\n**Signaalwoorden:** dus, dan ook, hieruit volgt, de slotsom is, concluderend\n\nVoorbeeld: *Je was te laat en ook nog eens brutaal. Je mag dus niet meetrainen.*\nConclusie: je mag niet meetrainen" },
+    { type: "check", question: "'Wij willen naar de Spelen, daarom trainen we elke dag.' Welk tekstverband is dit?", options: ["Opsommend", "Tegenstellend", "Redengevend", "Uitleggend"], correct: 2 },
+    { type: "check", question: "Welk signaalwoord hoort bij een concluderend tekstverband?", options: ["want", "bovendien", "maar", "dus"], correct: 3 },
   ],
 };
 
@@ -139,6 +191,108 @@ const PRACTICE = {
     { q: "Bij nauwkeurig lezen markeer je:", o: ["Alle woorden", "De drie belangrijkste punten", "Alleen het eerste woord van elke zin", "Niets"], c: 1 },
     { q: "In welke volgorde gebruik je de leesstrategieën?", o: ["Eerst nauwkeurig, dan verkennend", "Eerst verkennend, dan nauwkeurig", "Alleen verkennend", "Het maakt niet uit"], c: 1 },
     { q: "Wat betekent 'tot op zekere hoogte' in de zin 'ze kan dat tot op zekere hoogte compenseren'?", o: ["Helemaal", "Gedeeltelijk / voor een deel", "Helemaal niet", "Altijd"], c: 1 },
+  ],
+  feiten_meningen: [
+    { q: "'Een flatgebouw is 165 meter hoog.' Dit is een:", o: ["Mening", "Feit", "Argument", "Signaalwoord"], c: 1 },
+    { q: "'Ik vind dat flatgebouw echt lelijk.' Dit is een:", o: ["Feit", "Mening", "Conclusie", "Opsomming"], c: 1 },
+    { q: "Een ander woord voor 'mening' is:", o: ["Feit", "Opinie", "Context", "Alinea"], c: 1 },
+    { q: "Hoe kun je controleren of iets een feit is?", o: ["Door het aan een vriend te vragen", "Door te kijken of je het kunt nakijken of nameten", "Door het op te schrijven", "Dat kan niet"], c: 1 },
+    { q: "'Vanuit dierenwelzijn bekeken lijkt het mij goed dat eenzame dieren gezelschap krijgen.' Feit of mening?", o: ["Feit", "Mening", "Allebei", "Geen van beide"], c: 1 },
+    { q: "'In Antwerpen hebben de dierentuinbewoners geen huisdieren.' Feit of mening?", o: ["Feit", "Mening", "Allebei", "Geen van beide"], c: 0 },
+    { q: "Welke woorden horen NIET bij 'mening'?", o: ["Standpunt en oordeel", "Opinie en opvatting", "Controleerbaar en meetbaar", "Ik vind en volgens mij"], c: 2 },
+    { q: "De leesstrategie 'zoekend lezen' gebruik je om:", o: ["De titel te vinden", "Snel het antwoord op een vraag te vinden in een woordenboek", "De hele tekst samen te vatten", "De schrijver te vinden"], c: 1 },
+    { q: "Wat doe je als je de betekenis van een woord niet uit de context kunt halen?", o: ["Het woord overslaan", "Het opzoeken in een woordenboek", "De hele tekst opnieuw lezen", "De tekst niet meer lezen"], c: 1 },
+    { q: "'Er bestaat een heel boek over dit onderwerp, het heet Unlikely Friendships.' Feit of mening?", o: ["Feit", "Mening", "Allebei", "Geen van beide"], c: 0 },
+    { q: "Welke zin bevat een mening?", o: ["De aarde draait om de zon", "Water kookt bij 100 graden", "Dit is het mooiste schilderij", "Nederland heeft 12 provincies"], c: 2 },
+    { q: "Wat is de context van een woord?", o: ["De vertaling", "De zinnen rondom het woord", "Het woordenboek", "De titel van de tekst"], c: 1 },
+    { q: "Een feit is iets wat:", o: ["Iemand vindt", "Werkelijk zo is of is gebeurd", "Altijd positief is", "In een boek staat"], c: 1 },
+    { q: "Wat is GEEN synoniem van 'mening'?", o: ["Opinie", "Standpunt", "Bewijs", "Opvatting"], c: 2 },
+    { q: "Wat klopt over feiten en meningen?", o: ["Feiten zijn altijd waar en meningen zijn altijd fout", "Meningen kunnen verschillen, feiten kun je controleren", "Feiten staan alleen in kranten", "Meningen staan alleen in boeken"], c: 1 },
+  ],
+  tekstverbanden: [
+    { q: "Wat is een signaalwoord?", o: ["Een moeilijk woord", "Een woord dat een verband aangeeft tussen zinnen", "De eerste zin van een alinea", "Een synoniem"], c: 1 },
+    { q: "'Bovendien' is een signaalwoord voor een ... tekstverband.", o: ["Tegenstellend", "Opsommend", "Tijdsvolgorde", "Redengevend"], c: 1 },
+    { q: "'Nadat' is een signaalwoord voor een ... tekstverband.", o: ["Opsommend", "Tegenstellend", "Tijdsvolgorde", "Concluderend"], c: 2 },
+    { q: "'Maar' is een signaalwoord voor een ... tekstverband.", o: ["Opsommend", "Tijdsvolgorde", "Tegenstellend", "Uitleggend"], c: 2 },
+    { q: "'Ten eerste wil ik zeggen... Daarnaast is het ook zo dat...' Welk tekstverband?", o: ["Tegenstellend", "Tijdsvolgorde", "Opsommend", "Concluderend"], c: 2 },
+    { q: "Welk signaalwoord past bij tijdsvolgorde?", o: ["Bovendien", "Echter", "Vervolgens", "Daarentegen"], c: 2 },
+    { q: "Welk signaalwoord past NIET bij een tegenstellend tekstverband?", o: ["Maar", "Echter", "Toch", "Bovendien"], c: 3 },
+    { q: "'Zij speelt wel piano, maar geen gitaar.' Welk tekstverband is dit?", o: ["Opsommend", "Tijdsvolgorde", "Tegenstellend", "Redengevend"], c: 2 },
+    { q: "Welk woord geeft een opsomming aan?", o: ["Toch", "Nadat", "Daarnaast", "Echter"], c: 2 },
+    { q: "'Eerst ging hij naar school, daarna naar de sportclub.' Welk tekstverband?", o: ["Opsommend", "Tegenstellend", "Tijdsvolgorde", "Uitleggend"], c: 2 },
+    { q: "'Enerzijds vind ik het leuk, anderzijds is het vermoeiend.' Welk tekstverband?", o: ["Opsommend", "Tegenstellend", "Tijdsvolgorde", "Redengevend"], c: 1 },
+    { q: "Welk signaalwoord past bij opsommend?", o: ["Maar", "Zodra", "Tevens", "Daarentegen"], c: 2 },
+    { q: "'Zodra de bel ging, rende iedereen naar buiten.' Welk tekstverband?", o: ["Opsommend", "Tegenstellend", "Tijdsvolgorde", "Concluderend"], c: 2 },
+    { q: "Hoeveel soorten tekstverbanden heb je geleerd in par 2.3?", o: ["Twee", "Drie", "Vier", "Vijf"], c: 1 },
+    { q: "'Niet alleen is hij snel, hij is ook heel sterk.' Welk tekstverband?", o: ["Tegenstellend", "Opsommend", "Tijdsvolgorde", "Redengevend"], c: 1 },
+  ],
+  tekstopbouw: [
+    { q: "Wat is de tekstopbouw?", o: ["De lengte van de tekst", "De logische volgorde van de informatie", "Het aantal alinea's", "De moeilijkheid van de tekst"], c: 1 },
+    { q: "Bij een tweedeling bestaat de tekst uit:", o: ["Inleiding en slot", "Inleiding en kern", "Kern en slot", "Alleen de kern"], c: 1 },
+    { q: "Bij een driedeling bestaat de tekst uit:", o: ["Inleiding, kern en slot", "Titel, kern en slot", "Inleiding, kern en titel", "Drie alinea's"], c: 0 },
+    { q: "Wat bevat het slot van een tekst?", o: ["Nieuwe informatie", "Een samenvatting of conclusie", "Het onderwerp", "De eerste indruk van de schrijver"], c: 1 },
+    { q: "Welk deel van de tekst is meestal het langst?", o: ["De inleiding", "De kern", "Het slot", "De titel"], c: 1 },
+    { q: "Een nieuwsbericht heeft meestal een:", o: ["Driedeling", "Tweedeling", "Vierdeling", "Geen opbouw"], c: 1 },
+    { q: "De kernzin van een alinea is:", o: ["Altijd de eerste zin", "De belangrijkste zin", "Altijd de laatste zin", "De langste zin"], c: 1 },
+    { q: "Een artikel heeft meestal een:", o: ["Tweedeling", "Driedeling", "Geen opbouw", "Vijfdeling"], c: 1 },
+    { q: "Wat staat er NIET in het slot?", o: ["Een conclusie", "Een samenvatting", "Nieuwe informatie", "Een afsluiting"], c: 2 },
+    { q: "Wat bevat de inleiding meestal?", o: ["De conclusie", "Een samenvatting", "Informatie over het onderwerp", "Alleen vragen"], c: 2 },
+    { q: "De kernzin kan staan als:", o: ["Alleen de eerste zin", "De eerste, tweede of laatste zin", "Alleen de laatste zin", "Alleen de middelste zin"], c: 1 },
+    { q: "In de kern kun je vaak ... onderscheiden.", o: ["Signaalwoorden", "Deelonderwerpen", "Titels", "Verwijswoorden"], c: 1 },
+    { q: "Hoe vind je de kernzin van een alinea?", o: ["Het is altijd de langste zin", "Zoek de zin met de belangrijkste informatie", "Het is altijd de eerste zin", "Tel het aantal woorden"], c: 1 },
+    { q: "Een alinea bestaat uit de kernzin en:", o: ["Een titel", "Een uitleg of uitwerking", "Alleen feiten", "Een tussenkopje"], c: 1 },
+    { q: "Wat klopt over de tekstopbouw?", o: ["Elke tekst heeft een driedeling", "De volgorde van informatie maakt niet uit", "Een goed geschreven tekst heeft een logische opbouw", "Het slot is altijd het langst"], c: 2 },
+  ],
+  hoofdgedachte: [
+    { q: "De hoofdgedachte van een tekst is:", o: ["De eerste zin", "Het belangrijkste wat de schrijver over het onderwerp zegt", "De titel", "Het langste woord"], c: 1 },
+    { q: "Waar vind je de hoofdgedachte vaak?", o: ["Alleen in de kern", "In de titel, inleiding en/of slotalinea", "Alleen in de laatste zin", "In het tussenkopje"], c: 1 },
+    { q: "Hoe formuleer je de hoofdgedachte?", o: ["In een heel lang verhaal", "Met drie woorden", "Combineer het onderwerp en de belangrijkste mededeling tot een zin", "Door de titel over te schrijven"], c: 2 },
+    { q: "Hoofdzaken zijn:", o: ["Alle informatie in de tekst", "Het belangrijkste over het onderwerp", "Alleen de feiten", "De moeilijke woorden"], c: 1 },
+    { q: "Bijzaken zijn:", o: ["Het belangrijkste van de tekst", "Minder belangrijke informatie die je kunt weglaten", "De verwijswoorden", "De signaalwoorden"], c: 1 },
+    { q: "Bij het samenvatten neem je op:", o: ["Alle informatie", "Alleen de bijzaken", "Alleen de hoofdzaken", "Alleen de feiten"], c: 2 },
+    { q: "Verwijswoorden zijn woorden die:", o: ["Moeilijk zijn", "Verwijzen naar iets eerder in de tekst", "Altijd in de titel staan", "Een signaal geven"], c: 1 },
+    { q: "Welk van deze is een verwijswoord?", o: ["Bovendien", "Maar", "Hij", "Eerst"], c: 2 },
+    { q: "'De kat liep weg. Die was bang.' Waar verwijst 'die' naar?", o: ["De hond", "De kat", "De eigenaar", "Het huis"], c: 1 },
+    { q: "Hoe vind je waar een verwijswoord naar verwijst?", o: ["Raad het", "Stel een vraag met wie, wat, waar of welke", "Lees de titel", "Zoek in het woordenboek"], c: 1 },
+    { q: "'Mijn broer houdt van voetbal. Hij traint drie keer per week.' Waar verwijst 'hij' naar?", o: ["Voetbal", "De trainer", "Mijn broer", "De week"], c: 2 },
+    { q: "Welke tip helpt bij het vinden van hoofdzaken?", o: ["Lees alleen de titel", "Gebruik de kernzinnen van de alinea's", "Lees alleen de laatste alinea", "Tel de woorden"], c: 1 },
+    { q: "De hoofdgedachte combineer je uit:", o: ["Titel en slot", "Onderwerp en belangrijkste mededeling", "Eerste en laatste woord", "Alle feiten"], c: 1 },
+    { q: "Welk is een verwijswoord?", o: ["Omdat", "Deze", "Bovendien", "Daarom"], c: 1 },
+    { q: "'De leerlingen gingen op excursie. Ze bezochten een museum.' Waar verwijst 'ze' naar?", o: ["Het museum", "De excursie", "De leerlingen", "De docent"], c: 2 },
+  ],
+  tekstdoel_tekstvorm: [
+    { q: "Welke vier tekstdoelen zijn er?", o: ["Lezen, schrijven, luisteren, spreken", "Informeren, amuseren, overtuigen, activeren", "Feiten, meningen, argumenten, conclusies", "Inleiding, kern, slot, titel"], c: 1 },
+    { q: "Een nieuwsbericht heeft als tekstdoel:", o: ["Amuseren", "Overtuigen", "Informeren", "Activeren"], c: 2 },
+    { q: "Een advertentie heeft als tekstdoel:", o: ["Informeren", "Amuseren", "Overtuigen", "Activeren"], c: 3 },
+    { q: "Een filmrecensie heeft als tekstdoel:", o: ["Informeren", "Amuseren", "Overtuigen", "Activeren"], c: 2 },
+    { q: "Een leesboek heeft als tekstdoel:", o: ["Informeren", "Amuseren", "Overtuigen", "Activeren"], c: 1 },
+    { q: "Wat is een tekstsoort?", o: ["De lengte van de tekst", "Een verzamelnaam voor teksten met hetzelfde tekstdoel", "Een ander woord voor alinea", "De naam van de schrijver"], c: 1 },
+    { q: "Welke tekstvorm hoort bij 'activeren'?", o: ["Schoolboektekst", "Leesboek", "Reclamefolder", "Nieuwsbericht"], c: 2 },
+    { q: "Bij studerend lezen let je op:", o: ["Alleen de titel", "Kernzinnen en vetgedrukte woorden", "Alleen de plaatjes", "Het aantal pagina's"], c: 1 },
+    { q: "Waarop let je om het leespubliek te bepalen?", o: ["Alleen de titel", "Bron, onderwerp, taalgebruik, aanspreekvorm, afbeeldingen", "Alleen het aantal pagina's", "De prijs van de tekst"], c: 1 },
+    { q: "'Bijvoorbeeld' is een signaalwoord voor een ... tekstverband.", o: ["Tegenstellend", "Opsommend", "Uitleggend", "Redengevend"], c: 2 },
+    { q: "Een klachtenbrief heeft als tekstdoel:", o: ["Amuseren", "Overtuigen", "Informeren", "Activeren"], c: 1 },
+    { q: "Studerend lezen doe je wanneer?", o: ["Bij een spannend boek", "Bij een theorietekst die je moet onthouden", "Bij een reclame", "Bij een gedicht"], c: 1 },
+    { q: "Welk signaalwoord past bij een uitleggend tekstverband?", o: ["Maar", "Nadat", "Met andere woorden", "Bovendien"], c: 2 },
+    { q: "Een handleiding is een voorbeeld van een ... tekst.", o: ["Amuserende", "Betogende", "Informatieve", "Activerende"], c: 2 },
+    { q: "Wat is het verschil tussen een tekstsoort en een tekstvorm?", o: ["Er is geen verschil", "Tekstsoort is de verzamelnaam, tekstvorm is de specifieke vorm", "Tekstvorm is de verzamelnaam", "Tekstsoort gaat over de lengte"], c: 1 },
+  ],
+  betoog_overtuigen: [
+    { q: "In een betogende tekst wil de schrijver:", o: ["Informatie geven", "Je vermaken", "Je overtuigen van zijn mening", "Je laten kopen"], c: 2 },
+    { q: "De opbouw van een betoog is meestal:", o: ["Inleiding - kern - slot", "Alleen kern", "Slot - kern - inleiding", "Titel - kern"], c: 0 },
+    { q: "Wat staat er in de kern van een betoog?", o: ["De mening", "De argumenten", "De conclusie", "Alleen feiten"], c: 1 },
+    { q: "Een argument is:", o: ["Hetzelfde als een mening", "Een onderbouwing van de mening", "Altijd een feit", "Een signaalwoord"], c: 1 },
+    { q: "'Want' is een signaalwoord voor een ... tekstverband.", o: ["Opsommend", "Tegenstellend", "Redengevend", "Concluderend"], c: 2 },
+    { q: "'Dus' is een signaalwoord voor een ... tekstverband.", o: ["Opsommend", "Tegenstellend", "Redengevend", "Concluderend"], c: 3 },
+    { q: "'Hij is ziek, daarom kan hij niet komen.' Welk tekstverband?", o: ["Opsommend", "Tegenstellend", "Redengevend", "Uitleggend"], c: 2 },
+    { q: "'Het regent, dus neem een paraplu mee.' Welk tekstverband?", o: ["Opsommend", "Tegenstellend", "Redengevend", "Concluderend"], c: 3 },
+    { q: "Welk signaalwoord hoort bij redengevend?", o: ["Maar", "Omdat", "Bovendien", "Vervolgens"], c: 1 },
+    { q: "Welk signaalwoord hoort bij concluderend?", o: ["Want", "Hieruit volgt", "Nadat", "Tevens"], c: 1 },
+    { q: "In de inleiding van een betoog vind je:", o: ["De argumenten", "De conclusie", "De mening van de schrijver", "De signaalwoorden"], c: 2 },
+    { q: "In het slot van een betoog vind je:", o: ["Nieuwe argumenten", "De eerste mening", "Een conclusie of samenvatting", "Alleen feiten"], c: 2 },
+    { q: "'Immers' is een signaalwoord voor:", o: ["Tegenstellend", "Redengevend", "Opsommend", "Concluderend"], c: 1 },
+    { q: "Wat is een betoog?", o: ["Een verhalende tekst", "Een tekst waarin de schrijver zijn mening geeft en onderbouwt", "Een informatieve tekst", "Een reclamefolder"], c: 1 },
+    { q: "'Namelijk' is een signaalwoord voor een ... tekstverband.", o: ["Opsommend", "Tegenstellend", "Redengevend", "Concluderend"], c: 2 },
   ],
 };
 
@@ -233,13 +387,13 @@ function App() {
       React.createElement("div", { style: { background: "rgba(0,0,0,0.3)", backdropFilter: "blur(12px)", borderBottom: "1px solid " + bdr, padding: "14px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", position: "sticky", top: 0, zIndex: 50 } },
         React.createElement("div", { style: { display: "flex", alignItems: "center", gap: "10px" } },
           DashboardLink.backLink(dashDate),
-          React.createElement("div", { style: { fontSize: "17px", fontWeight: 900, color: COL } }, "\u{1F4D6} Nederlands 1.3")),
-        React.createElement("div", { style: { fontSize: "12px", color: "#666" } }, "Lezen")),
+          React.createElement("div", { style: { fontSize: "17px", fontWeight: 900, color: COL } }, "\u{1F4D6} Nederlands")),
+        React.createElement("div", { style: { fontSize: "12px", color: "#666" } }, "Lezen par 1.3-5.3")),
 
       React.createElement("div", { style: { maxWidth: "640px", margin: "0 auto", padding: "16px 14px 60px" } },
         // Overall progress
         React.createElement("div", { style: { background: cBg, borderRadius: "16px", padding: "18px", border: "1px solid " + bdr, marginBottom: "16px", textAlign: "center" } },
-          React.createElement("div", { style: { fontSize: "15px", fontWeight: 800, marginBottom: "8px" } }, "Voortgang par 1.3 Lezen"),
+          React.createElement("div", { style: { fontSize: "15px", fontWeight: 800, marginBottom: "8px" } }, "Voortgang Nederlands Lezen"),
           React.createElement("div", { style: { display: "flex", justifyContent: "space-around", marginBottom: "12px" } },
             React.createElement("div", null, React.createElement("div", { style: { fontSize: "24px", fontWeight: 900, color: COL } }, overall.masteryPct + "%"), React.createElement("div", { style: { fontSize: "10px", color: "#777" } }, "beheerst")),
             React.createElement("div", null, React.createElement("div", { style: { fontSize: "24px", fontWeight: 900, color: "#fff" } }, overall.mastered + "/" + SECTIONS.length), React.createElement("div", { style: { fontSize: "10px", color: "#777" } }, "secties")),
@@ -273,8 +427,8 @@ function App() {
 
         // Back + reset
         React.createElement("div", { style: { display: "flex", gap: "8px", marginTop: "8px" } },
-          React.createElement("a", { href: "../../index.html", style: { flex: 1, display: "block", padding: "10px", borderRadius: "10px", background: "rgba(255,255,255,0.03)", color: "#666", fontSize: "12px", fontWeight: 600, textDecoration: "none", textAlign: "center" } }, "← Terug"),
-          React.createElement("button", { style: { padding: "10px 16px", borderRadius: "10px", border: "none", background: "rgba(255,255,255,0.03)", color: "#555", fontSize: "12px", fontWeight: 600 }, onClick: () => { if (confirm("Reset alle voortgang voor Nederlands 1.3?")) { progress.reset(); forceUpdate(n => n + 1); } } }, "🔄 Reset voortgang"))
+          React.createElement("a", { href: "../../dashboard.html", style: { flex: 1, display: "block", padding: "10px", borderRadius: "10px", background: "rgba(255,255,255,0.03)", color: "#666", fontSize: "12px", fontWeight: 600, textDecoration: "none", textAlign: "center" } }, "← Studieplan"),
+          React.createElement("button", { style: { padding: "10px 16px", borderRadius: "10px", border: "none", background: "rgba(255,255,255,0.03)", color: "#555", fontSize: "12px", fontWeight: 600 }, onClick: () => { if (confirm("Reset alle voortgang voor Nederlands Lezen?")) { progress.reset(); forceUpdate(n => n + 1); } } }, "🔄 Reset voortgang"))
       ));
   }
 
@@ -385,7 +539,7 @@ function App() {
         React.createElement("div", { style: { fontSize: "48px", fontWeight: 900, color: passed ? "#6bcb77" : "#ffd93d", marginBottom: "8px" } }, pct + "%"),
         React.createElement("div", { style: { fontSize: "15px", color: "#999", marginBottom: "24px" } }, score.correct + " van " + score.total + " correct"),
         passed && quizMode === "quiz" && React.createElement("div", { style: { background: "rgba(107,203,119,0.1)", borderRadius: "12px", padding: "12px", marginBottom: "16px", border: "1px solid rgba(107,203,119,0.2)" } },
-          React.createElement("div", { style: { fontSize: "13px", color: "#6bcb77" } }, "✅ Je beheerst de stof van par 1.3!")),
+          React.createElement("div", { style: { fontSize: "13px", color: "#6bcb77" } }, "✅ Je beheerst deze stof!")),
         wrongAnswers.length > 0 && React.createElement("div", { style: { textAlign: "left", marginBottom: "16px" } },
           React.createElement("div", { style: { fontSize: "14px", fontWeight: 700, color: "#ff6b6b", marginBottom: "8px" } }, "❌ Foute antwoorden:"),
           wrongAnswers.map((w, i) => React.createElement("div", { key: i, style: { background: "rgba(255,107,107,0.08)", border: "1px solid rgba(255,107,107,0.2)", borderRadius: "10px", padding: "10px 14px", marginBottom: "6px" } },
