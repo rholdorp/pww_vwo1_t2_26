@@ -233,6 +233,8 @@ function App(){
   const[streak,setStreak]=useState(0);
   const[animKey,setAnimKey]=useState(0);
   const[almostCorrect,setAlmostCorrect]=useState(null);
+  const[stepResults,setStepResults]=useState(null);
+  const stepRefs=useRef([]);
   // Proeftoets state
   const[ptQuestions,setPtQuestions]=useState([]);
   const[ptIndex,setPtIndex]=useState(0);
@@ -254,20 +256,27 @@ function App(){
 
   const startTheory=sid=>{setSection(sid);setTheoryStep(0);setTheoryAnswer("");setTheoryChecked(false);setScreen("theory")};
   const startQuiz=(sid)=>{setSection(sid);usedQsRef.current=new Set();setQNum(0);setSession({c:0,t:0});setWrongAnswers([]);setStreak(0);setAlmostCorrect(null);setScreen("quiz");loadQ(sid,0)};
-  const loadQ=(sec,qNumOverride)=>{const num=qNumOverride!==undefined?qNumOverride:qNum;const diff=num<3?1:num<7?2:3;setQuestion(genUniqueQ(sec||section,usedQsRef.current,30,diff));setAnswer("");setChecked(false);setAlmostCorrect(null);setQNum(n=>n+1);setAnimKey(k=>k+1)};
+  const loadQ=(sec,qNumOverride)=>{const num=qNumOverride!==undefined?qNumOverride:qNum;const diff=num<3?1:num<7?2:3;const q=genUniqueQ(sec||section,usedQsRef.current,30,diff);setQuestion(q);setAnswer(q.steps?q.steps.map(()=>""):"");setChecked(false);setAlmostCorrect(null);setStepResults(null);setQNum(n=>n+1);setAnimKey(k=>k+1)};
 
   // Proeftoets
   const startProeftoets=(useTimer)=>{
     if(timerRef.current)clearInterval(timerRef.current);
     const qs=SECTIONS.map(sec=>{const q=genQ(sec.id);return{...q,sectionId:sec.id,sectionName:sec.name}});
     setPtQuestions(qs);setPtIndex(0);setPtAnswers([]);setPtUseTimer(useTimer);
-    setQuestion(qs[0]);setAnswer("");setChecked(false);setAnimKey(k=>k+1);
+    setQuestion(qs[0]);setAnswer(qs[0].steps?qs[0].steps.map(()=>""):"");setChecked(false);setStepResults(null);setAnimKey(k=>k+1);
     if(useTimer){setPtTimeLeft(20*60);timerRef.current=setInterval(()=>setPtTimeLeft(t=>{if(t<=1){clearInterval(timerRef.current);return 0}return t-1}),1000)}
     else{setPtTimeLeft(0)}
     setScreen("proeftoets");
   };
-  const checkPt=()=>{if(!question)return;let ok=false;if(question.t==="choice")ok=answer===question.a;else if(question.t==="stomp_check"){const v=parseFloat(answer.replace(",","."));ok=!isNaN(v)&&v>90&&v<180}else if(question.t==="text"){const ua=answer.replace(/\s/g,"").toLowerCase(),ca=String(question.a).replace(/\s/g,"").toLowerCase();ok=ua===ca;if(!ok)ok=normalizeAlgebra(answer)===normalizeAlgebra(String(question.a))}else ok=parseFloat(answer.replace(",","."))=== question.a;setCorrect(ok);setChecked(true);const cur=ptQuestions[ptIndex];setPtAnswers(a=>[...a,{sectionId:cur.sectionId,sectionName:cur.sectionName,q:question.q,chosen:answer,correctAns:String(question.a),ok}]);updateProg(cur.sectionId,ok)};
-  const nextPt=()=>{if(ptIndex>=ptQuestions.length-1){if(timerRef.current)clearInterval(timerRef.current);setScreen("pt-results")}else{const ni=ptIndex+1;setPtIndex(ni);setQuestion(ptQuestions[ni]);setAnswer("");setChecked(false);setAnimKey(k=>k+1)}};
+  const checkPt=()=>{if(!question)return;let ok=false;
+    if(question.steps&&Array.isArray(answer)){
+      const sr=question.steps.map((step,i)=>checkSingleAnswer(answer[i]||"",step.a,step.t||question.t||"text"));
+      setStepResults(sr);ok=sr[sr.length-1];
+    } else {
+      if(question.t==="choice")ok=answer===question.a;else if(question.t==="stomp_check"){const v=parseFloat(answer.replace(",","."));ok=!isNaN(v)&&v>90&&v<180}else if(question.t==="text"){const ua=answer.replace(/\s/g,"").toLowerCase(),ca=String(question.a).replace(/\s/g,"").toLowerCase();ok=ua===ca;if(!ok)ok=normalizeAlgebra(answer)===normalizeAlgebra(String(question.a))}else ok=parseFloat(answer.replace(",","."))=== question.a;
+    }
+    setCorrect(ok);setChecked(true);const cur=ptQuestions[ptIndex];const chosenStr=Array.isArray(answer)?answer[answer.length-1]||"":answer;setPtAnswers(a=>[...a,{sectionId:cur.sectionId,sectionName:cur.sectionName,q:question.q,chosen:chosenStr,correctAns:String(question.a),ok}]);updateProg(cur.sectionId,ok)};
+  const nextPt=()=>{if(ptIndex>=ptQuestions.length-1){if(timerRef.current)clearInterval(timerRef.current);setScreen("pt-results")}else{const ni=ptIndex+1;setPtIndex(ni);const nq=ptQuestions[ni];setQuestion(nq);setAnswer(nq.steps?nq.steps.map(()=>""):"");setChecked(false);setStepResults(null);setAnimKey(k=>k+1)}};
   // Cleanup timer on unmount
   useEffect(()=>()=>{if(timerRef.current)clearInterval(timerRef.current)},[]);
   // Auto-submit when timer runs out
@@ -290,12 +299,27 @@ function App(){
   const checkTheory=()=>{if(!curStep)return;let ok=false;if(curStep.type2==="choice")ok=theoryAnswer===String(curStep.answer);else if(curStep.type2==="text")ok=theoryAnswer.replace(/\s/g,"").toLowerCase()===String(curStep.answer).replace(/\s/g,"").toLowerCase();else ok=parseFloat(theoryAnswer.replace(",","."))=== curStep.answer;setTheoryCorrect(ok);setTheoryChecked(true)};
   const nextTheory=()=>{if(theoryStep<theorySteps.length-1){setTheoryStep(s=>s+1);setTheoryAnswer("");setTheoryChecked(false)}else{markTheory(section);setScreen("home")}};
 
+  const checkSingleAnswer=(userAns,correctAns,type)=>{
+    if(type==="choice")return userAns===correctAns;
+    if(type==="stomp_check"){const v=parseFloat(userAns.replace(",","."));return !isNaN(v)&&v>90&&v<180}
+    if(type==="text"){const ua=userAns.replace(/\s/g,"").toLowerCase(),ca=String(correctAns).replace(/\s/g,"").toLowerCase();if(ua===ca)return true;return normalizeAlgebra(userAns)===normalizeAlgebra(String(correctAns))}
+    const num=parseFloat(userAns.replace(",","."));return num===correctAns;
+  };
   const checkQuiz=()=>{if(!question)return;let ok=false;setAlmostCorrect(null);
-    if(question.t==="choice")ok=answer===question.a;
-    else if(question.t==="stomp_check"){const v=parseFloat(answer.replace(",","."));ok=!isNaN(v)&&v>90&&v<180}
-    else if(question.t==="text"){const ua=answer.replace(/\s/g,"").toLowerCase(),ca=String(question.a).replace(/\s/g,"").toLowerCase();ok=ua===ca;if(!ok)ok=normalizeAlgebra(answer)===normalizeAlgebra(String(question.a))}
-    else{const num=parseFloat(answer.replace(",","."));ok=num===question.a;if(!ok&&!isNaN(num)){const diff=Math.abs(num-question.a);if(diff<=2&&diff>0)setAlmostCorrect(diff)}}
-    setCorrect(ok);setChecked(true);if(!ok)setWrongAnswers(w=>[...w,{q:question.q,chosen:answer,correct:String(question.a)}]);setStreak(s=>ok?s+1:0);setSession(s=>({c:s.c+(ok?1:0),t:s.t+1}));updateProg(section,ok)};
+    if(question.steps&&Array.isArray(answer)){
+      const sr=question.steps.map((step,i)=>checkSingleAnswer(answer[i]||"",step.a,step.t||question.t||"text"));
+      setStepResults(sr);
+      ok=sr[sr.length-1];
+      const lastAns=answer[answer.length-1]||"";
+      setCorrect(ok);setChecked(true);if(!ok)setWrongAnswers(w=>[...w,{q:question.q,chosen:lastAns,correct:String(question.a)}]);setStreak(s=>ok?s+1:0);setSession(s=>({c:s.c+(ok?1:0),t:s.t+1}));updateProg(section,ok);
+    } else {
+      if(question.t==="choice")ok=answer===question.a;
+      else if(question.t==="stomp_check"){const v=parseFloat(answer.replace(",","."));ok=!isNaN(v)&&v>90&&v<180}
+      else if(question.t==="text"){const ua=answer.replace(/\s/g,"").toLowerCase(),ca=String(question.a).replace(/\s/g,"").toLowerCase();ok=ua===ca;if(!ok)ok=normalizeAlgebra(answer)===normalizeAlgebra(String(question.a))}
+      else{const num=parseFloat(answer.replace(",","."));ok=num===question.a;if(!ok&&!isNaN(num)){const diff=Math.abs(num-question.a);if(diff<=2&&diff>0)setAlmostCorrect(diff)}}
+      setCorrect(ok);setChecked(true);if(!ok)setWrongAnswers(w=>[...w,{q:question.q,chosen:answer,correct:String(question.a)}]);setStreak(s=>ok?s+1:0);setSession(s=>({c:s.c+(ok?1:0),t:s.t+1}));updateProg(section,ok);
+    }
+  };
   const nextQuiz=()=>{if(session.t>=10){setProgress(p=>({...p,[section]:{...p[section],lastQuizPct:Math.round(session.c/session.t*100)}}));setScreen("results")}else loadQ(section,session.t)};
 
   const fmtBold=text=>{const parts=text.split(/(\*\*[^*]+\*\*)/g);return parts.map((p,i)=>p.startsWith("**")&&p.endsWith("**")?React.createElement("strong",{key:i,style:{color:"#fff",fontWeight:800}},p.slice(2,-2)):React.createElement("span",{key:i},p))};
@@ -458,11 +482,25 @@ function App(){
         question&&React.createElement("div",{key:animKey,style:{background:cBg,borderRadius:"18px",padding:"24px 20px",border:"1px solid "+bdr,animation:"fadeIn 0.3s ease"}},
           question.svg&&React.createElement("div",{style:{textAlign:"center",marginBottom:"16px",overflow:"hidden"},dangerouslySetInnerHTML:{__html:question.svg}}),
           React.createElement("div",{style:{fontSize:"clamp(17px,4vw,22px)",fontWeight:700,lineHeight:1.5,whiteSpace:"pre-line",marginBottom:"20px"}},question.q),
-          question.t==="choice"?
+          question.steps&&Array.isArray(answer)?
+            // Multi-step input fields
+            React.createElement("div",null,
+              question.steps.map((step,si)=>{
+                var isLast=si===question.steps.length-1;
+                var srOk=stepResults?stepResults[si]:null;
+                var borderCol=checked?(srOk?"#6bcb77":"#ff6b6b"):(isLast?"#4d96ff":bdr);
+                return React.createElement("div",{key:si,style:{marginBottom:"10px"}},
+                  React.createElement("div",{style:{fontSize:"12px",fontWeight:700,color:checked?(srOk?"#6bcb77":"#ff6b6b"):(isLast?"#4d96ff":"#888"),marginBottom:"4px"}},"Stap "+(si+1)+": "+step.label+(checked?(srOk?" ✓":" ✗"):"")),
+                  React.createElement("input",{ref:function(el){stepRefs.current[si]=el},style:{width:"100%",padding:"12px 16px",borderRadius:"10px",border:"2px solid "+borderCol,background:isLast?"rgba(77,150,255,0.06)":"rgba(255,255,255,0.05)",color:"#fff",fontSize:"16px",fontWeight:600,outline:"none",boxSizing:"border-box",fontFamily:"'Nunito',monospace"},value:answer[si]||"",onChange:function(e){if(!checked){var na=[].concat(answer);na[si]=e.target.value;setAnswer(na)}},onKeyDown:function(e){if(e.key==="Enter"||e.key==="Tab"){if(!isLast&&e.key==="Tab"){e.preventDefault();if(stepRefs.current[si+1])stepRefs.current[si+1].focus()}else if(isLast&&e.key==="Enter"&&answer[si]&&!checked)checkQuiz()}},placeholder:step.label+"...",disabled:checked,inputMode:(step.t||question.t)==="text"?"text":"numeric",autoFocus:si===0}),
+                  checked&&!srOk&&React.createElement("div",{style:{fontSize:"12px",color:"#ff6b6b",marginTop:"2px"}},"Correct: "+step.a)
+                )
+              })
+            )
+          :question.t==="choice"?
             React.createElement("div",null,question.o.map(o=>React.createElement("button",{key:o,style:{width:"100%",padding:"12px 18px",borderRadius:"11px",border:"2px solid "+(answer===o?"#4d96ff":bdr),background:answer===o?"rgba(77,150,255,0.12)":"rgba(255,255,255,0.03)",color:"#ddd",fontSize:"16px",fontWeight:600,cursor:"pointer",marginBottom:"8px",textAlign:"left"},onClick:()=>!checked&&setAnswer(o),disabled:checked},o)))
             :React.createElement("input",{style:{width:"100%",padding:"14px 18px",borderRadius:"12px",border:"2px solid "+bdr,background:"rgba(255,255,255,0.05)",color:"#fff",fontSize:"18px",fontWeight:600,outline:"none",boxSizing:"border-box",fontFamily:"'Nunito',monospace"},value:answer,onChange:e=>setAnswer(e.target.value),onKeyDown:e=>e.key==="Enter"&&answer&&!checked&&checkQuiz(),placeholder:"Typ je antwoord...",disabled:checked,inputMode:question.t==="text"?"text":"numeric",autoFocus:true}),
           !checked?
-            React.createElement("button",{style:{width:"100%",padding:"14px",borderRadius:"12px",border:"none",background:"#4d96ff",color:"#fff",fontSize:"16px",fontWeight:700,cursor:"pointer",marginTop:"14px",opacity:answer?1:0.4},onClick:checkQuiz,disabled:!answer},"Controleer")
+            React.createElement("button",{style:{width:"100%",padding:"14px",borderRadius:"12px",border:"none",background:"#4d96ff",color:"#fff",fontSize:"16px",fontWeight:700,cursor:"pointer",marginTop:"14px",opacity:(question.steps?answer[answer.length-1]:answer)?1:0.4},onClick:checkQuiz,disabled:!(question.steps?answer[answer.length-1]:answer)},"Controleer")
             :React.createElement("div",null,
               React.createElement("div",{style:{padding:"16px",borderRadius:"14px",background:correct?"rgba(107,203,119,0.1)":"rgba(255,107,107,0.1)",border:"1px solid "+(correct?"#6bcb7730":"#ff6b6b30"),marginTop:"14px"}},
                 React.createElement("div",{style:{fontSize:"17px",fontWeight:800,color:correct?"#6bcb77":"#ff6b6b",marginBottom:"6px"}},correct?(question.t==="stomp_check"?"Goed! "+answer+"° is een stompe hoek ✅":pick(["Goed zo! 🎉","Correct! ✅","Top! 💪"])):(almostCorrect?"Bijna! Je zat er "+almostCorrect+"° naast. Antwoord: "+question.a:"Antwoord: "+question.a)),
@@ -530,11 +568,24 @@ function App(){
         question&&React.createElement("div",{key:animKey,style:{background:cBg,borderRadius:"18px",padding:"24px 20px",border:"1px solid "+bdr,animation:"fadeIn 0.3s ease"}},
           question.svg&&React.createElement("div",{style:{textAlign:"center",marginBottom:"16px",overflow:"hidden"},dangerouslySetInnerHTML:{__html:question.svg}}),
           React.createElement("div",{style:{fontSize:"clamp(17px,4vw,22px)",fontWeight:700,lineHeight:1.5,whiteSpace:"pre-line",marginBottom:"20px"}},question.q),
-          question.t==="choice"?
+          question.steps&&Array.isArray(answer)?
+            React.createElement("div",null,
+              question.steps.map((step,si)=>{
+                var isLast=si===question.steps.length-1;
+                var srOk=stepResults?stepResults[si]:null;
+                var borderCol=checked?(srOk?"#6bcb77":"#ff6b6b"):(isLast?"#ffd93d":bdr);
+                return React.createElement("div",{key:si,style:{marginBottom:"10px"}},
+                  React.createElement("div",{style:{fontSize:"12px",fontWeight:700,color:checked?(srOk?"#6bcb77":"#ff6b6b"):(isLast?"#ffd93d":"#888"),marginBottom:"4px"}},"Stap "+(si+1)+": "+step.label+(checked?(srOk?" ✓":" ✗"):"")),
+                  React.createElement("input",{ref:function(el){stepRefs.current[si]=el},style:{width:"100%",padding:"12px 16px",borderRadius:"10px",border:"2px solid "+borderCol,background:isLast?"rgba(255,217,61,0.06)":"rgba(255,255,255,0.05)",color:"#fff",fontSize:"16px",fontWeight:600,outline:"none",boxSizing:"border-box",fontFamily:"'Nunito',monospace"},value:answer[si]||"",onChange:function(e){if(!checked){var na=[].concat(answer);na[si]=e.target.value;setAnswer(na)}},onKeyDown:function(e){if(e.key==="Enter"||e.key==="Tab"){if(!isLast&&e.key==="Tab"){e.preventDefault();if(stepRefs.current[si+1])stepRefs.current[si+1].focus()}else if(isLast&&e.key==="Enter"&&answer[si]&&!checked)checkPt()}},placeholder:step.label+"...",disabled:checked,inputMode:(step.t||question.t)==="text"?"text":"numeric",autoFocus:si===0}),
+                  checked&&!srOk&&React.createElement("div",{style:{fontSize:"12px",color:"#ff6b6b",marginTop:"2px"}},"Correct: "+step.a)
+                )
+              })
+            )
+          :question.t==="choice"?
             React.createElement("div",null,question.o.map(o=>React.createElement("button",{key:o,style:{width:"100%",padding:"12px 18px",borderRadius:"11px",border:"2px solid "+(answer===o?"#ffd93d":bdr),background:answer===o?"rgba(255,217,61,0.12)":"rgba(255,255,255,0.03)",color:"#ddd",fontSize:"16px",fontWeight:600,cursor:"pointer",marginBottom:"8px",textAlign:"left"},onClick:()=>!checked&&setAnswer(o),disabled:checked},o)))
             :React.createElement("input",{style:{width:"100%",padding:"14px 18px",borderRadius:"12px",border:"2px solid "+bdr,background:"rgba(255,255,255,0.05)",color:"#fff",fontSize:"18px",fontWeight:600,outline:"none",boxSizing:"border-box",fontFamily:"'Nunito',monospace"},value:answer,onChange:e=>setAnswer(e.target.value),onKeyDown:e=>e.key==="Enter"&&answer&&!checked&&checkPt(),placeholder:"Typ je antwoord...",disabled:checked,inputMode:question.t==="text"?"text":"numeric",autoFocus:true}),
           !checked?
-            React.createElement("button",{style:{width:"100%",padding:"14px",borderRadius:"12px",border:"none",background:"#ffd93d",color:"#000",fontSize:"16px",fontWeight:700,cursor:"pointer",marginTop:"14px",opacity:answer?1:0.4},onClick:checkPt,disabled:!answer},"Controleer")
+            React.createElement("button",{style:{width:"100%",padding:"14px",borderRadius:"12px",border:"none",background:"#ffd93d",color:"#000",fontSize:"16px",fontWeight:700,cursor:"pointer",marginTop:"14px",opacity:(question.steps?answer[answer.length-1]:answer)?1:0.4},onClick:checkPt,disabled:!(question.steps?answer[answer.length-1]:answer)},"Controleer")
             :React.createElement("div",null,
               React.createElement("div",{style:{padding:"16px",borderRadius:"14px",background:correct?"rgba(107,203,119,0.1)":"rgba(255,107,107,0.1)",border:"1px solid "+(correct?"#6bcb7730":"#ff6b6b30"),marginTop:"14px"}},
                 React.createElement("div",{style:{fontSize:"17px",fontWeight:800,color:correct?"#6bcb77":"#ff6b6b",marginBottom:"6px"}},correct?"Goed! ✅":"Antwoord: "+question.a),

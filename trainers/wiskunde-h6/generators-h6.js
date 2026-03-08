@@ -337,6 +337,12 @@ function g62() {
     var x = pick([-2, -1, 4, 5]);
     var y = a * (x - p) * (x - p) + c;
     return {q: "y = " + a + "(x \u2212 " + p + ")\u00b2 + " + c + "\nBereken y voor x = " + x, a: y,
+      steps: [
+        {label: "Vul in", a: a + "\u00b7(" + (x - p) + ")\u00b2 + " + c},
+        {label: "Kwadraat", a: a + "\u00b7" + ((x - p) * (x - p)) + " + " + c},
+        {label: "Antwoord", a: String(y)}
+      ],
+      t: "text",
       h: a + "\u00b7(" + (x - p) + ")\u00b2 + " + c + " = " + a + "\u00b7" + ((x - p) * (x - p)) + " + " + c + " = " + (a * (x - p) * (x - p)) + " + " + c + " = " + y};
   }
 
@@ -348,8 +354,14 @@ function g62() {
     var aStr = a2 === 1 ? "" : a2 === -1 ? "\u2212" : "" + a2;
     var bStr = b2 > 0 ? " + " + (b2 === 1 ? "" : b2) : " \u2212 " + (b2 === -1 ? "" : Math.abs(b2));
     var cStr = c2 > 0 ? " + " + c2 : " \u2212 " + Math.abs(c2);
+    var sub2 = a2 * x2 * x2, sub2b = b2 * x2;
     return {q: "y = " + aStr + "x\u00b2" + bStr + "x" + cStr + "\nBereken y voor x = " + x2, a: y2,
-      h: "y = " + (a2 * x2 * x2) + " + " + (b2 * x2) + " + " + c2 + " = " + y2};
+      steps: [
+        {label: "Vul in", a: sub2 + (sub2b >= 0 ? " + " + sub2b : " \u2212 " + Math.abs(sub2b)) + (c2 >= 0 ? " + " + c2 : " \u2212 " + Math.abs(c2))},
+        {label: "Antwoord", a: String(y2)}
+      ],
+      t: "text",
+      h: "y = " + sub2 + " + " + sub2b + " + " + c2 + " = " + y2};
   }
 
   // 3: Finding x-as snijpunten (y=0)
@@ -392,6 +404,12 @@ function g62() {
     var a7 = pick([2, 3, 4, 5]), x7 = pick([-3, -4, -5]);
     var y7 = a7 * x7 * x7;
     return {q: "y = " + a7 + "x\u00b2\nBereken y voor x = " + x7, a: y7,
+      steps: [
+        {label: "Vul in", a: a7 + " \u00b7 (" + x7 + ")\u00b2"},
+        {label: "Kwadraat", a: a7 + " \u00b7 " + (x7 * x7)},
+        {label: "Antwoord", a: String(y7)}
+      ],
+      t: "text",
       h: a7 + " \u00b7 (" + x7 + ")\u00b2 = " + a7 + " \u00b7 " + (x7 * x7) + " = " + y7};
   }
 
@@ -1154,6 +1172,10 @@ function g64() {
     var a1 = rand(2, 6), b1 = rand(3, 8), a2 = rand(1, 5), b2 = rand(2, 7), c1 = rand(2, 6), c2 = rand(1, 4);
     return {q: "Herleid: " + a1 + "a + " + b1 + "b + " + a2 + "a + " + b2 + "b + " + c1 + "c \u2212 " + c2 + "c",
       a: (a1 + a2) + "a + " + (b1 + b2) + "b + " + (c1 - c2) + "c", t: "text",
+      steps: [
+        {label: "Groepeer", a: a1 + "a + " + a2 + "a + " + b1 + "b + " + b2 + "b + " + c1 + "c \u2212 " + c2 + "c"},
+        {label: "Antwoord", a: (a1 + a2) + "a + " + (b1 + b2) + "b + " + (c1 - c2) + "c"}
+      ],
       h: "a: " + a1 + "+" + a2 + "=" + (a1 + a2) + ", b: " + b1 + "+" + b2 + "=" + (b1 + b2) + ", c: " + c1 + "\u2212" + c2 + "=" + (c1 - c2)};
   }
 
@@ -1196,6 +1218,10 @@ function g64() {
     var v5 = pick(["a", "x"]);
     return {q: "Herleid: " + a5 + v5 + " + " + b5 + v5 + " + " + c5,
       a: (a5 + b5) + v5 + " + " + c5, t: "text",
+      steps: [
+        {label: "Groepeer", a: "(" + a5 + " + " + b5 + ")" + v5 + " + " + c5},
+        {label: "Antwoord", a: (a5 + b5) + v5 + " + " + c5}
+      ],
       h: v5 + ": " + a5 + "+" + b5 + "=" + (a5 + b5) + ", getal " + c5 + " apart"};
   }
 
@@ -1233,6 +1259,10 @@ function g64() {
     var p1 = f9a * f9b, p2 = f9c;
     return {q: "Herleid: " + f9a + v9a + " \u00b7 " + f9b + v9b + " + " + f9c + v9a + v9b,
       a: (p1 + p2) + v9a + v9b, t: "text",
+      steps: [
+        {label: "Vermenigvuldig", a: p1 + v9a + v9b + " + " + p2 + v9a + v9b},
+        {label: "Antwoord", a: (p1 + p2) + v9a + v9b}
+      ],
       h: f9a + "\u00b7" + f9b + "=" + p1 + " \u2192 " + p1 + v9a + v9b + " + " + p2 + v9a + v9b + " = " + (p1 + p2) + v9a + v9b};
   }
 
@@ -1240,6 +1270,10 @@ function g64() {
   var a10 = rand(5, 9), b10 = rand(3, 7), c10 = rand(2, 6), a102 = rand(1, 4), b102 = rand(1, 3);
   return {q: "Herleid: " + a10 + "a + " + b10 + "b + " + c10 + "c \u2212 " + a102 + "a \u2212 " + b102 + "b",
     a: (a10 - a102) + "a + " + (b10 - b102) + "b + " + c10 + "c", t: "text",
+    steps: [
+      {label: "Groepeer", a: a10 + "a \u2212 " + a102 + "a + " + b10 + "b \u2212 " + b102 + "b + " + c10 + "c"},
+      {label: "Antwoord", a: (a10 - a102) + "a + " + (b10 - b102) + "b + " + c10 + "c"}
+    ],
     h: "a: " + (a10 - a102) + ", b: " + (b10 - b102) + ", c: " + c10};
 }
 
@@ -1254,6 +1288,10 @@ function g65() {
     var rbStr = rb >= 0 ? " + " + rb + "b" : " \u2212 " + Math.abs(rb) + "b";
     return {q: "Herleid: " + a1 + "a + " + b1 + "b \u2212 " + a2 + "a \u2212 " + b2 + "b + " + k,
       a: raStr + rbStr + " + " + k, t: "text",
+      steps: [
+        {label: "Groepeer", a: a1 + "a \u2212 " + a2 + "a + " + b1 + "b \u2212 " + b2 + "b + " + k},
+        {label: "Antwoord", a: raStr + rbStr + " + " + k}
+      ],
       h: "a: " + a1 + "\u2212" + a2 + "=" + ra + ", b: " + b1 + "\u2212" + b2 + "=" + rb + ", getal: " + k};
   }
 
@@ -1267,8 +1305,13 @@ function g65() {
     var rvStr = rv + v;
     var rwStr = rw >= 0 ? " + " + rw + w : " \u2212 " + Math.abs(rw) + w;
     var rcStr = c2a >= 0 ? " + " + c2a : " \u2212 " + Math.abs(c2a);
+    var grp2 = a2a + v + (a2b >= 0 ? " + " + a2b : " \u2212 " + Math.abs(a2b)) + v + " + " + b2a + w + (b2b >= 0 ? " + " + b2b : " \u2212 " + Math.abs(b2b)) + w + (c2a >= 0 ? " + " + c2a : " \u2212 " + Math.abs(c2a));
     return {q: "Herleid: " + qStr,
       a: rvStr + rwStr + rcStr, t: "text",
+      steps: [
+        {label: "Groepeer", a: grp2},
+        {label: "Antwoord", a: rvStr + rwStr + rcStr}
+      ],
       h: v + ": " + a2a + "+" + a2b + "=" + rv + ", " + w + ": " + b2a + "+" + b2b + "=" + rw + ", getal: " + c2a};
   }
 
@@ -1279,6 +1322,10 @@ function g65() {
     var az = rand(2, 5), bz = rand(1, 3);
     return {q: "Herleid: " + ax + "x + " + ay + "y + " + az + "z \u2212 " + bx + "x \u2212 " + by + "y + " + bz + "z",
       a: (ax - bx) + "x + " + (ay - by) + "y + " + (az + bz) + "z", t: "text",
+      steps: [
+        {label: "Groepeer", a: ax + "x \u2212 " + bx + "x + " + ay + "y \u2212 " + by + "y + " + az + "z + " + bz + "z"},
+        {label: "Antwoord", a: (ax - bx) + "x + " + (ay - by) + "y + " + (az + bz) + "z"}
+      ],
       h: "x: " + (ax - bx) + ", y: " + (ay - by) + ", z: " + (az + bz)};
   }
 
@@ -1288,6 +1335,10 @@ function g65() {
     var v4 = pick(["a", "x", "p"]);
     return {q: "Herleid: " + a4 + v4 + " + " + k4a + " \u2212 " + b4 + v4 + " \u2212 " + k4b,
       a: (a4 - b4) + v4 + " + " + (k4a - k4b), t: "text",
+      steps: [
+        {label: "Groepeer", a: a4 + v4 + " \u2212 " + b4 + v4 + " + " + k4a + " \u2212 " + k4b},
+        {label: "Antwoord", a: (a4 - b4) + v4 + " + " + (k4a - k4b)}
+      ],
       h: v4 + ": " + (a4 - b4) + ", getallen: " + k4a + "\u2212" + k4b + "=" + (k4a - k4b)};
   }
 
@@ -1331,6 +1382,10 @@ function g65() {
     var a8 = rand(4, 9), b8 = rand(3, 7), c8 = rand(2, 6), d8 = rand(1, 4), k8 = rand(1, 8);
     return {q: "Herleid: " + a8 + "a \u2212 " + b8 + "b + " + k8 + " + " + c8 + "b \u2212 " + d8 + "a",
       a: (a8 - d8) + "a + " + (c8 - b8) + "b + " + k8, t: "text",
+      steps: [
+        {label: "Groepeer", a: a8 + "a \u2212 " + d8 + "a \u2212 " + b8 + "b + " + c8 + "b + " + k8},
+        {label: "Antwoord", a: (a8 - d8) + "a + " + (c8 - b8) + "b + " + k8}
+      ],
       h: "a: " + (a8 - d8) + ", b: " + (c8 - b8) + ", getal: " + k8};
   }
 
@@ -1351,6 +1406,10 @@ function g65() {
   var result10b = b10 - d10;
   return {q: "Herleid: " + a10 + v10 + " + " + b10 + " \u2212 " + c10 + v10 + " \u2212 " + d10 + " + " + e10 + v10,
     a: result10 + v10 + (result10b >= 0 ? " + " + result10b : " \u2212 " + Math.abs(result10b)), t: "text",
+    steps: [
+      {label: "Groepeer", a: a10 + v10 + " \u2212 " + c10 + v10 + " + " + e10 + v10 + " + " + b10 + " \u2212 " + d10},
+      {label: "Antwoord", a: result10 + v10 + (result10b >= 0 ? " + " + result10b : " \u2212 " + Math.abs(result10b))}
+    ],
     h: v10 + ": " + a10 + "\u2212" + c10 + "+" + e10 + "=" + result10 + ", getallen: " + b10 + "\u2212" + d10 + "=" + result10b};
 }
 
