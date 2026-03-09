@@ -41,7 +41,8 @@ async function fetchTrainerStats(user){
       const fbKey=meta.key.replace(/\./g,",");
       const data=fb[fbKey];
       if(!data){res[subj]=null;return;}
-      const secs=meta.fmt==="flat"?data:(data.sections||{});
+      const rawSecs=meta.fmt==="flat"?data:(data.sections||{});
+      const secs={};Object.entries(rawSecs).forEach(([k,v])=>{secs[k.replace(/,/g,".")]=v;});
       let mastered=0,totC=0,totA=0;const secData={};
       Object.entries(secs).forEach(([sid,s])=>{
         if(!s)return;
@@ -342,7 +343,7 @@ const deepLink=(taskId)=>{
 const tryToggle=(id)=>{
   const sm=secMastered(id);
   if(sm.free||sm.all||isC(id)){toggle(id);return;}
-  showToast("🔒 Haal eerst 80% op: "+sm.missing.join(", "));
+  showToast("🔒 Haal eerst 70% op: "+sm.missing.join(", "));
 };
 const toggle=id=>setCk(c=>{const n={...c};if(n[id])delete n[id];else n[id]=Date.now();return n});
 const isC=id=>!!ck[id];

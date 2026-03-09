@@ -30,7 +30,7 @@ const loadState=()=>{try{return JSON.parse(localStorage.getItem(STORE_KEY))}catc
 const saveState=s=>{
   const withTs={...s,_lastUpdated:new Date().toISOString()};
   try{localStorage.setItem(STORE_KEY,JSON.stringify(withTs))}catch{}
-  if(window.FB) window.FB.syncToFirebase(window.FB.trainerRef(STORE_KEY),withTs);
+  if(window.FB){const san={};Object.entries(withTs).forEach(([k,v])=>{san[k.replace(/\./g,",")]=v;});window.FB.syncToFirebase(window.FB.trainerRef(STORE_KEY),san);}
 };
 const defaultProgress=()=>({"5.1":{theoryDone:false,correct:0,total:0,bestStreak:0},"5.2":{theoryDone:false,correct:0,total:0,bestStreak:0},"5.3":{theoryDone:false,correct:0,total:0,bestStreak:0},"5.4":{theoryDone:false,correct:0,total:0,bestStreak:0},"5.5":{theoryDone:false,correct:0,total:0,bestStreak:0},"5.6":{theoryDone:false,correct:0,total:0,bestStreak:0},"6.1":{theoryDone:false,correct:0,total:0,bestStreak:0},"6.2":{theoryDone:false,correct:0,total:0,bestStreak:0},"6.3":{theoryDone:false,correct:0,total:0,bestStreak:0},"6.4":{theoryDone:false,correct:0,total:0,bestStreak:0},"6.5":{theoryDone:false,correct:0,total:0,bestStreak:0},"6.6":{theoryDone:false,correct:0,total:0,bestStreak:0}});
 
@@ -212,7 +212,8 @@ function App(){
   const[progress,setProgress]=useState(()=>loadState()||defaultProgress());
   useEffect(()=>{
     if(!window.FB)return;
-    window.FB.pullFromFirebase(window.FB.trainerRef(STORE_KEY),STORE_KEY,fresh=>{
+    window.FB.pullFromFirebase(window.FB.trainerRef(STORE_KEY),STORE_KEY,raw=>{
+      const fresh={};Object.entries(raw).forEach(([k,v])=>{fresh[k.replace(/,/g,".")]=v;});
       setProgress(fresh);
     });
   },[]);
