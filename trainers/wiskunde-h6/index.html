@@ -50,6 +50,59 @@ const SECTIONS=[
 ];
 const getSection=id=>SECTIONS.find(s=>s.id===id);
 
+// ========== DIAGNOSTISCHE TOETS (Mara) ==========
+const DIAG_BRIDGE_SVG='<svg viewBox="0 0 300 200" width="100%" style="max-width:300px"><rect width="300" height="200" fill="#0a0e1a"/><line x1="10" y1="190" x2="290" y2="190" stroke="#444" stroke-width="1"/><line x1="150" y1="10" x2="150" y2="190" stroke="#444" stroke-width="1"/><text x="155" y="18" fill="#888" font-size="10">y</text><text x="285" y="185" fill="#888" font-size="10">x</text><path d="M23,190 Q150,30 277,190" fill="none" stroke="#3498db" stroke-width="2.5"/><line x1="30" y1="110" x2="270" y2="110" stroke="#F39C12" stroke-width="2" stroke-dasharray="5,3"/><text x="272" y="108" fill="#F39C12" font-size="9">weg (10m)</text><line x1="105" y1="50" x2="105" y2="110" stroke="#6bcb77" stroke-width="2" stroke-dasharray="3,2"/><line x1="195" y1="50" x2="195" y2="110" stroke="#6bcb77" stroke-width="2" stroke-dasharray="3,2"/><circle cx="23" cy="190" r="3" fill="#ff6b6b"/><text x="12" y="185" fill="#ff6b6b" font-size="11" font-weight="bold">A</text><circle cx="277" cy="190" r="3" fill="#ff6b6b"/><text x="280" y="185" fill="#ff6b6b" font-size="11" font-weight="bold">B</text><circle cx="105" cy="50" r="3" fill="#6bcb77"/><text x="88" y="47" fill="#6bcb77" font-size="11" font-weight="bold">C</text><circle cx="105" cy="110" r="3" fill="#6bcb77"/><text x="88" y="115" fill="#6bcb77" font-size="11" font-weight="bold">D</text><circle cx="195" cy="50" r="3" fill="#6bcb77"/><text x="200" y="47" fill="#6bcb77" font-size="11" font-weight="bold">E</text><circle cx="195" cy="110" r="3" fill="#6bcb77"/><text x="200" y="115" fill="#6bcb77" font-size="11" font-weight="bold">F</text><text x="90" y="198" fill="#888" font-size="9">−5</text><text x="195" y="198" fill="#888" font-size="9">5</text></svg>';
+const DIAG_FIG_SVG='<svg viewBox="0 0 130 250" width="45%" style="max-width:130px"><rect width="130" height="250" fill="#0a0e1a" rx="8"/><rect x="10" y="10" width="42" height="52" fill="rgba(52,152,219,0.1)" stroke="#3498db" stroke-width="2" rx="2"/><rect x="52" y="10" width="42" height="52" fill="rgba(52,152,219,0.1)" stroke="#3498db" stroke-width="2" rx="2"/><rect x="10" y="62" width="42" height="52" fill="rgba(52,152,219,0.1)" stroke="#3498db" stroke-width="2" rx="2"/><rect x="10" y="114" width="42" height="52" fill="rgba(52,152,219,0.1)" stroke="#3498db" stroke-width="2" rx="2"/><rect x="10" y="166" width="42" height="52" fill="rgba(52,152,219,0.1)" stroke="#3498db" stroke-width="2" rx="2"/><text x="31" y="238" fill="#F39C12" font-size="11" text-anchor="middle" font-weight="bold">x</text><line x1="12" y1="230" x2="50" y2="230" stroke="#F39C12" stroke-width="1"/><text x="108" y="92" fill="#F39C12" font-size="11" text-anchor="middle" font-weight="bold">y</text><line x1="105" y1="65" x2="105" y2="112" stroke="#F39C12" stroke-width="1"/></svg>';
+const DIAG_QUESTIONS=[
+  // Opgave 1: Bereken
+  {q:"Opgave 1a · Bereken:\n4\u00B2 \u00B7 (\u00BE)\u00B2",a:9,t:"num",opgave:1,sectionId:"6.1",sectionName:"Kwadraten",
+   h:"4\u00B2 = 16, (\u00BE)\u00B2 = 9/16\n16 \u00B7 9/16 = 9"},
+  {q:"Opgave 1b · Bereken:\n(\u221A25 \u2212 (2+3)\u00B2) : 4",a:-5,t:"num",opgave:1,sectionId:"6.1",sectionName:"Kwadraten",
+   h:"\u221A25 = 5, (2+3)\u00B2 = 25\n(5 \u2212 25) : 4 = \u221220 : 4 = \u22125"},
+  {q:"Opgave 1c · Bereken:\n2 \u00B7 (7 \u2212 16)\u00B2",a:162,t:"num",opgave:1,sectionId:"6.1",sectionName:"Kwadraten",
+   h:"(7 \u2212 16)\u00B2 = (\u22129)\u00B2 = 81\n2 \u00B7 81 = 162"},
+  {q:"Opgave 1d · Bereken:\n7\u00B2 \u2212 \u221A9 \u00B7 4\u00B2",a:1,t:"num",opgave:1,sectionId:"6.1",sectionName:"Kwadraten",
+   h:"7\u00B2 = 49, \u221A9 = 3, 4\u00B2 = 16\n49 \u2212 3\u00B716 = 49 \u2212 48 = 1"},
+  {q:"Opgave 1e · Bereken:\n\u221A16 \u00B7 (\u22125)\u00B2",a:100,t:"num",opgave:1,sectionId:"6.1",sectionName:"Kwadraten",
+   h:"\u221A16 = 4, (\u22125)\u00B2 = 25\n4 \u00B7 25 = 100"},
+  // Opgave 2: Formule invullen
+  {q:"Opgave 2 · Gegeven: y = \u22124(2\u2212x)\u00B2 + 6\n\na) Bereken y voor x = 2",a:6,t:"num",opgave:2,sectionId:"6.2",sectionName:"Kwadratische formules",
+   h:"y = \u22124(2\u22122)\u00B2 + 6 = \u22124\u00B70 + 6 = 6"},
+  {q:"Opgave 2b · y = \u22124(2\u2212x)\u00B2 + 6\nBereken y voor x = 1",a:2,t:"num",opgave:2,sectionId:"6.2",sectionName:"Kwadratische formules",
+   h:"y = \u22124(2\u22121)\u00B2 + 6 = \u22124\u00B71 + 6 = 2"},
+  {q:"Opgave 2c · y = \u22124(2\u2212x)\u00B2 + 6\nBereken y voor x = \u22123",a:-94,t:"num",opgave:2,sectionId:"6.2",sectionName:"Kwadratische formules",
+   h:"y = \u22124(2\u2212(\u22123))\u00B2 + 6 = \u22124\u00B725 + 6 = \u221294"},
+  {q:"Opgave 2d · y = \u22124(2\u2212x)\u00B2 + 6\nBereken y voor x = \u22121",a:-30,t:"num",opgave:2,sectionId:"6.2",sectionName:"Kwadratische formules",
+   h:"y = \u22124(2\u2212(\u22121))\u00B2 + 6 = \u22124\u00B79 + 6 = \u221230"},
+  // Opgave 3: Parabool
+  {q:"Opgave 3a · y = (x \u2212 2)\u00B2 + 1\nWelk type parabool hoort hierbij?",t:"choice",opgave:3,sectionId:"6.3",sectionName:"Grafieken",
+   o:["Dalparabool met top (2, 1)","Bergparabool met top (2, 1)","Dalparabool met top (\u22122, 1)","Bergparabool met top (\u22122, \u22121)"],a:"Dalparabool met top (2, 1)",
+   h:"y = (x\u2212p)\u00B2 + q \u2192 dalparabool (positieve co\u00EBffici\u00EBnt)\nTop = (p, q) = (2, 1)"},
+  {q:"Opgave 3b · y = (x \u2212 2)\u00B2 + 1\nWat zijn de co\u00F6rdinaten van het laagste punt van de parabool?\n(schrijf als: (x,y) )",a:"(2,1)",t:"text",opgave:3,sectionId:"6.3",sectionName:"Grafieken",
+   h:"De top van y = (x\u2212p)\u00B2 + q is (p, q)\nDus het laagste punt = (2, 1)"},
+  // Opgave 4: Brug
+  {q:"Opgave 4 · Een brug heeft de vorm van een parabool:\ny = \u22120,1x\u00B2 + 20\ny = hoogte in meter boven het water.\nHet wegdek ligt op 10 m boven het water.\n\na) Hoeveel meter ligt het hoogste punt van de brug boven de weg?",a:10,t:"num",opgave:4,sectionId:"6.3",sectionName:"Grafieken",
+   svg:DIAG_BRIDGE_SVG,h:"Hoogste punt: x=0 \u2192 y = 20 m\nWeg op 10 m \u2192 20 \u2212 10 = 10 m boven de weg"},
+  {q:"Opgave 4b · y = \u22120,1x\u00B2 + 20\nDe steunpilaren CD en EF staan op x = \u22125 en x = 5.\nHoe hoog zijn de steunpilaren?\n(van wegdek tot de brug)",a:7.5,t:"num",opgave:4,sectionId:"6.3",sectionName:"Grafieken",
+   svg:DIAG_BRIDGE_SVG,h:"x = 5: y = \u22120,1\u00B725 + 20 = 17,5 m\nWegdek op 10 m \u2192 17,5 \u2212 10 = 7,5 m"},
+  // Opgave 5: Herleiden
+  {q:"Opgave 5a · Herleid:\n25a \u00B7 \u22124b",a:"-100ab",t:"text",opgave:5,sectionId:"6.4",sectionName:"Rekenen met letters",
+   h:"25 \u00B7 \u22124 = \u2212100\na \u00B7 b = ab\nUitkomst: \u2212100ab"},
+  {q:"Opgave 5b · Herleid:\n3x + 4y + x \u2212 2y",a:"4x+2y",t:"text",opgave:5,sectionId:"6.5",sectionName:"Herleiden",
+   h:"3x + x = 4x\n4y \u2212 2y = 2y\nUitkomst: 4x + 2y"},
+  {q:"Opgave 5c · Herleid:\n2a \u00B7 3b + a \u2212 4ab",a:"2ab+a",t:"text",opgave:5,sectionId:"6.4",sectionName:"Rekenen met letters",
+   h:"2a\u00B73b = 6ab\n6ab \u2212 4ab = 2ab\nUitkomst: 2ab + a"},
+  {q:"Opgave 5d · Herleid:\n6ab \u00F7 2b + 5a \u2212 (\u22122bc) \u00F7 ac",a:"8a+2b/a",t:"text",opgave:5,sectionId:"6.6",sectionName:"Herleiden van breuken",
+   h:"6ab/2b = 3a\n\u22122bc/ac = \u22122b/a \u2192 min \u00B7 min = +2b/a\n3a + 5a + 2b/a = 8a + 2b/a"},
+  {q:"Opgave 5e · Herleid:\n8x \u2212 (2x \u2212 7y) \u2212 4y",a:"6x+3y",t:"text",opgave:5,sectionId:"6.5",sectionName:"Herleiden",
+   h:"8x \u2212 2x + 7y \u2212 4y\n= 6x + 3y"},
+  // Opgave 6: Figuur
+  {q:"Opgave 6a · De figuur is opgebouwd uit 5 rechthoeken met lengte y en breedte x.\nWat is de omtrek van de figuur?",a:"8y+4x",t:"text",opgave:6,sectionId:"6.4",sectionName:"Rekenen met letters",
+   svg:DIAG_FIG_SVG,h:"Tel alle buitenzijden:\nLinks: 4y omhoog\nBoven: 2x naar rechts\nRechts boven: y omlaag, x naar links, 3y omlaag\nOnder: x naar links\nTotaal = 8y + 4x"},
+  {q:"Opgave 6b · Dezelfde figuur (5 rechthoeken, lengte y, breedte x).\nWat is de oppervlakte?",a:"5xy",t:"text",opgave:6,sectionId:"6.4",sectionName:"Rekenen met letters",
+   svg:DIAG_FIG_SVG,h:"5 rechthoeken van x \u00D7 y\nOppervlakte = 5 \u00D7 xy = 5xy"},
+];
+
 // ========== THEORY ==========
 const THEORY={
 "5.1":[
@@ -244,6 +297,7 @@ function App(){
   const[ptTimeLeft,setPtTimeLeft]=useState(0);
   const[ptUseTimer,setPtUseTimer]=useState(false);
   const timerRef=useRef(null);
+  const[diagMode,setDiagMode]=useState(false);
   const[dashTaskId,setDashTaskId]=useState(null);
   const[dashDate,setDashDate]=useState(null);
 
@@ -267,7 +321,14 @@ function App(){
     setQuestion(qs[0]);setAnswer(qs[0].steps?qs[0].steps.map(()=>""):"");setChecked(false);setStepResults(null);setAnimKey(k=>k+1);
     if(useTimer){setPtTimeLeft(20*60);timerRef.current=setInterval(()=>setPtTimeLeft(t=>{if(t<=1){clearInterval(timerRef.current);return 0}return t-1}),1000)}
     else{setPtTimeLeft(0)}
-    setScreen("proeftoets");
+    setDiagMode(false);setScreen("proeftoets");
+  };
+  const startDiag=()=>{
+    if(timerRef.current)clearInterval(timerRef.current);
+    const qs=DIAG_QUESTIONS.map(dq=>({...dq}));
+    setPtQuestions(qs);setPtIndex(0);setPtAnswers([]);setPtUseTimer(false);setPtTimeLeft(0);
+    setQuestion(qs[0]);setAnswer(qs[0].steps?qs[0].steps.map(()=>""):"");setChecked(false);setStepResults(null);setAnimKey(k=>k+1);
+    setDiagMode(true);setScreen("proeftoets");
   };
   const checkPt=()=>{if(!question)return;let ok=false;
     if(question.steps&&Array.isArray(answer)){
@@ -276,7 +337,7 @@ function App(){
     } else {
       if(question.t==="choice")ok=answer===question.a;else if(question.t==="stomp_check"){const v=parseFloat(answer.replace(",","."));ok=!isNaN(v)&&v>90&&v<180}else if(question.t==="text"){const ua=answer.replace(/\s/g,"").toLowerCase(),ca=String(question.a).replace(/\s/g,"").toLowerCase();ok=ua===ca;if(!ok)ok=normalizeAlgebra(answer)===normalizeAlgebra(String(question.a))}else ok=parseFloat(answer.replace(",","."))=== question.a;
     }
-    setCorrect(ok);setChecked(true);const cur=ptQuestions[ptIndex];const chosenStr=Array.isArray(answer)?answer[answer.length-1]||"":answer;setPtAnswers(a=>[...a,{sectionId:cur.sectionId,sectionName:cur.sectionName,q:question.q,chosen:chosenStr,correctAns:String(question.a),ok}]);updateProg(cur.sectionId,ok)};
+    setCorrect(ok);setChecked(true);const cur=ptQuestions[ptIndex];const chosenStr=Array.isArray(answer)?answer[answer.length-1]||"":answer;setPtAnswers(a=>[...a,{sectionId:cur.sectionId,sectionName:cur.sectionName,opgave:cur.opgave,q:question.q,chosen:chosenStr,correctAns:String(question.a),ok}]);if(cur.sectionId&&progress[cur.sectionId])updateProg(cur.sectionId,ok)};
   const nextPt=()=>{if(ptIndex>=ptQuestions.length-1){if(timerRef.current)clearInterval(timerRef.current);setScreen("pt-results")}else{const ni=ptIndex+1;setPtIndex(ni);const nq=ptQuestions[ni];setQuestion(nq);setAnswer(nq.steps?nq.steps.map(()=>""):"");setChecked(false);setStepResults(null);setAnimKey(k=>k+1)}};
   // Cleanup timer on unmount
   useEffect(()=>()=>{if(timerRef.current)clearInterval(timerRef.current)},[]);
@@ -410,6 +471,20 @@ function App(){
           React.createElement("div",{style:{display:"flex",gap:"8px",marginTop:"14px"}},
             React.createElement("button",{style:{flex:1,padding:"12px 16px",borderRadius:"12px",border:"none",background:"#ffd93d",color:"#000",fontSize:"14px",fontWeight:700,cursor:"pointer"},onClick:()=>startProeftoets(false)},"▶ Start"),
             React.createElement("button",{style:{flex:1,padding:"12px 16px",borderRadius:"12px",border:"2px solid #ffd93d",background:"transparent",color:"#ffd93d",fontSize:"14px",fontWeight:700,cursor:"pointer"},onClick:()=>startProeftoets(true)},"⏱ Met timer (20 min)")
+          )
+        ),
+        // Diagnostische Toets card
+        React.createElement("div",{style:{background:"linear-gradient(135deg,rgba(72,219,251,0.08),rgba(107,203,119,0.06))",border:"1px solid rgba(72,219,251,0.25)",borderRadius:"16px",padding:"20px",marginBottom:"12px",marginTop:"12px"}},
+          React.createElement("div",{style:{display:"flex",gap:"14px",alignItems:"center"}},
+            React.createElement("div",{style:{width:"48px",height:"48px",borderRadius:"12px",background:"linear-gradient(135deg,#48dbfb20,#6bcb7720)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"24px",flexShrink:0}},"📋"),
+            React.createElement("div",{style:{flex:1}},
+              React.createElement("div",{style:{fontSize:"17px",fontWeight:800,color:"#48dbfb"}},"Diagnostische Toets"),
+              React.createElement("div",{style:{fontSize:"12px",color:"#999",marginTop:"2px"}},"6 opgaven · 21 vragen · door Mara")
+            )
+          ),
+          React.createElement("div",{style:{fontSize:"13px",color:"#888",marginTop:"12px",lineHeight:1.6}},"Vaste toets met berekeningen, formules invullen, grafieken, herleiden en figuren. Precies zoals op een echte toets."),
+          React.createElement("div",{style:{display:"flex",gap:"8px",marginTop:"14px"}},
+            React.createElement("button",{style:{flex:1,padding:"12px 16px",borderRadius:"12px",border:"none",background:"#48dbfb",color:"#000",fontSize:"14px",fontWeight:700,cursor:"pointer"},onClick:startDiag},"▶ Start toets")
           )
         ),
         React.createElement("button",{style:{width:"100%",padding:"12px",borderRadius:"10px",border:"none",background:"rgba(255,255,255,0.03)",color:"#555",fontSize:"12px",fontWeight:600,cursor:"pointer",marginTop:"20px"},onClick:()=>{setProgress(defaultProgress())}},"🔄 Reset voortgang"),
@@ -548,7 +623,7 @@ function App(){
     return React.createElement("div",{style:{minHeight:"100vh",background:"linear-gradient(160deg,#0c0c20,#141432 40%,#0e0e28)"}},
       React.createElement("div",{style:{background:"rgba(0,0,0,0.25)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+bdr,padding:"14px 20px",display:"flex",justifyContent:"space-between",alignItems:"center",position:"sticky",top:0,zIndex:50}},
         React.createElement("button",{style:{background:"none",border:"none",color:"#888",cursor:"pointer",fontSize:"14px",fontWeight:600},onClick:()=>{if(timerRef.current)clearInterval(timerRef.current);setScreen("home")}},"← Stop"),
-        React.createElement("div",{style:{fontSize:"16px",fontWeight:800,color:"#ffd93d"}},"Proeftoets"),
+        React.createElement("div",{style:{fontSize:"16px",fontWeight:800,color:diagMode?"#48dbfb":"#ffd93d"}},diagMode?"Diagnostische Toets":"Proeftoets"),
         React.createElement("div",{style:{display:"flex",gap:"10px",alignItems:"center"}},
           ptUseTimer&&React.createElement("span",{style:{padding:"3px 10px",borderRadius:"8px",background:ptTimeLeft<=120?"rgba(255,107,107,0.2)":"rgba(255,217,61,0.15)",color:ptTimeLeft<=120?"#ff6b6b":"#ffd93d",fontSize:"13px",fontWeight:700}},mm+":"+(ss<10?"0":"")+ss),
           React.createElement("span",{style:{fontSize:"13px",fontWeight:700,color:"#aaa"}},(ptIndex+1)+"/"+ptQuestions.length)
@@ -559,12 +634,12 @@ function App(){
         React.createElement("div",{style:{display:"flex",gap:"4px",justifyContent:"center",marginBottom:"16px",flexWrap:"wrap"}},
           ptQuestions.map((pq,i)=>{
             const done=i<ptAnswers.length,isCur=i===ptIndex;
-            const bg=done?(ptAnswers[i].ok?"#6bcb77":"#ff6b6b"):isCur?"#ffd93d":"rgba(255,255,255,0.1)";
+            const bg=done?(ptAnswers[i].ok?"#6bcb77":"#ff6b6b"):isCur?(diagMode?"#48dbfb":"#ffd93d"):"rgba(255,255,255,0.1)";
             return React.createElement("div",{key:i,style:{width:"22px",height:"6px",borderRadius:"3px",background:bg,transition:"background 0.3s"}})
           })
         ),
         // Section label
-        React.createElement("div",{style:{display:"inline-block",padding:"4px 12px",borderRadius:"8px",background:sec.color+"18",color:sec.color,fontSize:"12px",fontWeight:700,marginBottom:"12px"}},"§"+cur.sectionId+" "+cur.sectionName+" · Diagnostisch"),
+        React.createElement("div",{style:{display:"inline-block",padding:"4px 12px",borderRadius:"8px",background:sec.color+"18",color:sec.color,fontSize:"12px",fontWeight:700,marginBottom:"12px"}},diagMode?"Opgave "+cur.opgave+" · §"+cur.sectionId+" "+cur.sectionName:"§"+cur.sectionId+" "+cur.sectionName+" · Diagnostisch"),
         // Question card
         question&&React.createElement("div",{key:animKey,style:{background:cBg,borderRadius:"18px",padding:"24px 20px",border:"1px solid "+bdr,animation:"fadeIn 0.3s ease"}},
           question.svg&&React.createElement("div",{style:{textAlign:"center",marginBottom:"16px",overflow:"hidden"},dangerouslySetInnerHTML:{__html:question.svg}}),
@@ -583,10 +658,10 @@ function App(){
               })
             )
           :question.t==="choice"?
-            React.createElement("div",null,question.o.map(o=>React.createElement("button",{key:o,style:{width:"100%",padding:"12px 18px",borderRadius:"11px",border:"2px solid "+(answer===o?"#ffd93d":bdr),background:answer===o?"rgba(255,217,61,0.12)":"rgba(255,255,255,0.03)",color:"#ddd",fontSize:"16px",fontWeight:600,cursor:"pointer",marginBottom:"8px",textAlign:"left"},onClick:()=>!checked&&setAnswer(o),disabled:checked},o)))
+            React.createElement("div",null,question.o.map(o=>{const ac=diagMode?"#48dbfb":"#ffd93d";return React.createElement("button",{key:o,style:{width:"100%",padding:"12px 18px",borderRadius:"11px",border:"2px solid "+(answer===o?ac:bdr),background:answer===o?(diagMode?"rgba(72,219,251,0.12)":"rgba(255,217,61,0.12)"):"rgba(255,255,255,0.03)",color:"#ddd",fontSize:"16px",fontWeight:600,cursor:"pointer",marginBottom:"8px",textAlign:"left"},onClick:()=>!checked&&setAnswer(o),disabled:checked},o)}))
             :React.createElement("input",{style:{width:"100%",padding:"14px 18px",borderRadius:"12px",border:"2px solid "+bdr,background:"rgba(255,255,255,0.05)",color:"#fff",fontSize:"18px",fontWeight:600,outline:"none",boxSizing:"border-box",fontFamily:"'Nunito',monospace"},value:answer,onChange:e=>setAnswer(e.target.value),onKeyDown:e=>e.key==="Enter"&&answer&&!checked&&checkPt(),placeholder:"Typ je antwoord...",disabled:checked,inputMode:question.t==="text"?"text":"numeric",autoFocus:true}),
           !checked?
-            React.createElement("button",{style:{width:"100%",padding:"14px",borderRadius:"12px",border:"none",background:"#ffd93d",color:"#000",fontSize:"16px",fontWeight:700,cursor:"pointer",marginTop:"14px",opacity:(question.steps?answer[answer.length-1]:answer)?1:0.4},onClick:checkPt,disabled:!(question.steps?answer[answer.length-1]:answer)},"Controleer")
+            React.createElement("button",{style:{width:"100%",padding:"14px",borderRadius:"12px",border:"none",background:diagMode?"#48dbfb":"#ffd93d",color:"#000",fontSize:"16px",fontWeight:700,cursor:"pointer",marginTop:"14px",opacity:(question.steps?answer[answer.length-1]:answer)?1:0.4},onClick:checkPt,disabled:!(question.steps?answer[answer.length-1]:answer)},"Controleer")
             :React.createElement("div",null,
               React.createElement("div",{style:{padding:"16px",borderRadius:"14px",background:correct?"rgba(107,203,119,0.1)":"rgba(255,107,107,0.1)",border:"1px solid "+(correct?"#6bcb7730":"#ff6b6b30"),marginTop:"14px"}},
                 React.createElement("div",{style:{fontSize:"17px",fontWeight:800,color:correct?"#6bcb77":"#ff6b6b",marginBottom:"6px"}},correct?"Goed! ✅":"Antwoord: "+question.a),
@@ -605,7 +680,7 @@ function App(){
     // Group by section
     const bySection={};ptAnswers.forEach(a=>{if(!bySection[a.sectionId])bySection[a.sectionId]={name:a.sectionName,correct:0,total:0,wrong:[]};bySection[a.sectionId].total++;if(a.ok)bySection[a.sectionId].correct++;else bySection[a.sectionId].wrong.push(a)});
     return React.createElement("div",{style:{minHeight:"100vh",background:"linear-gradient(160deg,#0c0c20,#141432 40%,#0e0e28)"}},
-      React.createElement("div",{style:{background:"rgba(0,0,0,0.25)",padding:"14px 20px",borderBottom:"1px solid "+bdr}},React.createElement("div",{style:{fontSize:"18px",fontWeight:900,background:"linear-gradient(90deg,#ffd93d,#ff6b6b,#48dbfb)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",textAlign:"center"}},"Proeftoets Resultaten")),
+      React.createElement("div",{style:{background:"rgba(0,0,0,0.25)",padding:"14px 20px",borderBottom:"1px solid "+bdr}},React.createElement("div",{style:{fontSize:"18px",fontWeight:900,background:diagMode?"linear-gradient(90deg,#48dbfb,#6bcb77,#ffd93d)":"linear-gradient(90deg,#ffd93d,#ff6b6b,#48dbfb)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",textAlign:"center"}},diagMode?"Diagnostische Toets — Resultaten":"Proeftoets Resultaten")),
       React.createElement("div",{style:{maxWidth:"640px",margin:"0 auto",padding:"20px 16px"}},
         // Score card
         React.createElement("div",{style:{background:cBg,borderRadius:"18px",padding:"28px 20px",border:"1px solid "+bdr,textAlign:"center",marginBottom:"20px"}},
@@ -614,32 +689,44 @@ function App(){
           React.createElement("div",{style:{fontSize:"18px",fontWeight:700,marginTop:"4px"}},totalC+" van "+totalT+" goed"),
           React.createElement("div",{style:{fontSize:"14px",color:"#888",marginTop:"8px"}},pct>=80?"Goed voorbereid op de toets!":pct>=60?"Bijna! Oefen de rode paragrafen nog.":"Bestudeer de theorie nog eens goed.")
         ),
-        // Per-section breakdown
-        React.createElement("div",{style:{fontSize:"14px",fontWeight:700,color:"#ffd93d",marginBottom:"10px"}},"Resultaat per paragraaf:"),
-        SECTIONS.map(sec=>{const data=bySection[sec.id];if(!data)return null;
-          const ok=data.correct===data.total;
-          return React.createElement("div",{key:sec.id,style:{display:"flex",alignItems:"center",gap:"10px",padding:"10px 14px",borderRadius:"10px",background:ok?"rgba(107,203,119,0.08)":"rgba(255,107,107,0.08)",border:"1px solid "+(ok?"rgba(107,203,119,0.2)":"rgba(255,107,107,0.2)"),marginBottom:"6px"}},
-            React.createElement("div",{style:{width:"28px",height:"28px",borderRadius:"7px",background:sec.color+"20",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"14px",color:sec.color,fontWeight:800,flexShrink:0}},sec.id.split(".")[1]),
-            React.createElement("div",{style:{flex:1,fontSize:"13px",fontWeight:600}},"§"+sec.id+" "+sec.name),
-            React.createElement("div",{style:{fontSize:"13px",fontWeight:800,color:ok?"#6bcb77":"#ff6b6b"}},ok?"✓ Goed":"✗ Fout")
-          )
-        }),
+        // Per-section/opgave breakdown
+        diagMode?React.createElement("div",null,
+          React.createElement("div",{style:{fontSize:"14px",fontWeight:700,color:"#48dbfb",marginBottom:"10px"}},"Resultaat per opgave:"),
+          [1,2,3,4,5,6].map(function(op){
+            var items=ptAnswers.filter(function(a){return a.opgave===op});if(!items.length)return null;
+            var opOk=items.filter(function(a){return a.ok}).length;
+            var allOk=opOk===items.length;
+            return React.createElement("div",{key:op,style:{display:"flex",alignItems:"center",gap:"10px",padding:"10px 14px",borderRadius:"10px",background:allOk?"rgba(107,203,119,0.08)":"rgba(255,107,107,0.08)",border:"1px solid "+(allOk?"rgba(107,203,119,0.2)":"rgba(255,107,107,0.2)"),marginBottom:"6px"}},
+              React.createElement("div",{style:{width:"28px",height:"28px",borderRadius:"7px",background:"#48dbfb20",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"14px",color:"#48dbfb",fontWeight:800,flexShrink:0}},op),
+              React.createElement("div",{style:{flex:1,fontSize:"13px",fontWeight:600}},"Opgave "+op),
+              React.createElement("div",{style:{fontSize:"13px",fontWeight:800,color:allOk?"#6bcb77":"#ff6b6b"}},opOk+"/"+items.length))
+          })
+        ):React.createElement("div",null,
+          React.createElement("div",{style:{fontSize:"14px",fontWeight:700,color:"#ffd93d",marginBottom:"10px"}},"Resultaat per paragraaf:"),
+          SECTIONS.map(sec=>{const data=bySection[sec.id];if(!data)return null;
+            const ok=data.correct===data.total;
+            return React.createElement("div",{key:sec.id,style:{display:"flex",alignItems:"center",gap:"10px",padding:"10px 14px",borderRadius:"10px",background:ok?"rgba(107,203,119,0.08)":"rgba(255,107,107,0.08)",border:"1px solid "+(ok?"rgba(107,203,119,0.2)":"rgba(255,107,107,0.2)"),marginBottom:"6px"}},
+              React.createElement("div",{style:{width:"28px",height:"28px",borderRadius:"7px",background:sec.color+"20",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"14px",color:sec.color,fontWeight:800,flexShrink:0}},sec.id.split(".")[1]),
+              React.createElement("div",{style:{flex:1,fontSize:"13px",fontWeight:600}},"§"+sec.id+" "+sec.name),
+              React.createElement("div",{style:{fontSize:"13px",fontWeight:800,color:ok?"#6bcb77":"#ff6b6b"}},ok?"✓ Goed":"✗ Fout"))
+          })
+        ),
         // Wrong answers detail
         ptAnswers.filter(a=>!a.ok).length>0&&React.createElement("div",{style:{marginTop:"16px"}},
-          React.createElement("div",{style:{fontSize:"14px",fontWeight:700,color:"#ff6b6b",marginBottom:"8px"}},"❌ Foute antwoorden:"),
+          React.createElement("div",{style:{fontSize:"14px",fontWeight:700,color:"#ff6b6b",marginBottom:"8px"}},"Foute antwoorden:"),
           ptAnswers.filter(a=>!a.ok).map((w,i)=>React.createElement("div",{key:i,style:{background:"rgba(255,107,107,0.08)",border:"1px solid rgba(255,107,107,0.2)",borderRadius:"10px",padding:"10px 14px",marginBottom:"6px"}},
-            React.createElement("div",{style:{fontSize:"11px",fontWeight:700,color:getSection(w.sectionId).color,marginBottom:"2px"}},"§"+w.sectionId+" "+w.sectionName),
-            React.createElement("div",{style:{fontSize:"13px",color:"#ccc"}},w.q),
+            React.createElement("div",{style:{fontSize:"11px",fontWeight:700,color:getSection(w.sectionId)?getSection(w.sectionId).color:"#48dbfb",marginBottom:"2px"}},diagMode?"Opgave "+w.opgave:"§"+w.sectionId+" "+w.sectionName),
+            React.createElement("div",{style:{fontSize:"13px",color:"#ccc",whiteSpace:"pre-line"}},w.q),
             React.createElement("div",{style:{fontSize:"12px",color:"#ff6b6b",marginTop:"2px"}},"Jouw antwoord: "+w.chosen),
             React.createElement("div",{style:{fontSize:"12px",color:"#6bcb77",marginTop:"2px"}},"Goed: "+w.correctAns)
           ))
         ),
         // Action buttons
         React.createElement("div",{style:{display:"flex",gap:"8px",marginTop:"20px"}},
-          React.createElement("button",{style:{flex:1,padding:"12px 16px",borderRadius:"12px",border:"none",background:"#ffd93d",color:"#000",fontSize:"14px",fontWeight:700,cursor:"pointer"},onClick:()=>startProeftoets(false)},"🔄 Opnieuw"),
-          React.createElement("button",{style:{flex:1,padding:"12px 16px",borderRadius:"12px",border:"2px solid #ffd93d",background:"transparent",color:"#ffd93d",fontSize:"14px",fontWeight:700,cursor:"pointer"},onClick:()=>setScreen("home")},"← Overzicht")
+          React.createElement("button",{style:{flex:1,padding:"12px 16px",borderRadius:"12px",border:"none",background:diagMode?"#48dbfb":"#ffd93d",color:"#000",fontSize:"14px",fontWeight:700,cursor:"pointer"},onClick:diagMode?startDiag:()=>startProeftoets(false)},"🔄 Opnieuw"),
+          React.createElement("button",{style:{flex:1,padding:"12px 16px",borderRadius:"12px",border:"2px solid "+(diagMode?"#48dbfb":"#ffd93d"),background:"transparent",color:diagMode?"#48dbfb":"#ffd93d",fontSize:"14px",fontWeight:700,cursor:"pointer"},onClick:()=>setScreen("home")},"← Overzicht")
         ),
-        React.createElement("div",{style:{textAlign:"center",color:"#444",fontSize:"11px",marginTop:"20px",paddingBottom:"40px"}},"Proeftoets · 12 paragrafen · H5+H6")
+        React.createElement("div",{style:{textAlign:"center",color:"#444",fontSize:"11px",marginTop:"20px",paddingBottom:"40px"}},diagMode?"Diagnostische Toets · 6 opgaven · 21 vragen":"Proeftoets · 12 paragrafen · H5+H6")
       )
     );
   }
