@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Studieplan Stijn – PW maart 2026</title>
+<title>Studieplan – PW maart 2026</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>*{box-sizing:border-box;margin:0;padding:0}body{background:linear-gradient(160deg,#0a0e1a,#111830 50%,#0c1020);font-family:'Nunito',sans-serif;color:#ddd;min-height:100vh}button{font-family:inherit}button:active{transform:scale(0.97)}</style>
@@ -369,7 +369,7 @@ const pBar=(pct,c,h)=>React.createElement("div",{style:{height:h||"6px",borderRa
 return React.createElement("div",{style:{minHeight:"100vh"}},
 // Header
 React.createElement("div",{style:{background:"rgba(0,0,0,0.3)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+bdr,padding:"14px 20px",display:"flex",justifyContent:"space-between",alignItems:"center",position:"sticky",top:0,zIndex:50}},
-  React.createElement("div",{style:{fontSize:"17px",fontWeight:900,background:"linear-gradient(90deg,#ff6b6b,#feca57,#48dbfb,#6bcb77)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}},"Studieplan Stijn"),
+  React.createElement("div",{style:{fontSize:"17px",fontWeight:900,background:"linear-gradient(90deg,#ff6b6b,#feca57,#48dbfb,#6bcb77)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}},"Studieplan "+curUser.charAt(0).toUpperCase()+curUser.slice(1)),
   React.createElement("div",{style:{display:"flex",alignItems:"center",gap:"8px"}},
     React.createElement("button",{style:{fontSize:"11px",color:"#4d96ff",background:"rgba(77,150,255,0.1)",border:"1px solid rgba(77,150,255,0.2)",borderRadius:"8px",padding:"3px 9px",cursor:"pointer",fontFamily:"inherit",fontWeight:700},onClick:()=>setShowPicker(v=>!v)},"👤 "+curUser),
     React.createElement("span",{style:{fontSize:"12px",color:"#666"}},"PW maart 2026"))),
@@ -428,7 +428,7 @@ return React.createElement("div",{key:phase.id,style:{marginBottom:"16px"}},
           trLink&&React.createElement("a",{href:trLink,style:{display:"inline-flex",alignItems:"center",gap:"3px",fontSize:"10px",fontWeight:700,padding:"3px 8px",borderRadius:"6px",border:"1px solid "+(tr&&tr.pct>=80?"rgba(107,203,119,0.3)":task.color+"30"),background:(tr&&tr.pct>=80)?"rgba(107,203,119,0.12)":task.color+"10",color:(tr&&tr.pct>=80)?"#6bcb77":task.color,textDecoration:"none"}},"🎯 Trainer",tr?" "+tr.pct+"%":" →"),
           !sm.free&&TS[task.id]&&TS[task.id].secs.length>0&&TS[task.id].secs.map(sid=>{const sd=tr&&tr.secData&&tr.secData[sid];const m=sd&&sd.mastered;const sPct=sd&&sd.total>0?sd.pct:null;const dotCol=m?"#6bcb77":sPct!==null?(sPct>=60?"#ffd93d":"#ff6b6b"):"#555";return React.createElement("span",{key:sid,style:{fontSize:"9px",padding:"1px 5px",borderRadius:"4px",fontWeight:700,background:m?"rgba(107,203,119,0.15)":sPct!==null?"rgba(255,255,255,0.06)":"rgba(255,255,255,0.03)",color:m?"#6bcb77":sPct!==null?dotCol:"#555",display:"inline-flex",alignItems:"center",gap:"2px"}},React.createElement("span",{style:{width:"5px",height:"5px",borderRadius:"50%",background:dotCol,display:"inline-block"}}),sid+(sPct!==null?" "+sPct+"%":"")+(m?" ✓":""))}))),
       React.createElement("span",{style:{fontSize:"11px",color:"#555",marginTop:"2px"}},task.dur+" min"))}),
-    isExp&&dayT===0&&day.exam&&React.createElement("div",{style:{padding:"16px",textAlign:"center"}},React.createElement("div",{style:{fontSize:"32px",marginBottom:"8px"}},"🎉"),React.createElement("div",{style:{fontSize:"15px",fontWeight:700,color:"#6bcb77"}},"Proefwerkweek voorbij!"),React.createElement("div",{style:{fontSize:"12px",color:"#777"}},"Goed gedaan, Stijn!")))}))}),
+    isExp&&dayT===0&&day.exam&&React.createElement("div",{style:{padding:"16px",textAlign:"center"}},React.createElement("div",{style:{fontSize:"32px",marginBottom:"8px"}},"🎉"),React.createElement("div",{style:{fontSize:"15px",fontWeight:700,color:"#6bcb77"}},"Proefwerkweek voorbij!"),React.createElement("div",{style:{fontSize:"12px",color:"#777"}},"Goed gedaan, "+curUser.charAt(0).toUpperCase()+curUser.slice(1)+"!")))}))}),
 
 // ====== SUBJECTS VIEW ======
 view==="subjects"&&subjects.map(subj=>{const st=subSt(subj),c=subCol[subj],exam=EXAMS.find(e=>e.subject===subj),si=SUBJ_INFO[subj]||{},hasTr=!!TRAINER_META[subj],isSoon=si.badge==="BINNENKORT";
