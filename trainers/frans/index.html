@@ -116,6 +116,36 @@ const ETRE_AVOIR_MIX = [
   {zin:"Elle ___ mal à la tête.",nl:"zij heeft hoofdpijn",a:"a",verb:"avoir",reden:"pijn"},
 ];
 
+// ===== VERB CONJUGATIONS (all 25 verbs) =====
+const PRONOUNS = ["je","tu","il/elle","nous","vous","ils/elles"];
+const VERB_CONJ = [
+  {inf:"aider",nl:"helpen",type:"er",forms:["aide","aides","aide","aidons","aidez","aident"]},
+  {inf:"regarder",nl:"bekijken",type:"er",forms:["regarde","regardes","regarde","regardons","regardez","regardent"]},
+  {inf:"adorer",nl:"dol zijn op",type:"er",forms:["adore","adores","adore","adorons","adorez","adorent"]},
+  {inf:"visiter",nl:"bezoeken",type:"er",forms:["visite","visites","visite","visitons","visitez","visitent"]},
+  {inf:"manger",nl:"eten",type:"er-g",forms:["mange","manges","mange","mangeons","mangez","mangent"]},
+  {inf:"détester",nl:"een hekel hebben aan",type:"er",forms:["déteste","détestes","déteste","détestons","détestez","détestent"]},
+  {inf:"commencer",nl:"beginnen",type:"er-c",forms:["commence","commences","commence","commençons","commencez","commencent"]},
+  {inf:"parler",nl:"praten",type:"er",forms:["parle","parles","parle","parlons","parlez","parlent"]},
+  {inf:"payer",nl:"betalen",type:"er-y",forms:["paie/paye","paies/payes","paie/paye","payons","payez","paient/payent"]},
+  {inf:"préférer",nl:"liever hebben",type:"er-acc",forms:["préfère","préfères","préfère","préférons","préférez","préfèrent"]},
+  {inf:"organiser",nl:"organiseren",type:"er",forms:["organise","organises","organise","organisons","organisez","organisent"]},
+  {inf:"rentrer",nl:"naar huis gaan",type:"er",forms:["rentre","rentres","rentre","rentrons","rentrez","rentrent"]},
+  {inf:"chercher",nl:"zoeken",type:"er",forms:["cherche","cherches","cherche","cherchons","cherchez","cherchent"]},
+  {inf:"trouver",nl:"vinden",type:"er",forms:["trouve","trouves","trouve","trouvons","trouvez","trouvent"]},
+  {inf:"aimer",nl:"houden van",type:"er",forms:["aime","aimes","aime","aimons","aimez","aiment"]},
+  {inf:"acheter",nl:"kopen",type:"er-acc",forms:["achète","achètes","achète","achetons","achetez","achètent"]},
+  {inf:"changer",nl:"veranderen",type:"er-g",forms:["change","changes","change","changeons","changez","changent"]},
+  {inf:"essayer",nl:"passen, proberen",type:"er-y",forms:["essaie/essaye","essaies/essayes","essaie/essaye","essayons","essayez","essaient/essayent"]},
+  {inf:"habiter",nl:"wonen",type:"er",forms:["habite","habites","habite","habitons","habitez","habitent"]},
+  {inf:"arriver",nl:"aankomen",type:"er",forms:["arrive","arrives","arrive","arrivons","arrivez","arrivent"]},
+  {inf:"donner",nl:"geven",type:"er",forms:["donne","donnes","donne","donnons","donnez","donnent"]},
+  {inf:"apprendre",nl:"leren",type:"irreg",forms:["apprends","apprends","apprend","apprenons","apprenez","apprennent"]},
+  {inf:"avoir",nl:"hebben",type:"irreg",forms:["ai","as","a","avons","avez","ont"]},
+  {inf:"être",nl:"zijn",type:"irreg",forms:["suis","es","est","sommes","êtes","sont"]},
+  {inf:"travailler",nl:"werken",type:"er",forms:["travaille","travailles","travaille","travaillons","travaillez","travaillent"]},
+];
+
 const VOC131 = [
   ["le dessin","het tekenen"],["le musée","het museum"],["le secret","het geheim"],["le rendez-vous","de afspraak"],
   ["il fait chaud","het is warm"],["riche","rijk"],["préféré(e)","lievelings-"],["enthousiaste","enthousiast"],
@@ -134,6 +164,7 @@ const VOC131 = [
 
 const SECTIONS = [
   {id:"werkwoorden",title:"Werkwoorden NL → FR",icon:"📝",desc:"25 werkwoorden vertalen"},
+  {id:"vervoegingen",title:"Vervoegingen",icon:"🔄",desc:"Alle 25 werkwoorden vervoegen"},
   {id:"etre",title:"Être (zijn)",icon:"🔵",desc:"Vervoeging van être"},
   {id:"avoir",title:"Avoir (hebben)",icon:"🟢",desc:"Vervoeging van avoir"},
   {id:"bezittelijk",title:"Bezittelijk voornaamwoord",icon:"👤",desc:"mon/ma/mes, ton/ta/tes..."},
@@ -194,6 +225,21 @@ function genVocQs(n=12){
     });
 }
 
+function genConjQs(n=12){
+  const qs=[];
+  const verbs=[...VERB_CONJ].sort(()=>Math.random()-0.5);
+  for(const v of verbs){
+    // Pick 1-2 random pronouns per verb
+    const pIdxs=[0,1,2,3,4,5].sort(()=>Math.random()-0.5).slice(0,Math.random()>0.5?2:1);
+    for(const pi of pIdxs){
+      const subj=PRONOUNS[pi];
+      const dispSubj=(subj==="je"&&/^[aeéèêiouâ]/i.test(v.forms[pi]))?"j'":subj;
+      qs.push({q:"Vervoeg "+v.inf+" ("+v.nl+"):\n"+dispSubj+" _____", a:v.forms[pi], secId:"vervoegingen"});
+    }
+  }
+  return qs.sort(()=>Math.random()-0.5).slice(0,n);
+}
+
 function genVerbContextQs(n=8){
   return [...VERB_CONTEXT].sort(()=>Math.random()-0.5).slice(0,n)
     .map(c=>({q:"Vul de juiste vorm in ("+c.verb+"):\n"+c.zin+"\n("+c.nl+")", a:c.a, secId:"werkwoorden"}));
@@ -208,6 +254,7 @@ function genDtoetsQs(){
   const qs = [
     ...genVerbQs(3),
     ...genVerbContextQs(2),
+    ...genConjQs(2),
     ...genEtreQs().slice(0,2),
     ...genAvoirQs().slice(0,2),
     ...genEtreAvoirMixQs(2),
@@ -229,6 +276,13 @@ const THEORY = {
     {type:"explain",title:"-ER werkwoorden vervoegen",text:"De meeste werkwoorden eindigen op **-er**. Je vervoegt ze zo:\n\n**Stam** = werkwoord zonder -er\n**aimer** → stam = **aim-**\n\nj'aim**e**, tu aim**es**, il aim**e**\nnous aim**ons**, vous aim**ez**, ils aim**ent**\n\nLet op: je hoort de uitgangen -e, -es, -ent **niet** als je het woord uitspreekt!"},
     {type:"example",title:"Voorbeelden",text:"**habiter** (wonen): j'habite, tu habites, il habite\n**chercher** (zoeken): je cherche, tu cherches, il cherche\n**travailler** (werken): je travaille, tu travailles, il travaille\n\nHet patroon is altijd hetzelfde!"},
     {type:"check",question:"Wat is de stam van 'regarder'?",answer:"regard-",hint:"Haal -er weg van het werkwoord"},
+  ],
+  vervoegingen: [
+    {type:"explain",title:"Werkwoorden vervoegen",text:"Bij het proefwerk moet je de **25 werkwoorden** kunnen vervoegen. De meeste zijn **regelmatige -ER werkwoorden**.\n\nStap 1: Haal **-er** eraf → je houdt de **stam** over\nStap 2: Plak de juiste **uitgang** erachter:\n\nje → **-e**\ntu → **-es**\nil/elle/on → **-e**\nnous → **-ons**\nvous → **-ez**\nils/elles → **-ent**"},
+    {type:"example",title:"Regelmatig: parler",text:"Stam = **parl-**\n\nje **parle** — tu **parles** — il **parle**\nnous **parlons** — vous **parlez** — ils **parlent**\n\nDit patroon geldt voor: aider, regarder, adorer, visiter, détester, organiser, rentrer, chercher, trouver, aimer, habiter, arriver, donner, travailler"},
+    {type:"explain",title:"Bijzondere -ER werkwoorden",text:"Sommige -ER werkwoorden hebben een **spellingwijziging** bij nous of bij je/tu/il/ils:\n\n**manger / changer** → nous mange**ons** / change**ons** (extra -e- vóór -ons)\n**commencer** → nous commen**çons** (ç vóór -ons)\n**payer / essayer** → je pa**ie**/pa**ye** (y mag → i vóór stomme -e)\n**préférer** → je pré**fère** (é → è vóór stomme -e)\n**acheter** → j'a**chète** (e → è vóór stomme -e)"},
+    {type:"explain",title:"Onregelmatige werkwoorden",text:"Drie werkwoorden zijn **onregelmatig** — je moet ze uit je hoofd kennen:\n\n**être** (zijn): suis, es, est, sommes, êtes, sont\n**avoir** (hebben): ai, as, a, avons, avez, ont\n**apprendre** (leren): apprends, apprends, apprend, apprenons, apprenez, apprennent\n\nLet op bij **apprendre**: dubbel-n in ils/elles apprenn**ent**!"},
+    {type:"check",question:"Vervoeg 'manger' met nous: nous _____",answer:"mangeons",hint:"Bij -ger werkwoorden komt er een extra -e- vóór -ons"},
   ],
   etre: [
     {type:"explain",title:"Être = zijn",text:"**Être** is een onregelmatig werkwoord. Je moet alle vormen uit je hoofd kennen:\n\nje **suis** = ik ben\ntu **es** = jij bent\nil/elle **est** = hij/zij is\non **est** = men is\nnous **sommes** = wij zijn\nvous **êtes** = u bent / jullie zijn\nils **sont** = zij zijn (mannelijk)\nelles **sont** = zij zijn (vrouwelijk)"},
@@ -287,6 +341,7 @@ function App(){
     let qs;
     switch(secId){
       case"werkwoorden":qs=[...genVerbQs(7),...genVerbContextQs(5)].sort(()=>Math.random()-0.5).slice(0,10);break;
+      case"vervoegingen":qs=genConjQs(12);break;
       case"etre":qs=[...genEtreQs(),...genEtreAvoirMixQs(4).filter(q=>q.secId==="etre")].sort(()=>Math.random()-0.5);break;
       case"avoir":qs=[...genAvoirQs(),...genEtreAvoirMixQs(4).filter(q=>q.secId==="avoir")].sort(()=>Math.random()-0.5);break;
       case"bezittelijk":qs=genBezQs(10);break;
