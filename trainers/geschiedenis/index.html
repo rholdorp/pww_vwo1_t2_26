@@ -30,6 +30,7 @@ const SECTIONS=[
   {id:"p41",title:"Par 4.1: Van stadstaat tot wereldrijk",icon:"\u2694\uFE0F",desc:"Veroveringen, Pax Romana, sterk leger, slaven"},
   {id:"p42",title:"Par 4.2: Koningstijd, republiek, keizertijd",icon:"\u{1F451}",desc:"Patrici\u00EBrs, plebejers, Julius Caesar, Augustus"},
   {id:"p43",title:"Par 4.3: Leven in het Romeinse Rijk",icon:"\u{1F3DB}\u{FE0F}",desc:"De limes, Germanen, villa's, Romeinse invloed"},
+  {id:"samenvatting",title:"Samenvatting alle stof",icon:"\u{1F4DA}",desc:"Volledige samenvatting H4 als naslagwerk",noQuiz:true},
 ];
 
 const THEORY={
@@ -133,6 +134,160 @@ const QUESTIONS={
   ],
 };
 
+const SUMMARY=[
+  {title:"\u00A7 4.1 — Van stadstaat tot wereldrijk",sections:[
+    {sub:"Van dorpje naar stadstaat",items:[
+      "Rome was in de 8e eeuw v.Chr. een klein dorpje aan de rivier de **Tiber** in Italië.",
+      "De **Etrusken**, het machtigste volk in het gebied, maakten van Rome een **stadstaat** — een stad die zichzelf bestuurt.",
+      "Rome lag op een goede plek: je kon er de Tiber oversteken. Daardoor liepen de **handelswegen** langs Rome, tussen de Etruskische gebieden (noorden) en de **Griekse koloniën** (zuiden).",
+      "De inwoners van Rome profiteerden van de handel. Toen de macht van de Romeinen toenam, verdreven zij de Etrusken.",
+      "Vanaf de 3e eeuw v.Chr. heersten de Romeinen over bijna heel **Italië**.",
+      "Romeinse soldaten waren boeren die vochten voor oorlogsbuit. Na een oorlog gingen ze terug naar hun boerderij. Maar toen ze steeds vaker van huis vochten, raakten hun bedrijven verwaarloosd.",
+      "Rijke Romeinen kochten deze boerderijen op → grote **boerenbedrijven** met slaven. Arme boeren trokken naar de stad om werk te zoeken.",
+    ]},
+    {sub:"Veroveringen",items:[
+      "Door bevolkingsgroei ontstond een **voedseltekort**. Rome had niet genoeg landbouwgrond en moest voedsel invoeren via handel.",
+      "Conflict met **Carthago**, een machtige handelsstad in Noord-Afrika. De Romeinen bouwden een **oorlogsvloot** en de havenstad **Ostia**, en leerden op zee vechten.",
+      "Er waren **drie oorlogen** (Punische Oorlogen) nodig om de Carthagers te verslaan. De Carthaagse generaal **Hannibal Barkas** viel Rome aan met een enorm leger en zelfs olifanten vanuit het noorden. Rome hield stand en maakte in **146 v.Chr.** Carthago letterlijk met de grond gelijk.",
+      "Hierna veroverden de Romeinen alle gebieden rond de **Middellandse Zee**.",
+      "Generaal **Julius Caesar** veroverde in de 1e eeuw v.Chr. **Gallië** (nu Frankrijk en België). Generaals na hem veroverden nog meer gebieden.",
+      "In het jaar **117** was het Romeinse Rijk het **grootst**. Daarna kwamen de veroveringen tot een einde.",
+      "Het leger bewaakte voortaan de grenzen van het **imperium** en zorgde voor orde en rust.",
+    ]},
+    {sub:"Leren van de Grieken",items:[
+      "De Romeinen bewonderden de Griekse cultuur. Van de Griekse koloniën in de buurt van Rome hadden ze al het **alfabet** en het **gebruik van geld** overgenomen.",
+      "Toen Romeinse soldaten in **146 v.Chr.** Griekenland veroverden, namen ze talloze Griekse geleerden, artsen, architecten en kunstenaars mee als **slaven** naar Rome.",
+      "Daar bouwden deze Grieken tempels en andere gebouwen net zoals in Griekenland, maakten beelden en kunstvoorwerpen.",
+      "Rijke families kochten graag een Griekse geleerde als **leraar** voor hun kinderen. 'Grieks' was in de mode!",
+      "De cultuur die toen ontstond, heet de **Grieks-Romeinse** of **Klassieke cultuur**.",
+    ]},
+    {sub:"Sterk leger, rechte wegen",items:[
+      "Het Romeinse leger kon zo'n groot gebied veroveren dankzij hun **sterke beroepsleger**.",
+      "Soldaten waren jaren van huis en kregen **salaris**. Soldaat-zijn was een **beroep**.",
+      "Het leger was strak georganiseerd: iedere soldaat wist hoe hij zijn wapens moest gebruiken en moest samenwerken in een gevecht. Andere volken kenden dit meestal niet.",
+      "Een stormloop op het Romeinse beroepsleger was **kansloos** — en dan sloegen de Romeinen keihard terug, soms door een heel volk uit te moorden.",
+      "De Romeinen legden overal **rechte wegen** aan (kaarsrecht en verhard), zodat soldaten, boodschappers en legioenen zich snel konden verplaatsen.",
+      "Er lagen honderden wegen in het Rijk, met een totale lengte van **80.000 kilometer**.",
+      "Aan belangrijke wegen lag om de 25 kilometer een **herberg** van de overheid. Een boodschapper legde zo'n **80 km per dag** af.",
+    ]},
+    {sub:"Pax Romana (Romeinse Vrede)",items:[
+      "Hoe bleven de Romeinen de baas in een veroverd gebied? Met de tactiek van **'verdeel en heers'**.",
+      "Ze werden vrienden met het ene volk en hielpen dat de vijanden van dat volk te verslaan. Of ze nodigden een volk uit om op een goede plek in het Rijk te komen wonen.",
+      "Voorbeeld: de **Bataven** (in de Betuwe). Dit volk hoefde geen belasting te betalen, maar moest wel meevechten in het Romeinse leger.",
+      "Een overwonnen volk mocht de **eigen cultuur** behouden, en dus ook de eigen goden. Dat maakte de bezetting makkelijker te accepteren.",
+      "In het Rijk was het van **27 v.Chr. tot 180 n.Chr.** vrede — de **Pax Romana** (Romeinse vrede). Reizen over de goede Romeinse wegen was dus veilig, en daar profiteerden handelaren van.",
+      "Een man kon ook in het **leger** gaan: hij had jarenlang onderdak en gratis eten, en kreeg ook salaris. Wie dapper was en goed kon vechten, kon een **hogere rang** krijgen.",
+      "Na zijn diensttijd kon hij zelfs **Romeins burger** worden — dan had hij de meeste rechten.",
+    ]},
+    {sub:"Slaven doen het werk",items:[
+      "Dat zoveel Romeinen in het leger konden vechten, kon alleen doordat **slaven** een groot deel van het werk deden.",
+      "Slaven waren strijders van een vijand die waren **gevangen genomen**. Maar de Romeinen namen in veroverde gebieden ook miljoenen gewone mannen en vrouwen gevangen om die als slaaf te verkopen. Al hun nakomelingen waren automatisch ook slaven.",
+      "Slaven deden het huishouden, werkten op het land, in steengroeven, mijnen en kleine bedrijven, en roeiden de schepen.",
+      "Ze stonden **te koop op de markt** met een bordje waarop je kon lezen waar ze goed in waren: 'lezen en schrijven', 'koken'...",
+      "Slaven die werkten als arts, leraar of architect hadden het niet slecht — als hun eigenaar hen goed behandelde.",
+      "Maar ze waren **zijn bezit** en hij kon met ze doen wat hij wilde.",
+      "Soms gaf een eigenaar een slaaf de **vrijheid**, of mocht een slaaf geld sparen om zijn eigen vrijheid te kopen. Maar pas zijn kinderen kregen alle **burgerrechten**.",
+      "Sommige **vrijgelatenen** bleven werken voor hun vroegere meesters. Ze kregen loon en werden dus niet arm. En soms ging een vrijgelatene handeldrijven, werd rijk en kocht **zelf slaven**.",
+    ]},
+  ]},
+  {title:"\u00A7 4.2 — Koningstijd, republiek, keizertijd",sections:[
+    {sub:"Van koningstijd naar republiek",items:[
+      "Toen Rome nog klein was, werd de stad bestuurd door **koningen**. Ze hadden veel macht en werden geadviseerd door een groep wijze mannen: de **Senaat**.",
+      "Rome heeft **zeven koningen** gehad. Over deze periode is weinig bekend, maar historici weten dat de Romeinen hun **laatste koning wegjoegen**. Hij was wreed en verwaand en trok zich niets aan van de Senaat.",
+      "De Romeinen spraken af dat **nooit meer de macht van vader op zoon** mocht overgaan en dat nooit meer één man alle macht mocht krijgen.",
+      "Rome werd in **509 v.Chr.** een **republiek**. De Senaat bleef bestaan. Aan het hoofd stonden twee **consuls**, die werden gekozen door alle Romeinse burgers en voor maar **één jaar**.",
+      "Ook voor elke andere belangrijke baan in het bestuur waren **verkiezingen**. Romeinse burgers konden alleen stemmen in de stad Rome.",
+      "**Vrouwen** hadden geen stemrecht en konden ook niet gekozen worden.",
+      "Had je een belangrijke bestuursbaan gehad, dan kon je daarna benoemd worden tot **senator**. Officieel gaf de Senaat alleen advies aan de twee consuls, maar een advies van de Senaat woog natuurlijk zwaar.",
+    ]},
+    {sub:"Plebejers en volkstribunen",items:[
+      "In de tijd van de koningen bestond de Senaat uit mannen uit de **elite** (patriciërs). Zij mochten niet trouwen met iemand die niet uit de elite kwam. Senatoren kwamen altijd uit dezelfde families.",
+      "Toen de bevolking van Rome toenam, woonden er steeds meer Romeinse burgers die niet bij de elite hoorden: de **plebejers**. Hoewel ze mochten stemmen, hadden ze maar weinig invloed op het bestuur.",
+      "In **494 v.Chr.** kwamen de plebejers in opstand en dreigden Rome te verlaten. Dat was een serieus dreigement, want de plebejers leverden de meeste soldaten voor het leger.",
+      "Als oplossing mochten Romeinse burgers ieder jaar **tien volkstribunen** kiezen. Deze moesten voor de belangen van **alle** burgers opkomen, dus ook voor die van de plebejers.",
+      "De volkstribunen kregen **vetorecht**: daarmee konden ze elke beslissing van de Senaat of van de consuls tegenhouden.",
+      "Ook moest voortaan één van de twee consuls een **plebejer** zijn en werden de belangrijkste wetten opgeschreven **in steen** en voor iedereen zichtbaar. Zo wist elke burger welke rechten hij had.",
+    ]},
+    {sub:"Proletariërs",items:[
+      "Plebejers hadden een inkomen doordat ze een winkeltje hadden of een **ambacht** uitoefenden. Ze hadden het lang niet zo goed als de elite, maar veel beter dan een steeds groter wordende groep in de stad: de **proletariërs**.",
+      "Die hadden niets: geen bezittingen, geen inkomen, geen stemrecht. Soms was een plebejer zo arm dat hij zijn kinderen als **slaaf** verkocht.",
+      "Proletariërs woonden in gehuurde kamers in een **insula**, een soort flat van ongeveer vijf verdiepingen. Hoe hoger je woonde, hoe minder huur je hoefde te betalen. Op de bovenste verdieping, die van hout was, woonden proletariërs.",
+      "Er waren heel veel plebejers en proletariërs in Rome. De overheid probeerde hen tevreden te houden door **gratis graan** uit te delen en te zorgen voor ontspanning, zoals **sport en amusement**.",
+    ]},
+    {sub:"In het amfitheater",items:[
+      "De overheid organiseerde spelen in het **amfitheater**. De toegang was voor iedereen **gratis**, net als het eten en drinken.",
+      "**Gladiatoren** bevochten elkaar soms op leven en dood tijdens de spelen. Het publiek vond dit prachtig. Hoe meer bloed er vloeide, hoe enthousiaster men was.",
+      "De meeste gladiatoren waren **slaven of misdadigers** die ter dood waren veroordeeld. In gladiatorenscholen leerden zij alles wat nodig was om een goede vechter te worden.",
+      "Wie **drie jaar** als gladiator overleefde, kreeg de **vrijheid**. Soms bleef een vrijgelaten gladiator daarna zijn beroep uitoefenen — hij kon er veel geld mee verdienen.",
+      "Andere onderdelen van de spelen: gevechten tussen **dieren** (leeuwen tegen beren, wolven tegen een tijger). Ook werden vaak veroordeelde misdadigers terechtgesteld.",
+      "Rijke Romeinen organiseerden ook spelen, vaak om stemmen te krijgen bij **verkiezingen**. Er werden zelfs **zeegevechten** georganiseerd: de vloer van het amfitheater werd onder water gezet, waarna er hongerige krokodillen werden losgelaten!",
+      "In het **Circus Maximus** vonden **wagenrennen** plaats — de paardenrenbaan bood plaats voor meer dan **150.000 toeschouwers**.",
+    ]},
+    {sub:"Julius Caesar",items:[
+      "Toen Julius Caesar na zijn verovering van Gallië terugkeerde in Rome, was hij **schatrijk en enorm populair**. Hij had de Galliërs hoge belastingen laten betalen en honderdduizenden van hen als slaaf verkocht.",
+      "Zo kon hij zijn soldaten gul belonen. Zij steunden hem altijd en overal. De Senaat organiseerde niet één triomftocht voor Caesar, maar vier! Rome vierde dagenlang feest.",
+      "Geen wonder dat Caesar als **consul** werd gekozen. Maar er waren meer generaals die hun veroveringen wilden gebruiken en meer macht wilden.",
+      "Toen tussen enkele van hen een **burgeroorlog** ontstond, benoemde de Senaat Caesar tot **dictator** — hij kreeg zes maanden veel macht, zodat hij de orde kon herstellen.",
+      "Lukte dat niet, dan koos de Senaat opnieuw een dictator. Caesar werd na zes maanden opnieuw tot dictator benoemd, maar nu voor **één jaar**. Hij was zelfs **'dictator voor het leven'**.",
+      "Maar de Romeinen hadden toch de Republiek gesticht om te **voorkomen dat één man alle macht** kreeg? Veel senatoren vreesden dat Caesar koning wilde worden.",
+      "Daarom vermoordden ze hem tijdens een vergadering van de Senaat, op **15 maart 44 v.Chr.**",
+    ]},
+    {sub:"Caesar Augustus",items:[
+      "Na de moord op Caesar kwam er weer een **burgeroorlog**. Eerst tussen Caesars aanhangers en moordenaars, later tussen de aanhangers van Caesar onderling.",
+      "**Octavianus** wist er met een leger een eind aan te maken. Hij was een achterneef van Caesar, die hem had **geadopteerd** als zijn zoon. Octavianus werd consul en dictator.",
+      "Maar hij pakte het slimmer aan dan zijn oom. Toen de burgeroorlog voorbij was, gaf hij al zijn macht **terug aan de Senaat**.",
+      "De senatoren waren hem zo dankbaar dat ze hem de eretitel **Augustus** gaven, 'de verhevene'. Augustus werd de leider van de Senaat.",
+      "Hij noemde zichzelf **'eerste onder gelijken'**. Daarmee liet hij zien dat hij geen koning was en dat hij de macht van de senatoren respecteerde.",
+      "Als erfgenaam van zijn oom gebruikte hij voortaan diens achternaam: **Caesar**. Wij noemen hem nu: **keizer Augustus**.",
+    ]},
+    {sub:"De keizertijd",items:[
+      "Augustus regeerde meer dan **veertig jaar**. Na zijn dood wilde bijna niemand meer terug naar hoe het vóór Augustus was, met alle ruzies en burgeroorlogen.",
+      "De Senaat bleef bestaan, net als de consuls en volkstribunen. Maar er was voortaan ook een **'caesar'**: hij benoemde de belangrijkste ambtenaren, de bestuurders van de provincies, de rechters en de generaals.",
+      "Zo ontstond er naast het bestuur van de Senaat een apart **keizerlijk bestuur** met een soort ministeries.",
+      "Het keizerschap ging officieel niet van vader op zoon, maar in de praktijk kwam een nieuwe keizer meestal uit **de familie van zijn voorganger**. Toch ontstond er vaak een machtsstrijd over een opvolging, zodat uiteindelijk werd besloten om het keizerschap officieel **erfelijk** te maken.",
+      "**Goede keizers** zorgden dat hun relatie met de Senaat, het leger en het volk goed was. Ze bestuurden het Rijk bekwaam.",
+      "Maar er waren ook **slechte keizers** die niet met hun macht konden omgaan. Die volgden elkaar meestal snel op, doordat ze werden **vermoord**.",
+    ]},
+  ]},
+  {title:"\u00A7 4.3 — Leven in het Romeinse Rijk",sections:[
+    {sub:"De limes",items:[
+      "De grens van het enorme Romeinse Rijk werd bewaakt. We gebruiken voor de grens het Latijnse woord **limes**.",
+      "De limes liep dwars door ons land en was de **noordgrens** van het Romeinse Rijk. De grens was niet gesloten. Er werd volop gehandeld met volken aan de andere kant.",
+      "De Romeinse soldaten letten er wel op dat bezoekers van buiten het Rijk **ongewapend** waren en lieten geen grote groepen toe.",
+      "De soldaten woonden in een **castellum** bij de grens. Tussen twee castella stonden op vaste afstanden **wachttorens**.",
+      "Als soldaten snel een bericht tussen de verschillende wachttorens en castella moesten doorgeven, seinden ze dat met **brandende fakkels**.",
+      "Ook knooppunten van belangrijke wegen in het Rijk werden bewaakt. Bijvoorbeeld de **Via Belgica**: deze weg van Keulen naar de kust van de Atlantische Oceaan liep door Zuid-Limburg. Omdat je bij **Maastricht** de rivier de Maas kon oversteken, was daar een castellum.",
+    ]},
+    {sub:"Bruikbaarheid van bronnen",items:[
+      "**Bronnen** geven informatie over het verleden. Als je een vraag hebt over de geschiedenis, zoek je naar bronnen voor een antwoord.",
+      "Je wilt bijvoorbeeld weten wie Julius Caesar was. Als je in een bron daarover informatie vindt, is dat een **bruikbare bron** voor jouw vraag.",
+      "Hoe meer bruikbare bronnen je vindt, hoe beter je jouw vraag kunt beantwoorden.",
+      "Het kan ook andersom: je leest of bekijkt een bron, en bedenkt daar vragen bij. Dan beoordeel jij waar de bron bruikbaar voor is.",
+    ]},
+    {sub:"Germaanse boeren",items:[
+      "Toen de Romeinen in onze streken aankwamen, woonden hier verschillende volken. Ten noorden van de limes noemden we ze samen **'Germanen'** — omdat ze wel dezelfde taal spraken (ook Friezen waren Germanen).",
+      "De Germanen waren **boeren**. Dorpen waren er niet; families hadden wat vee en een stukje grond, verspreid in het gebied van hun volk.",
+      "Iedere boerenfamilie had wat vee en een akker, en ook een stuk bos, om de eigen familie te voeden. De boerderij was van **hout**, had een rieten dak en een vloer van aangestampte aarde.",
+      "Door **ruilhandel** kregen de mensen een product dat ze niet konden maken. Geld was onbekend en ze gebruikten geen geschrift.",
+      "En dan stond er opeens een groot **castellum** in de buurt waar honderden soldaten woonden! Die hadden van alles nodig en dat kon boeren goed uitkomen: belasting betalen, bijvoorbeeld door hen te voorzien van graan, koeienhuiden en paarden.",
+      "Op die manier kwamen er **contacten** tussen Germanen en Romeinen. Toen er meer handel kwam, gingen Germaanse handelaren en hun gezinnen in de buurt van een castellum wonen. Zo ontstonden de **eerste steden** in ons land.",
+    ]},
+    {sub:"Villa's en badhuizen",items:[
+      "Soldaten bleven lange tijd in een gebied wonen. Daarom lieten hun leiders in de buurt van een castellum een **villa rustica** bouwen — een groot **boerenbedrijf**.",
+      "Behalve de woning van de eigenaar en veel grond, hoorden er stallen bij, voorraadschuren en woningen voor **slaven en bedienden**.",
+      "De Romeinen vonden hygiëne belangrijk. Daarvoor bouwden ze badhuizen: **thermen**. Iedereen mocht er komen, ook vrouwen en proletariërs.",
+      "De thermen waren een belangrijke **ontmoetingsplaats** waar mensen handeldreven, discussieerden en roddelden.",
+      "In Heerlen zijn resten van zo'n badhuis gevonden, met koud- en warmwaterbaden, massageruimtes, winkeltjes, nisjes om je kleding in op te bergen, vloerverwarming, een sportschool, een gezondheidscentrum en een **zwembad**.",
+      "Bij **Nijmegen** zijn resten van een amfitheater uit de tweede eeuw gevonden. Archeologen denken dat de tribunes van hout waren, met plaats voor zo'n **12.000 toeschouwers**.",
+    ]},
+    {sub:"Leren van de Romeinen",items:[
+      "In plaats van iets te ruilen, betaalden de Romeinen met **munten**. Zo ontdekten de Germanen de voordelen van geld. Al snel gingen ze dat zelf ook gebruiken, naast de ruilhandel.",
+      "Spiegels, messen, lepels, aardewerk, dakpannen, glaswerk, de draaischijf voor de pottenbakker — er kwam geen eind aan alle **nieuwe voorwerpen en technieken** die de Germanen leerden kennen.",
+      "De Romeinen gingen hier ook **landbouwproducten** verbouwen die ze lekker vonden. Zo leerden de Germanen hoe je een boomgaard en een kruidentuin aanlegt.",
+    ]},
+  ]},
+];
+
 function shuffle(arr){return [...arr].sort(()=>Math.random()-0.5);}
 
 function genQs(secId){
@@ -173,6 +328,10 @@ function App(){
   const openSection=(id,mode)=>{
     setSecId(id);
     setTheoryIdx(0);
+    if(id==="samenvatting"){
+      setScreen("samenvatting");
+      return;
+    }
     if(mode==="theory"){
       setScreen("theory");
     } else {
@@ -218,7 +377,7 @@ function App(){
     React.createElement("div",{style:{maxWidth:640,margin:"0 auto",padding:"16px 14px 60px"}},
       React.createElement("div",{style:{background:cBg,borderRadius:16,padding:18,border:"1px solid "+bdr,marginBottom:16,textAlign:"center"}},
         React.createElement("div",{style:{display:"flex",justifyContent:"space-around",marginBottom:12}},
-          React.createElement("div",null,React.createElement("div",{style:{fontSize:28,fontWeight:900,color:COL}},stats.mastered+"/"+SECTIONS.length),React.createElement("div",{style:{fontSize:11,color:"#777"}},"beheerst")),
+          React.createElement("div",null,React.createElement("div",{style:{fontSize:28,fontWeight:900,color:COL}},stats.mastered+"/"+SECTIONS.filter(s=>!s.noQuiz).length),React.createElement("div",{style:{fontSize:11,color:"#777"}},"beheerst")),
           React.createElement("div",null,React.createElement("div",{style:{fontSize:28,fontWeight:900,color:"#4d96ff"}},stats.masteryPct+"%"),React.createElement("div",{style:{fontSize:11,color:"#777"}},"klaar")),
           React.createElement("div",null,React.createElement("div",{style:{fontSize:28,fontWeight:900,color:"#ffd93d"}},stats.accuracy+"%"),React.createElement("div",{style:{fontSize:11,color:"#777"}},"correct"))),
         pBar(stats.masteryPct,COL,8)),
@@ -235,19 +394,25 @@ function App(){
               React.createElement("div",{style:{flex:1}},
                 React.createElement("div",{style:{fontSize:14,fontWeight:700,color:mastered?"#6bcb77":"#ddd"}},sec.title),
                 React.createElement("div",{style:{fontSize:11,color:"#666"}},sec.desc)),
-              mastered?tag("#6bcb77","\u2713 BEHEERST"):st&&st.total>0?tag(COL,spct+"%"):tag("#555","niet gestart")),
-            st&&st.total>0?pBar(spct,mastered?"#6bcb77":COL,4):null,
+              sec.noQuiz?tag(COL,"naslagwerk"):mastered?tag("#6bcb77","\u2713 BEHEERST"):st&&st.total>0?tag(COL,spct+"%"):tag("#555","niet gestart")),
+            !sec.noQuiz&&st&&st.total>0?pBar(spct,mastered?"#6bcb77":COL,4):null,
             st&&st.bestStreak>=3&&React.createElement("span",{style:{display:"inline-block",padding:"2px 8px",borderRadius:"6px",fontSize:"11px",fontWeight:700,background:"#ffd93d20",color:"#ffd93d",marginTop:"6px"}},"🔥 "+st.bestStreak+"x")),
-          React.createElement("div",{style:{display:"flex",borderTop:"1px solid "+bdr}},
-            React.createElement("button",{
-              style:{flex:1,padding:"10px 8px",border:"none",background:theoryDone?"rgba(107,203,119,0.08)":"rgba(255,255,255,0.03)",color:theoryDone?"#6bcb77":"#aaa",fontSize:12,fontWeight:700},
-              onClick:()=>openSection(sec.id,"theory")},
-              (theoryDone?"\u2713 ":"\u{1F4D6} ")+"Theorie"),
-            React.createElement("div",{style:{width:1,background:bdr}}),
-            React.createElement("button",{
-              style:{flex:1,padding:"10px 8px",border:"none",background:"rgba(255,255,255,0.03)",color:COL,fontSize:12,fontWeight:700},
-              onClick:()=>openSection(sec.id,"practice")},
-              "\u{1F3AF} Oefenen")));
+          sec.noQuiz
+            ?React.createElement("div",{style:{display:"flex",borderTop:"1px solid "+bdr}},
+              React.createElement("button",{
+                style:{flex:1,padding:"10px 8px",border:"none",background:COL+"15",color:COL,fontSize:12,fontWeight:700},
+                onClick:()=>openSection(sec.id,"theory")},
+                "\u{1F4DA} Samenvatting lezen"))
+            :React.createElement("div",{style:{display:"flex",borderTop:"1px solid "+bdr}},
+              React.createElement("button",{
+                style:{flex:1,padding:"10px 8px",border:"none",background:theoryDone?"rgba(107,203,119,0.08)":"rgba(255,255,255,0.03)",color:theoryDone?"#6bcb77":"#aaa",fontSize:12,fontWeight:700},
+                onClick:()=>openSection(sec.id,"theory")},
+                (theoryDone?"\u2713 ":"\u{1F4D6} ")+"Theorie"),
+              React.createElement("div",{style:{width:1,background:bdr}}),
+              React.createElement("button",{
+                style:{flex:1,padding:"10px 8px",border:"none",background:"rgba(255,255,255,0.03)",color:COL,fontSize:12,fontWeight:700},
+                onClick:()=>openSection(sec.id,"practice")},
+                "\u{1F3AF} Oefenen")));
       }),
       React.createElement("button",{
         style:{width:"100%",padding:12,borderRadius:10,border:"none",background:"rgba(255,255,255,0.03)",color:"#555",fontSize:12,fontWeight:600,marginTop:8},
@@ -331,6 +496,32 @@ function App(){
         React.createElement("div",{style:{display:"flex",gap:8}},
           React.createElement("button",{style:{flex:1,padding:14,borderRadius:12,border:"none",background:"rgba(255,255,255,0.06)",color:"#ccc",fontSize:14,fontWeight:700},onClick:()=>setScreen("home")},"\u2190 Overzicht"),
           React.createElement("button",{style:{flex:1,padding:14,borderRadius:12,border:"none",background:COL,color:"#fff",fontSize:14,fontWeight:700},onClick:()=>openSection(secId,"practice")},"\u{1F504} Opnieuw"))));
+  }
+
+  // ===== SAMENVATTING =====
+  if(screen==="samenvatting"){
+    const renderBold=(text)=>{
+      const parts=text.split(/(\*\*[^*]+\*\*)/g);
+      return parts.map((p,j)=>{
+        if(p.startsWith("**")&&p.endsWith("**"))return React.createElement("strong",{key:j,style:{color:"#fff",background:COL+"18",padding:"1px 4px",borderRadius:4}},p.slice(2,-2));
+        return React.createElement("span",{key:j},p);
+      });
+    };
+    return React.createElement("div",{style:{minHeight:"100vh"},className:"fade-in"},
+      React.createElement("div",{style:{background:"rgba(0,0,0,0.3)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+bdr,padding:"14px 20px",display:"flex",justifyContent:"space-between",alignItems:"center",position:"sticky",top:0,zIndex:50}},
+        React.createElement("button",{style:{background:"none",border:"none",color:"#555",fontSize:13},onClick:()=>setScreen("home")},"\u2190 Terug"),
+        React.createElement("div",{style:{fontSize:14,fontWeight:700,color:COL}},"\u{1F4DA} Samenvatting H4"),
+        React.createElement("div",null)),
+      React.createElement("div",{style:{maxWidth:640,margin:"0 auto",padding:"16px 14px 60px"}},
+        React.createElement("div",{style:{background:COL+"12",borderRadius:12,padding:"12px 16px",border:"1px solid "+COL+"25",marginBottom:16,fontSize:13,color:"#ccc",lineHeight:1.6}},
+          React.createElement("strong",{style:{color:COL}},"\u{1F4D6} Tip: "),"Gebruik deze samenvatting om de stof door te lezen vóór je gaat oefenen. Belangrijke begrippen staan ",
+          React.createElement("strong",{style:{color:"#fff",background:COL+"18",padding:"1px 4px",borderRadius:4}},"gemarkeerd"),"."),
+        SUMMARY.map((par,pi)=>React.createElement("div",{key:pi,style:{marginBottom:24}},
+          React.createElement("div",{style:{fontSize:18,fontWeight:900,color:COL,marginBottom:12,paddingBottom:8,borderBottom:"2px solid "+COL+"30"}},par.title),
+          par.sections.map((sec,si)=>React.createElement("div",{key:si,style:{background:cBg,borderRadius:14,border:"1px solid "+bdr,padding:"16px 18px",marginBottom:10}},
+            React.createElement("div",{style:{fontSize:15,fontWeight:800,color:"#fff",marginBottom:10}},sec.sub),
+            sec.items.map((item,ii)=>React.createElement("div",{key:ii,style:{fontSize:13,lineHeight:1.75,color:"#bbb",marginBottom:6,paddingLeft:12,borderLeft:"2px solid "+bdr}},
+              renderBold(item)))))))));
   }
 
   return null;
