@@ -24,9 +24,127 @@ const{useState,useEffect,useRef}=React;
 const progress=new TrainerProgress("engels_u23","Engels Unit 2+3",{subject:"Engels",color:"#E91E63",icon:"🇬🇧"});
 const COL="#E91E63",bdr="rgba(255,255,255,0.06)",cBg="rgba(255,255,255,0.04)";
 
-const U2=[["acting","toneelspelen"],["aerobics","aerobics"],["archery","boogschieten"],["athletics","atletiek"],["bad (at)","slecht (in iets)"],["badminton","badminton"],["basketball","basketbal"],["canoeing","kanoën"],["cello","cello"],["clarinet","klarinet"],["computer game","computerspel"],["cooking","koken"],["cricket","cricket"],["dancing","dansen"],["different","verschillend"],["difficult","moeilijk"],["drawing","tekenen"],["drums","drums"],["easy","makkelijk"],["enjoy","genieten van"],["flute","fluit"],["good (at)","goed (in iets)"],["guitar","gitaar"],["gymnastics","turnen"],["hockey","hockey"],["interested","geïnteresseerd"],["karate","karate"],["keyboards","keyboard"],["like","leuk vinden"],["love","houden van"],["new","nieuw"],["noisy","lawaaierig"],["old","oud"],["painting","schilderen"],["piano","piano"],["quiet","stil"],["rock climbing","rotsklimmen"],["rugby","rugby"],["running","hardlopen"],["sailing","zeilen"],["same","hetzelfde"],["saxophone","saxofoon"],["singing","zingen"],["skateboarding","skateboarden"],["skiing","skiën"],["swimming","zwemmen"],["tennis","tennis"],["trumpet","trompet"],["unusual","ongewoon"],["usual","gewoon"],["violin","viool"],["volleyball","volleybal"]];
+const U2=[
+["acting","toneelspelen","performing in plays or films"],
+["aerobics","aerobics","physical exercises that people often do in classes, with music"],
+["archery","boogschieten","the sport of shooting arrows"],
+["athletics","atletiek","sports like running, jumping and throwing"],
+["bad (at)","slecht (in iets)","not able to work or do sth well"],
+["badminton","badminton","a game for two or four players who try to hit a kind of light ball with feathers on it (called a shuttlecock) over a high net, using a racket"],
+["basketball","basketbal","a game for two teams of five players who try to throw a ball into a high net"],
+["canoeing","kanoën","the activity of moving through water in a light narrow boat for one or two people, using a flat piece of wood called a paddle"],
+["cello","cello","a large wooden musical instrument with strings. You sit down to play it and hold it between your knees"],
+["clarinet","klarinet","a musical instrument made of wood with holes in it. You play it by blowing into it"],
+["computer game","computerspel","a game that you play on a computer"],
+["cooking","koken","making food ready to eat"],
+["cricket","cricket","a game for two teams of eleven players who try to hit a small hard ball with a piece of wood (called a bat) on a large field"],
+["dancing","dansen","moving to music"],
+["different","verschillend","not the same"],
+["difficult","moeilijk","not easy to do or understand"],
+["drawing","tekenen","the art of drawing pictures with a pen or a pencil"],
+["drums","drums","a musical instrument made of empty containers with plastic stretched across the ends. You play the drums by hitting them with sticks"],
+["easy","makkelijk","not difficult to do or understand; not causing problems"],
+["enjoy","genieten van","to like sth very much"],
+["flute","fluit","a musical instrument that you hold out to the side and play by blowing"],
+["good (at)","goed (in iets)","able to do sth well"],
+["guitar","gitaar","a musical instrument with strings"],
+["gymnastics","turnen","physical exercises that are done inside a building, often using special equipment such as bars and ropes"],
+["hockey","hockey","a game that is played on a field by two teams of eleven players who try to hit a small hard ball into a goal with a curved wooden stick"],
+["interested","geïnteresseerd","wanting to know or hear more about sth/sb; enjoying or liking sth/sb"],
+["karate","karate","a Japanese sport where people fight with their hands and feet"],
+["keyboards","keyboard","a musical instrument like a small electrical piano"],
+["like","leuk vinden","to enjoy sth"],
+["love","houden van","to like sth very much"],
+["new","nieuw","different from before"],
+["noisy","lawaaierig","making a lot of noise; full of noise"],
+["old","oud","done or had before now"],
+["painting","schilderen","the act of making pictures using paint"],
+["piano","piano","a big musical instrument that you play by pressing black and white bars called keys"],
+["quiet","stil","with very little or no noise"],
+["rock climbing","rotsklimmen","the sport of climbing rocks and mountains with ropes, etc."],
+["rugby","rugby","a game like football for two teams of 13 or 15 players. In rugby, you can kick and carry the ball"],
+["running","hardlopen","the sport of moving very quickly on your legs"],
+["sailing","zeilen","the sport of controlling a boat with sails"],
+["same","hetzelfde","not different; not another"],
+["saxophone","saxofoon","a musical instrument made of metal that you play by blowing into it"],
+["singing","zingen","making musical sounds with your voice"],
+["skateboarding","skateboarden","the activity of moving over the ground on a long piece of wood or plastic on wheels"],
+["skiing","skiën","the sport of sliding over snow on a pair of long, flat, narrow pieces of wood or plastic that are fastened to boots"],
+["swimming","zwemmen","the sport or activity of moving your body through water"],
+["tennis","tennis","a game for two or four players who hit a ball to each other over a net using a piece of equipment called a racket"],
+["trumpet","trompet","a musical instrument that is made of metal and that you blow"],
+["unusual","ongewoon","not expected or normal"],
+["usual","gewoon","happening or used most often"],
+["violin","viool","a musical instrument that you hold under your chin and play by moving a stick (called a bow) across the strings"],
+["volleyball","volleybal","a game where two teams try to hit a ball over a high net with their hands"],
+];
 
-const U3=[["armchair","fauteuil"],["bank","bank (geld)"],["bath","bad"],["bathroom","badkamer"],["bed","bed"],["bedroom","slaapkamer"],["bedside table","nachtkastje"],["bus stop","bushalte"],["café","café"],["capital","hoofdstad"],["carpet","tapijt"],["ceiling","plafond"],["chest of drawers","ladekast"],["cinema","bioscoop"],["city","stad"],["city centre","stadscentrum"],["cooker","fornuis"],["countryside","platteland"],["cupboard","kast"],["curtains","gordijnen"],["cushion","kussen"],["dining room","eetkamer"],["dishwasher","vaatwasser"],["fireplace","open haard"],["floor","vloer"],["freezer","vriezer"],["fridge","koelkast"],["front door","voordeur"],["garden","tuin"],["hall","hal"],["hospital","ziekenhuis"],["kitchen","keuken"],["lamp","lamp"],["leisure centre","sportcentrum"],["library","bibliotheek"],["living room","woonkamer"],["mirror","spiegel"],["museum","museum"],["park","park"],["police station","politiebureau"],["restaurant","restaurant"],["roof","dak"],["rug","kleed"],["shelf","plank"],["shopping centre","winkelcentrum"],["shower","douche"],["shutters","luiken"],["sink","gootsteen"],["sofa","bank (meubel)"],["stadium","stadion"],["stairs","trap"],["suburb","buitenwijk"],["table","tafel"],["theatre","theater"],["toilet","toilet"],["town","stad"],["train station","treinstation"],["university","universiteit"],["village","dorp"],["wall","muur"],["wardrobe","kledingkast"],["washbasin","wasbak"],["washing machine","wasmachine"],["window","raam"]];
+const U3=[
+["armchair","fauteuil","a soft comfortable chair with side parts where you can put your arms"],
+["bank","bank (geld)","a place that keeps money safe for people"],
+["bath","bad","a large container that you fill with water and sit in to wash your body"],
+["bathroom","badkamer","a room where you can wash and have a bath or shower"],
+["bed","bed","a piece of furniture that you sleep on"],
+["bedroom","slaapkamer","a room where you sleep"],
+["bedside table","nachtkastje","a small piece of furniture for a lamp, clock, etc. next to a bed"],
+["bus stop","bushalte","a place where buses stop and people get on and off"],
+["café","café","a place where you can buy a drink and sth to eat"],
+["capital","hoofdstad","the most important city in a country, where the government is"],
+["carpet","tapijt","a piece of thick material that is used for covering floors and stairs"],
+["ceiling","plafond","the top part of the inside of a room"],
+["chest of drawers","ladekast","a piece of furniture with parts that you can pull out (called drawers). A chest of drawers is usually used for keeping clothes in"],
+["cinema","bioscoop","a place where you go to see a film"],
+["city","stad","a large and important town"],
+["city centre","stadscentrum","the most important part of a city, usually in the middle, where most of the shops and offices are"],
+["cooker","fornuis","a piece of kitchen equipment for cooking using electricity or gas. It has places for heating pans on the top and an oven for cooking food inside it"],
+["countryside","platteland","land with fields, woods, farms, etc., that is away from towns and cities"],
+["cupboard","kast","a piece of furniture with shelves and doors, where you keep things like clothes or food"],
+["curtains","gordijnen","two pieces of cloth that you can move to cover a window"],
+["cushion","kussen","a cloth bag filled with sth soft, which you put on a chair"],
+["dining room","eetkamer","a room where people eat meals"],
+["dishwasher","vaatwasser","a machine that washes things like plates, glasses, knives and forks"],
+["fireplace","open haard","the open place in a room where you light a fire"],
+["floor","vloer","the part of a room that you walk on"],
+["freezer","vriezer","an electric container which keeps food very cold (below 0° Celsius) so that it stays fresh for a long time"],
+["fridge","koelkast","a metal container, usually electric, which keeps food cold, but not frozen"],
+["front door","voordeur","the main door at the front of a house"],
+["garden","tuin","a piece of land by your house where you can grow flowers, fruit, and vegetables"],
+["hall","hal","the room in a house that is near the front door and has doors to other rooms"],
+["hospital","ziekenhuis","a place where doctors and nurses look after people who are ill or hurt"],
+["kitchen","keuken","a room where you cook food"],
+["lamp","lamp","an electric light that stands on a table"],
+["leisure centre","sportcentrum","a public building where people can go to do sports and other activities in their free time"],
+["library","bibliotheek","a room or building where you go to borrow or read books"],
+["living room","woonkamer","a room in a house where people sit together and watch television or talk"],
+["mirror","spiegel","a piece of special glass where you can see yourself"],
+["museum","museum","a building where people can look at old or interesting things"],
+["park","park","place with grass and trees, where anybody can go to walk, play games or relax"],
+["police station","politiebureau","an office where police officers work"],
+["restaurant","restaurant","a place where you buy a meal and eat it"],
+["roof","dak","the top of a building, that covers it"],
+["rug","kleed","a small piece of thick material that you put on the floor"],
+["shelf","plank","a long flat piece of wood on a wall or in a cupboard, where things can stand"],
+["shopping centre","winkelcentrum","a place where there are many shops, either outside or in a covered building"],
+["shower","douche","a place where you can wash by standing under water that falls from above you"],
+["shutters","luiken","wooden or metal covers on the outside of a window"],
+["sink","gootsteen","the place in a kitchen where you wash dishes"],
+["sofa","bank (meubel)","a long soft seat for more than one person"],
+["stadium","stadion","a place with seats around it where you can watch sport"],
+["stairs","trap","steps that lead up and down inside a building"],
+["suburb","buitenwijk","one of the parts of a town or city outside the centre"],
+["table","tafel","a piece of furniture with a flat top on legs"],
+["theatre","theater","a building where you go to see plays"],
+["toilet","toilet","a large bowl with a seat, that you use when you need to empty waste from your body"],
+["town","stad","a place where there are a lot of houses, shops and other buildings"],
+["train station","treinstation","a place where trains stop so that people can get on and off"],
+["university","universiteit","a place where people go to study more difficult subjects after they have left school"],
+["village","dorp","a very small town in the countryside"],
+["wall","muur","a side of a building or room"],
+["wardrobe","kledingkast","a cupboard where you hang your clothes"],
+["washbasin","wasbak","the large bowl in a bathroom where you wash your hands and face"],
+["washing machine","wasmachine","a machine that washes clothes"],
+["window","raam","an opening in a building with glass in it"],
+];
 
 // Past Simple be: subject → correct form
 const PS_BE_QS=[
@@ -50,11 +168,131 @@ const PS_BE_QS=[
 // Past Simple regular: base → past
 const REG_VERBS=[["play","played"],["watch","watched"],["listen","listened"],["walk","walked"],["talk","talked"],["start","started"],["finish","finished"],["enjoy","enjoyed"],["like","liked"],["love","loved"],["live","lived"],["arrive","arrived"],["cook","cooked"],["clean","cleaned"],["wash","washed"],["study","studied"],["carry","carried"],["try","tried"],["stop","stopped"],["plan","planned"],["travel","travelled"],["dance","danced"],["hate","hated"],["want","wanted"],["need","needed"]];
 
+// ===== DIAGNOSTIC TEST QUESTIONS =====
+const DT_PRESENT_SIMPLE=[
+  {q:"I _____ (not/understand) this question.",a:"do not understand/don't understand"},
+  {q:"_____ your sister _____ (drive) to work?",a:"Does your sister drive/Does, drive"},
+  {q:"The shop _____ (close) at 6 o'clock.",a:"closes"},
+  {q:"We _____ (not/have) a pet.",a:"do not have/don't have"},
+  {q:"_____ it _____ (rain) a lot in your country?",a:"Does it rain/Does, rain"},
+  {q:"Mr Smith _____ (teach) English.",a:"teaches"},
+  {q:"He _____ (not/eat) meat.",a:"does not eat/doesn't eat"},
+  {q:"_____ they _____ (travel) by train?",a:"Do they travel/Do, travel"},
+  {q:"The baby _____ (cry) every night.",a:"cries"},
+  {q:"I _____ (not/agree) with you.",a:"do not agree/don't agree"},
+];
+
+const DT_PRES_SIMP_CONT=[
+  {q:"Why _____ (she/cry)?",a:"is she crying"},
+  {q:"I _____ (have) two brothers.",a:"have"},
+  {q:"The birds _____ (sing) in the garden right now.",a:"are singing"},
+  {q:"We _____ (not/travel) abroad very often.",a:"do not travel/don't travel"},
+  {q:"I _____ (read) a really good book at the moment.",a:"am reading"},
+  {q:"My dad _____ (drive) to work every day.",a:"drives"},
+  {q:"They _____ (clean) the house right now.",a:"are cleaning"},
+  {q:"_____ it usually _____ (snow) in winter here?",a:"Does it usually snow/Does, snow"},
+  {q:"I _____ (not/understand) what you mean.",a:"do not understand/don't understand"},
+  {q:"She _____ (wear) a beautiful dress today.",a:"is wearing"},
+];
+
+const DT_ADVERB_ORDER=[
+  {q:"Put in the correct order:\ntravel / abroad / my parents / rarely",a:"My parents rarely travel abroad"},
+  {q:"Put in the correct order:\ntired / she / often / after work / is",a:"She is often tired after work"},
+  {q:"Put in the correct order:\nforget / I / sometimes / my keys",a:"I sometimes forget my keys"},
+  {q:"Put in the correct order:\ngo out / they / on weekdays / hardly ever",a:"They hardly ever go out on weekdays"},
+  {q:"Put in the correct order:\nin a bad mood / he / always / is / in the morning",a:"He is always in a bad mood in the morning"},
+];
+
+const DT_PAST_SIMPLE=[
+  {q:"We _____ (visit) Paris last summer.",a:"visited"},
+  {q:"I _____ (not/enjoy) the film.",a:"did not enjoy/didn't enjoy"},
+  {q:"_____ you _____ (finish) your homework?",a:"Did you finish/Did, finish"},
+  {q:"They _____ (travel) to Spain.",a:"travelled/traveled"},
+  {q:"She _____ (not/call) me yesterday.",a:"did not call/didn't call"},
+  {q:"_____ she _____ (buy) a new car?",a:"Did she buy/Did, buy"},
+  {q:"We _____ (enjoy) the party.",a:"enjoyed"},
+  {q:"He _____ (not/understand) the question.",a:"did not understand/didn't understand"},
+  {q:"_____ they _____ (see) the film?",a:"Did they see/Did, see"},
+  {q:"We _____ (move) to a new house last year.",a:"moved"},
+  {q:"She _____ (not/study) for the test.",a:"did not study/didn't study"},
+  {q:"_____ he _____ (drive) to work?",a:"Did he drive/Did, drive"},
+  {q:"I _____ (have) a great time.",a:"had"},
+  {q:"They _____ (not/remember) my birthday.",a:"did not remember/didn't remember"},
+  {q:"_____ it _____ (rain) yesterday?",a:"Did it rain/Did, rain"},
+];
+
+const DT_ADVERBS=[
+  {q:"Make an adverb from: confident",a:"confidently"},
+  {q:"Make an adverb from: peaceful",a:"peacefully"},
+  {q:"Make an adverb from: efficient",a:"efficiently"},
+  {q:"Make an adverb from: attentive",a:"attentively"},
+  {q:"Make an adverb from: fluent",a:"fluently"},
+  {q:"Make an adverb from: quick",a:"quickly"},
+  {q:"Make an adverb from: hard",a:"hard"},
+  {q:"Make an adverb from: clear",a:"clearly"},
+  {q:"Make an adverb from: bad",a:"badly"},
+  {q:"Make an adverb from: easy",a:"easily"},
+];
+
+const DT_PLURALS=[
+  {q:"What is the plural of: flower",a:"flowers"},
+  {q:"What is the plural of: child",a:"children"},
+  {q:"What is the plural of: tomato",a:"tomatoes"},
+  {q:"What is the plural of: man",a:"men"},
+  {q:"What is the plural of: knife",a:"knives"},
+  {q:"What is the plural of: star",a:"stars"},
+  {q:"What is the plural of: baby",a:"babies"},
+  {q:"What is the plural of: couch",a:"couches"},
+  {q:"What is the plural of: sheep",a:"sheep"},
+  {q:"What is the plural of: book",a:"books"},
+];
+
+const DT_ARTICLES=[
+  {q:"She is _____ doctor. (a/an/the)",a:"a"},
+  {q:"He ate _____ orange. (a/an/the)",a:"an"},
+  {q:"Can you close _____ door? (a/an/the)",a:"the"},
+  {q:"_____ sun is very bright today. (a/an/the)",a:"The/the"},
+  {q:"I need _____ umbrella and _____ hat. (a/an)",a:"an, a"},
+  {q:"My sister has _____ cat. (a/an/the)",a:"a"},
+  {q:"I went to _____ supermarket near my house. (a/an/the)",a:"the"},
+  {q:"She is _____ tallest girl in our class. (a/an/the)",a:"the"},
+  {q:"He is _____ excellent student. (a/an/the)",a:"an"},
+  {q:"I bought _____ new phone. (a/an/the)",a:"a"},
+];
+
+const DT_THERE_IS=[
+  {q:"_____ an apple on the table. (there is/there are)",a:"There is an apple on the table"},
+  {q:"_____ some chairs in the classroom. (there is/there are)",a:"There are some chairs in the classroom"},
+  {q:"_____ any milk in the fridge? (is there/are there)",a:"Is there any milk in the fridge"},
+  {q:"_____ a supermarket near my house. (there is/there are)",a:"There is a supermarket near my house"},
+  {q:"_____ some books on the shelf. (there is/there are)",a:"There are some books on the shelf"},
+  {q:"_____ any water in the bottle? (is there/are there)",a:"Is there any water in the bottle"},
+  {q:"_____ an interesting film on TV tonight. (there is/there are)",a:"There is an interesting film on TV tonight"},
+  {q:"_____ some mistakes in your test. (there is/there are)",a:"There are some mistakes in your test"},
+  {q:"_____ an orange in my lunchbox. (there is/there are)",a:"There is an orange in my lunchbox"},
+  {q:"_____ any good restaurants in this area? (is there/are there)",a:"Are there any good restaurants in this area"},
+];
+
+function genDiagQs(){
+  const pick=(arr,n)=>[...arr].sort(()=>Math.random()-0.5).slice(0,n);
+  return[
+    ...pick(DT_PRESENT_SIMPLE,3).map(q=>({prompt:q.q,answer:q.a,direction:"Present Simple",hint:"Fill in the correct form",secId:"diag"})),
+    ...pick(DT_PRES_SIMP_CONT,3).map(q=>({prompt:q.q,answer:q.a,direction:"Simple vs Continuous",hint:"Present Simple or Continuous?",secId:"diag"})),
+    ...pick(DT_ADVERB_ORDER,2).map(q=>({prompt:q.q,answer:q.a,direction:"Word Order",hint:"Write the complete sentence",secId:"diag"})),
+    ...pick(DT_PAST_SIMPLE,3).map(q=>({prompt:q.q,answer:q.a,direction:"Past Simple",hint:"Fill in the correct form",secId:"diag"})),
+    ...pick(DT_ADVERBS,2).map(q=>({prompt:q.q,answer:q.a,direction:"Adverbs",hint:"Form the adverb",secId:"diag"})),
+    ...pick(DT_PLURALS,2).map(q=>({prompt:q.q,answer:q.a,direction:"Plurals",hint:"Write the plural form",secId:"diag"})),
+    ...pick(DT_ARTICLES,2).map(q=>({prompt:q.q,answer:q.a,direction:"Articles",hint:"a, an or the?",secId:"diag"})),
+    ...pick(DT_THERE_IS,2).map(q=>({prompt:q.q,answer:q.a,direction:"There is/are",hint:"Write the complete sentence",secId:"diag"})),
+  ].sort(()=>Math.random()-0.5);
+}
+
 const SECTIONS=[
   {id:"unit2",title:"Unit 2 Vocabulary",icon:"📖",desc:"Hobbies, sports & music – "+U2.length+" woorden"},
   {id:"unit3",title:"Unit 3 Vocabulary",icon:"🏠",desc:"House, rooms & places – "+U3.length+" woorden"},
   {id:"pastbe",title:"Past Simple 'be'",icon:"🔵",desc:"was / were invullen"},
   {id:"pastreg",title:"Past Simple Regular",icon:"🟢",desc:"-ed werkwoorden"},
+  {id:"diag",title:"Diagnostische Toets",icon:"🧪",desc:"Grammar: tenses, adverbs, plurals, articles"},
   {id:"mix",title:"Mixed Test",icon:"📝",desc:"Alle stof door elkaar"},
 ];
 
@@ -83,8 +321,12 @@ function checkAnswer(input,correctStr){
 // ===== QUESTION GENERATORS =====
 function genVocQs(words,secId,n=10){
   const pool=[...words].sort(()=>Math.random()-0.5).slice(0,n);
-  return pool.map(([en,nl])=>{
-    if(Math.random()>0.5){
+  return pool.map(([en,nl,desc])=>{
+    const r=Math.random();
+    if(desc&&r<0.5){
+      // Description → English word
+      return{prompt:desc,answer:en,direction:"Description → Word",hint:"Which word is described here?",secId};
+    } else if(r<0.75){
       return{prompt:en,answer:nl,direction:"EN → NL",hint:"Vertaal naar Nederlands",secId};
     } else {
       return{prompt:nl,answer:en,direction:"NL → EN",hint:"Translate to English",secId};
@@ -106,10 +348,11 @@ function genPastRegQs(n=10){
 
 function genMixQs(){
   return[
-    ...genVocQs(U2,"unit2",4),
-    ...genVocQs(U3,"unit3",4),
-    ...genPastBeQs(3),
-    ...genPastRegQs(4)
+    ...genVocQs(U2,"unit2",3),
+    ...genVocQs(U3,"unit3",3),
+    ...genPastBeQs(2),
+    ...genPastRegQs(3),
+    ...genDiagQs().slice(0,4),
   ].sort(()=>Math.random()-0.5);
 }
 
@@ -130,6 +373,15 @@ const THEORY={
   pastreg:[
     {type:"explain",title:"Past Simple: Regular Verbs",text:"Bij **regelmatige werkwoorden** voeg je **-ed** toe:\n\nplay → **played**, watch → **watched**, listen → **listened**\n\n**Spellingregels:**\n• Eindigt op -e → alleen -d: live → **lived**, like → **liked**\n• Medeklinker + y → y wordt ied: study → **studied**, carry → **carried**\n• Korte klinker + medeklinker → dubbel: stop → **stopped**, plan → **planned**\n\n**Ontkenning:** I **didn't** play (NIET: didn't played!)\n**Vraag:** **Did** you play? (NIET: Did you played?)"},
     {type:"check",prompt:"Past Simple of 'study':",answer:"studied",hint:"Typ de Past Simple vorm"},
+  ],
+  diag:[
+    {type:"explain",title:"Present Simple",text:"Gebruik de **Present Simple** voor gewoontes, feiten en routines.\n\n**Positief:** I/you/we/they **play** — he/she/it **plays**\n**Negatief:** I/you/we/they **do not (don't)** play — he/she/it **does not (doesn't)** play\n**Vraag:** **Do** you play? — **Does** he play?\n\n**Spellingregels 3e persoon (he/she/it):**\n• +s: play → plays, drive → drives\n• -ch/-sh/-s/-x/-o + **es**: teach → teaches, close → closes\n• medeklinker + y → **ies**: cry → cries, study → studies"},
+    {type:"explain",title:"Present Simple vs Continuous",text:"**Present Simple** = gewoontes, feiten, routines\nI **drive** to work every day.\n\n**Present Continuous** = NU aan de gang, tijdelijk\nI **am driving** to work right now.\n\n**Signaalwoorden Simple:** always, usually, often, sometimes, never, every day\n**Signaalwoorden Continuous:** now, right now, at the moment, today, currently\n\n**Vorming Continuous:** am/is/are + werkwoord + **-ing**\nI **am reading** — She **is wearing** — They **are cleaning**"},
+    {type:"explain",title:"Adverbs of Frequency — Word Order",text:"Bijwoorden van frequentie: **always, usually, often, sometimes, rarely, hardly ever, never**\n\n**Positie in de zin:**\n• Vóór het gewone werkwoord: I **sometimes** forget my keys.\n• Ná 'be' (am/is/are/was/were): She **is often** tired.\n\n**Voorbeelden:**\nMy parents **rarely** travel abroad.\nHe **is always** in a bad mood.\nThey **hardly ever** go out on weekdays."},
+    {type:"explain",title:"Past Simple",text:"**Regelmatig:** voeg **-ed** toe\nvisit → **visited**, enjoy → **enjoyed**, move → **moved**\n\n**Spellingregels:**\n• -e: live → lived\n• medeklinker + y: study → **studied**\n• korte klinker + medeklinker: stop → **stopped**\n• travel → **travelled** (Brits Engels)\n\n**Onregelmatig:** have → **had**, see → **saw**, buy → **bought**, drive → **drove**\n\n**Negatief:** did not (**didn't**) + hele werkwoord\n**Vraag:** **Did** + onderwerp + hele werkwoord?"},
+    {type:"explain",title:"Adverbs (bijwoorden)",text:"Een **bijwoord** (adverb) beschrijft HOE iets gebeurt.\nVorm: bijvoeglijk naamwoord + **-ly**\n\nquick → **quickly**, clear → **clearly**\npeaceful → **peacefully**, confident → **confidently**\n\n**Spellingregels:**\n• -le → -ly: comfortable → comfortab**ly**\n• -y → -ily: easy → eas**ily**\n• -ic → -ically: basic → basica**lly**\n\n**Uitzonderingen (onregelmatig):**\ngood → **well**, fast → **fast**, hard → **hard**"},
+    {type:"explain",title:"Plurals, Articles & There is/are",text:"**Meervoud:**\n• +s: book → books, star → stars\n• -ch/-sh/-s/-x + **es**: couch → couches\n• medeklinker + y → **ies**: baby → babies\n• -f/-fe → **ves**: knife → knives\n• -o → **oes**: tomato → tomatoes\n• onregelmatig: child → **children**, man → **men**, sheep → **sheep**\n\n**Lidwoorden:**\n• **a** voor medeklinkerklank: a doctor, a cat\n• **an** voor klinkerklank: an orange, an umbrella\n• **the** als je iets specifieks bedoelt: the door, the sun\n\n**There is/are:**\n• There **is** + enkelvoud: There is an apple.\n• There **are** + meervoud: There are some chairs.\n• Vragen: **Is there** any milk? **Are there** any restaurants?"},
+    {type:"check",prompt:"Make an adverb from: easy",answer:"easily",hint:"Let op de spelling!"},
   ],
 };
 
@@ -174,6 +426,7 @@ function App(){
       case"unit3":qs=genVocQs(U3,"unit3",12);break;
       case"pastbe":qs=genPastBeQs(10);break;
       case"pastreg":qs=genPastRegQs(10);break;
+      case"diag":qs=genDiagQs();break;
       case"mix":qs=genMixQs();break;
       default:qs=[];
     }
