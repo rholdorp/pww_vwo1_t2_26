@@ -267,6 +267,73 @@ const QUESTIONS={
   ],
 };
 
+// ===== FLASHCARDS =====
+const FLASHCARDS=[
+  // BS1
+  {front:"Prokaryoot",back:"Cel ZONDER celkern\nBijv. bacteriën, archaea",cat:"BS1"},
+  {front:"Eukaryoot",back:"Cel MET celkern\nBijv. planten, dieren, schimmels",cat:"BS1"},
+  {front:"Celkenmerken bacterie",back:"❌ Celkern  ✅ Celwand  ❌ Bladgroenkorrels",cat:"BS1"},
+  {front:"Celkenmerken schimmel",back:"✅ Celkern  ✅ Celwand  ❌ Bladgroenkorrels",cat:"BS1"},
+  {front:"Celkenmerken plant",back:"✅ Celkern  ✅ Celwand  ✅ Bladgroenkorrels",cat:"BS1"},
+  {front:"Celkenmerken dier",back:"✅ Celkern  ❌ Celwand  ❌ Bladgroenkorrels",cat:"BS1"},
+  {front:"7 Rijken (noem ze)",back:"Prokaryoten: Bacteriën + Archaea\nEukaryoten: Chromista, Protozoa, Schimmels, Planten, Dieren",cat:"BS1"},
+  {front:"Indeling groot → klein\n(ezelsbruggetje)",back:"Rijk → Stam → Klasse → Orde → Familie → Geslacht → Soort\n\n🧠 Dokter Scheikunde Of Geschiedenis",cat:"BS1"},
+  // BS2
+  {front:"Wanneer zijn organismen\ndezelfde soort?",back:"Ze kunnen samen voortplanten\nEN de nakomelingen zijn VRUCHTBAAR",cat:"BS2"},
+  {front:"Variatie",back:"Kleine verschillen tussen organismen\nvan dezelfde soort\n(bijv. kleur, grootte)",cat:"BS2"},
+  {front:"Natuurlijke selectie",back:"Organismen met de beste kenmerken\noverleven beter → meer nakomelingen",cat:"BS2"},
+  {front:"Evolutie",back:"Soorten veranderen langzaam\ndoor variatie + selectie\nover vele generaties",cat:"BS2"},
+  {front:"Hoe bepaal je\nverwantschap?",back:"DNA-vergelijking!\nMeer DNA-overeenkomst = meer verwant\n\nChimpansee: 1,4% verschil met mens",cat:"BS2"},
+  // BS3
+  {front:"Tweezijdig symmetrisch",back:"Links = spiegelbeeld van rechts\nBijv. mens, vis, insect, krokodil",cat:"BS3"},
+  {front:"Veelzijdig symmetrisch",back:"Meerdere assen van symmetrie\nBijv. zee-egel, zeeanemoon",cat:"BS3"},
+  {front:"Uitwendig skelet",back:"Pantser aan de BUITENKANT\nBijv. geleedpotigen (insecten, spinnen)",cat:"BS3"},
+  {front:"Inwendig skelet",back:"Skelet aan de BINNENKANT\nBijv. gewervelden (wervelkolom)",cat:"BS3"},
+  {front:"7 stammen dierenrijk",back:"1. Sponsdieren  2. Neteldieren\n3. Weekdieren  4. Stekelhuidigen\n5. Geleedpotigen  6. Gewervelden\n7. Wormen",cat:"BS3"},
+  // BS4
+  {front:"Groenwieren",back:"Leven in water\nGeen wortels/stengels/bladeren\nEencellig of meercellig",cat:"BS4"},
+  {front:"Sporenplanten",back:"Wél wortels/stengels/bladeren\nGeen bloemen/zaden → SPOREN\nBijv. varens, mossen",cat:"BS4"},
+  {front:"Zaadplanten:\nNaaktzadigen",back:"Zaden tussen schubben van een KEGEL\nBijv. dennenboom, spar",cat:"BS4"},
+  {front:"Zaadplanten:\nBedektzadigen",back:"Zaden in VRUCHTEN\n= bloemplanten\nBijv. appelboom, roos",cat:"BS4"},
+  // BS5
+  {front:"Waarom kunnen schimmels\ngeen fotosynthese?",back:"Ze hebben GEEN bladgroenkorrels!\nZe moeten voedsel opnemen\nuit hun omgeving",cat:"BS5"},
+  {front:"Gist\n(eencellige schimmel)",back:"Eencellig\nVoortplanting: KNOPVORMING\nGebruik: brood, bier, wijn",cat:"BS5"},
+  {front:"Meercellige schimmels",back:"Bestaan uit schimmeldraden\nVoortplanting: SPOREN\nPaddenstoel = vruchtlichaam",cat:"BS5"},
+  {front:"Penicilline",back:"ANTIBIOTICUM\nGemaakt van penseelschimmel\nDoodt bacteriën",cat:"BS5"},
+  // BS6
+  {front:"Bacterie: prokaryoot\nof eukaryoot?",back:"PROKARYOOT!\nGeen celkern\nWél celwand\nAltijd eencellig",cat:"BS6"},
+  {front:"Hoe snel delen\nbacteriën zich?",back:"Elke 20 MINUTEN\n(onder optimale omstandigheden)\n1 bacterie → 68 miljard na 12 uur",cat:"BS6"},
+  {front:"Nuttige bacteriën\n(4 voorbeelden)",back:"1. Darmbacteriën → vertering\n2. Huidbacteriën → bescherming\n3. Bodembacteriën → voedingsstoffen\n4. Yoghurt/zuurkool maken",cat:"BS6"},
+  {front:"Antibiotica",back:"Medicijn dat bacteriën doodt\n⚠️ Breedspectrum doodt\nook NUTTIGE bacteriën!",cat:"BS6"},
+  // ES7
+  {front:"Vissen\n(5 kenmerken)",back:"🐟 Koudbloedig\nSchubben + slijm\nKieuwen\nEieren zonder schaal (water)\nBijv. zalm, haai",cat:"ES7"},
+  {front:"Amfibieën\n(5 kenmerken)",back:"🐸 Koudbloedig\nSlijmhuid\nLongen (+ kieuwen als larve)\nEieren zonder schaal (water)\nBijv. kikker, salamander",cat:"ES7"},
+  {front:"Reptielen\n(5 kenmerken)",back:"🦎 Koudbloedig\nDroge schubben\nLongen\nEieren met leerachtige schaal\nBijv. krokodil, slang",cat:"ES7"},
+  {front:"Vogels\n(5 kenmerken)",back:"🐦 Warmbloedig\nVeren\nLongen\nEieren met KALKSCHAAL\nBijv. mus, arend",cat:"ES7"},
+  {front:"Zoogdieren\n(5 kenmerken)",back:"🐘 Warmbloedig\nHaren\nLongen\nLEVENDBAREN\nBijv. mens, hond, walvis",cat:"ES7"},
+  {front:"Verschil koud- vs\nwarmbloedig",back:"Koudbloedig = lichaamstemperatuur\nverandert met omgeving\n\nWarmbloedig = CONSTANTE\ntemperatuur (haren/veren isoleren)",cat:"ES7"},
+  // ES8
+  {front:"Insecten",back:"🦟 6 poten\nKop + borststuk + achterlijf\nVleugels aan borststuk\nBijv. vlinder, bij, kever",cat:"ES8"},
+  {front:"Spinachtigen",back:"🕷️ 8 poten\nOok: gifkakigen\nBijv. spin, schorpioen, teek, mijt",cat:"ES8"},
+  {front:"Kreeftachtigen",back:"🦀 10 of meer poten\nBijv. krab, kreeft, garnaal, pissebed",cat:"ES8"},
+  {front:"Veelpotigen",back:"🐛 Aan elk segment poten\nBijv. duizendpoot, miljoenpoot",cat:"ES8"},
+  {front:"Kenmerken ALLE\ngeleedpotigen",back:"• Lichaam uit segmenten\n• Gelede poten\n• Uitwendig skelet (pantser)\n• Tweezijdig symmetrisch\n• 80% van alle diersoorten!",cat:"ES8"},
+];
+
+// ===== SPEED ROUND: all sections mixed =====
+function genSpeedQs(n=20){
+  const allQs=[];
+  Object.keys(QUESTIONS).forEach(secId=>{
+    (QUESTIONS[secId]||[]).forEach(q=>{
+      allQs.push({...q,secId});
+    });
+  });
+  return shuffle(allQs).slice(0,n).map(q=>{
+    const opts=shuffle(q.opts);
+    return{q:q.q,opts,correct:opts.indexOf(q.a),secId:q.secId};
+  });
+}
+
 function shuffle(arr){return [...arr].sort(()=>Math.random()-0.5);}
 
 function genQs(secId){
@@ -280,7 +347,7 @@ function genQs(secId){
 function App(){
   const[version,setVersion]=useState(0);
   useEffect(()=>{progress.onUpdate(()=>setVersion(v=>v+1));},[]);
-  const[screen,setScreen]=useState("home"); // home|theory|practice|results
+  const[screen,setScreen]=useState("home"); // home|theory|practice|results|blitz|flashcards|speed|speedresult
   const[secId,setSecId]=useState(null);
   const[theoryIdx,setTheoryIdx]=useState(0);
   const[questions,setQuestions]=useState([]);
@@ -291,6 +358,16 @@ function App(){
   const[stats,setStats]=useState(()=>progress.getOverallStats());
   const[dashTaskId,setDashTaskId]=useState(null);
   const[dashDate,setDashDate]=useState(null);
+  // Blitsstudie state
+  const[fcCards,setFcCards]=useState([]);
+  const[fcIdx,setFcIdx]=useState(0);
+  const[fcFlipped,setFcFlipped]=useState(false);
+  const[fcKnown,setFcKnown]=useState(0);
+  const[fcUnknown,setFcUnknown]=useState([]);
+  const[xp,setXp]=useState(0);
+  const[streak,setStreak]=useState(0);
+  const[speedTime,setSpeedTime]=useState(0);
+  const[speedStart,setSpeedStart]=useState(null);
 
   const refreshStats=()=>setStats(progress.getOverallStats());
 
@@ -356,6 +433,21 @@ function App(){
           React.createElement("div",null,React.createElement("div",{style:{fontSize:28,fontWeight:900,color:"#4d96ff"}},stats.masteryPct+"%"),React.createElement("div",{style:{fontSize:11,color:"#777"}},"klaar")),
           React.createElement("div",null,React.createElement("div",{style:{fontSize:28,fontWeight:900,color:"#ffd93d"}},stats.accuracy+"%"),React.createElement("div",{style:{fontSize:11,color:"#777"}},"correct"))),
         pBar(stats.masteryPct,COL,8)),
+
+      // Blitsstudie button
+      React.createElement("div",{style:{background:"linear-gradient(135deg,"+COL+"20,#4d96ff20)",borderRadius:16,padding:"20px",border:"1px solid "+COL+"40",marginBottom:16}},
+        React.createElement("div",{style:{display:"flex",alignItems:"center",gap:12,marginBottom:12}},
+          React.createElement("span",{style:{fontSize:32}},"🚀"),
+          React.createElement("div",null,
+            React.createElement("div",{style:{fontSize:17,fontWeight:900,color:"#fff"}},"Blitsstudie"),
+            React.createElement("div",{style:{fontSize:12,color:"#aaa"}},"Leer alles in 2×30 min met flashcards + speedronde"))),
+        React.createElement("div",{style:{display:"flex",gap:8}},
+          React.createElement("button",{style:{flex:1,padding:"12px",borderRadius:12,border:"none",background:COL,color:"#fff",fontSize:14,fontWeight:800},
+            onClick:()=>{setFcCards(shuffle([...FLASHCARDS]));setFcIdx(0);setFcFlipped(false);setFcKnown(0);setFcUnknown([]);setXp(0);setStreak(0);setScreen("flashcards")}},
+            "📇 Sessie 1: Flashcards"),
+          React.createElement("button",{style:{flex:1,padding:"12px",borderRadius:12,border:"none",background:"#4d96ff",color:"#fff",fontSize:14,fontWeight:800},
+            onClick:()=>{const qs=genSpeedQs(20);setQuestions(qs);setQIdx(0);setSelected(null);setScore(0);setAnswers([]);setStreak(0);setXp(0);setSpeedStart(Date.now());setScreen("speed")}},
+            "⚡ Sessie 2: Speedronde"))),
 
       SECTIONS.map(sec=>{
         const st=progress.getSection(sec.id);
@@ -465,6 +557,146 @@ function App(){
         React.createElement("div",{style:{display:"flex",gap:8}},
           React.createElement("button",{style:{flex:1,padding:14,borderRadius:12,border:"none",background:"rgba(255,255,255,0.06)",color:"#ccc",fontSize:14,fontWeight:700},onClick:()=>setScreen("home")},"\u2190 Overzicht"),
           React.createElement("button",{style:{flex:1,padding:14,borderRadius:12,border:"none",background:COL,color:"#fff",fontSize:14,fontWeight:700},onClick:()=>openSection(secId,"practice")},"\u{1F504} Opnieuw"))));
+  }
+
+  // ===== FLASHCARDS =====
+  if(screen==="flashcards"){
+    const total=fcCards.length;
+    const done=fcIdx>=total;
+    const card=done?null:fcCards[fcIdx];
+    const pct=total>0?Math.round((fcIdx/total)*100):0;
+
+    if(done){
+      // Flashcards done — show summary or retry unknown
+      return React.createElement("div",{style:{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center"},className:"fade-in"},
+        React.createElement("div",{style:{maxWidth:400,padding:20,textAlign:"center"}},
+          React.createElement("div",{style:{fontSize:64,marginBottom:16}},fcUnknown.length===0?"🏆":"📇"),
+          React.createElement("div",{style:{fontSize:24,fontWeight:900,color:COL,marginBottom:8}},fcUnknown.length===0?"Alle kaarten geleerd!":"Ronde klaar!"),
+          React.createElement("div",{style:{fontSize:48,fontWeight:900,color:"#ffd93d",marginBottom:4}},xp+" XP"),
+          React.createElement("div",{style:{fontSize:15,color:"#999",marginBottom:16}},fcKnown+" geweten · "+fcUnknown.length+" herhalen"),
+          fcUnknown.length>0&&React.createElement("button",{style:{width:"100%",padding:14,borderRadius:12,border:"none",background:"#ff6b6b",color:"#fff",fontSize:15,fontWeight:800,marginBottom:8},
+            onClick:()=>{setFcCards(shuffle([...fcUnknown]));setFcIdx(0);setFcFlipped(false);setFcKnown(0);setFcUnknown([]);setScreen("flashcards")}},
+            "🔄 Herhaal "+fcUnknown.length+" moeilijke kaarten"),
+          React.createElement("button",{style:{width:"100%",padding:14,borderRadius:12,border:"none",background:COL,color:"#fff",fontSize:15,fontWeight:800,marginBottom:8},
+            onClick:()=>{const qs=genSpeedQs(20);setQuestions(qs);setQIdx(0);setSelected(null);setScore(0);setAnswers([]);setStreak(0);setSpeedStart(Date.now());setScreen("speed")}},
+            "⚡ Door naar Speedronde"),
+          React.createElement("button",{style:{width:"100%",padding:12,borderRadius:12,border:"none",background:"rgba(255,255,255,0.06)",color:"#999",fontSize:14,fontWeight:700},onClick:()=>setScreen("home")},"← Terug")));
+    }
+
+    return React.createElement("div",{style:{minHeight:"100vh"},className:"fade-in"},
+      React.createElement("div",{style:{background:"rgba(0,0,0,0.3)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+bdr,padding:"14px 20px",display:"flex",justifyContent:"space-between",alignItems:"center",position:"sticky",top:0,zIndex:50}},
+        React.createElement("button",{style:{background:"none",border:"none",color:"#555",fontSize:13},onClick:()=>setScreen("home")},"← Stop"),
+        React.createElement("div",{style:{fontSize:14,fontWeight:700,color:COL}},"📇 Flashcards"),
+        React.createElement("div",{style:{display:"flex",gap:10,alignItems:"center"}},
+          React.createElement("span",{style:{fontSize:12,color:"#ffd93d",fontWeight:700}},xp+" XP"),
+          streak>=3&&React.createElement("span",{style:{fontSize:12,color:"#ff6b6b",fontWeight:700}},"🔥"+streak),
+          React.createElement("span",{style:{fontSize:12,color:"#666"}},(fcIdx+1)+"/"+total))),
+      React.createElement("div",{style:{maxWidth:640,margin:"0 auto",padding:"20px 14px 60px"}},
+        pBar(pct,COL,4),
+        React.createElement("div",{style:{display:"flex",justifyContent:"center",gap:16,margin:"12px 0"}},
+          React.createElement("span",{style:{fontSize:13,color:"#6bcb77"}},"✓ "+fcKnown),
+          React.createElement("span",{style:{fontSize:13,color:"#ff6b6b"}},"✗ "+fcUnknown.length)),
+        // Category badge
+        React.createElement("div",{style:{textAlign:"center",marginBottom:8}},
+          React.createElement("span",{style:{display:"inline-block",padding:"3px 10px",borderRadius:8,fontSize:11,fontWeight:700,background:COL+"20",color:COL}},card.cat)),
+        // Card
+        React.createElement("div",{
+          onClick:()=>setFcFlipped(!fcFlipped),
+          style:{background:fcFlipped?COL+"15":cBg,borderRadius:20,padding:"40px 24px",border:"1px solid "+(fcFlipped?COL+"40":bdr),minHeight:220,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",cursor:"pointer",transition:"all 0.3s",textAlign:"center"}},
+          !fcFlipped
+            ?React.createElement("div",null,
+                React.createElement("div",{style:{fontSize:20,fontWeight:800,color:"#fff",lineHeight:1.6,whiteSpace:"pre-line"}},card.front),
+                React.createElement("div",{style:{fontSize:12,color:"#666",marginTop:16}},"👆 Tik om te flippen"))
+            :React.createElement("div",null,
+                React.createElement("div",{style:{fontSize:11,color:COL,fontWeight:700,marginBottom:8}},"ANTWOORD"),
+                React.createElement("div",{style:{fontSize:16,fontWeight:700,color:"#ccc",lineHeight:1.8,whiteSpace:"pre-line"}},card.back))),
+        // Know / Don't know buttons
+        fcFlipped&&React.createElement("div",{style:{display:"flex",gap:10,marginTop:16}},
+          React.createElement("button",{style:{flex:1,padding:"14px",borderRadius:14,border:"none",background:"rgba(255,107,107,0.15)",color:"#ff6b6b",fontSize:15,fontWeight:800},
+            onClick:()=>{setFcUnknown(u=>[...u,card]);setStreak(0);setFcIdx(fcIdx+1);setFcFlipped(false)}},
+            "❌ Wist ik niet"),
+          React.createElement("button",{style:{flex:1,padding:"14px",borderRadius:14,border:"none",background:"rgba(107,203,119,0.15)",color:"#6bcb77",fontSize:15,fontWeight:800},
+            onClick:()=>{setFcKnown(k=>k+1);setStreak(s=>s+1);setXp(x=>x+10+(streak>=2?5:0));setFcIdx(fcIdx+1);setFcFlipped(false)}},
+            "✅ Wist ik!"))));
+  }
+
+  // ===== SPEED ROUND =====
+  if(screen==="speed"&&questions.length>0){
+    const q=questions[qIdx];
+    const elapsed=speedStart?Math.round((Date.now()-speedStart)/1000):0;
+    const mins=Math.floor(elapsed/60);
+    const secs=elapsed%60;
+
+    return React.createElement("div",{style:{minHeight:"100vh"},className:"fade-in"},
+      React.createElement("div",{style:{background:"rgba(0,0,0,0.3)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+bdr,padding:"14px 20px",display:"flex",justifyContent:"space-between",alignItems:"center",position:"sticky",top:0,zIndex:50}},
+        React.createElement("button",{style:{background:"none",border:"none",color:"#555",fontSize:13},onClick:()=>setScreen("home")},"← Stop"),
+        React.createElement("div",{style:{display:"flex",gap:12,alignItems:"center"}},
+          React.createElement("span",{style:{fontSize:14,fontWeight:700,color:"#4d96ff"}},"⚡ Speed"),
+          streak>=3&&React.createElement("span",{style:{fontSize:13,color:"#ff6b6b",fontWeight:700}},"🔥"+streak)),
+        React.createElement("div",{style:{display:"flex",gap:10,alignItems:"center"}},
+          React.createElement("span",{style:{fontSize:12,color:"#ffd93d",fontWeight:700}},xp+" XP"),
+          React.createElement("span",{style:{fontSize:12,color:"#666"}},(qIdx+1)+"/"+questions.length))),
+      React.createElement("div",{style:{maxWidth:640,margin:"0 auto",padding:"20px 14px"}},
+        pBar(((qIdx+1)/questions.length)*100,"#4d96ff",4),
+        React.createElement("div",{style:{display:"flex",justifyContent:"center",gap:16,margin:"12px 0"}},
+          React.createElement("span",{style:{fontSize:13,color:"#6bcb77"}},"✓ "+score),
+          React.createElement("span",{style:{fontSize:13,color:"#ff6b6b"}},"✗ "+(qIdx-(selected===null?0:1)-score+1>0?qIdx-score:0)),
+          React.createElement("span",{style:{fontSize:13,color:"#888"}},"⏱ "+mins+":"+(secs<10?"0":"")+secs)),
+        React.createElement("div",{style:{background:cBg,borderRadius:16,padding:24,border:"1px solid "+bdr,margin:"8px 0 12px"},className:"fade-in"},
+          React.createElement("div",{style:{fontSize:16,fontWeight:700,lineHeight:1.5,color:"#fff"}},q.q)),
+        q.opts.map((opt,i)=>{
+          let bg="rgba(255,255,255,0.04)",col="#ccc",border=bdr;
+          if(selected!==null){
+            if(i===q.correct){bg="rgba(107,203,119,0.15)";col="#6bcb77";border="rgba(107,203,119,0.4)";}
+            else if(i===selected&&i!==q.correct){bg="rgba(255,107,107,0.15)";col="#ff6b6b";border="rgba(255,107,107,0.4)";}
+          }
+          return React.createElement("button",{key:i,
+            style:{width:"100%",textAlign:"left",padding:"12px 16px",borderRadius:12,border:"1px solid "+border,background:bg,color:col,fontSize:14,fontWeight:600,marginBottom:6,transition:"all 0.2s"},
+            onClick:()=>{
+              if(selected!==null)return;
+              setSelected(i);
+              const isOk=i===q.correct;
+              if(isOk){setScore(s=>s+1);setStreak(s=>s+1);setXp(x=>x+15+(streak>=2?10:0)+(streak>=5?10:0))}
+              else{setStreak(0)}
+              progress.recordAnswer(q.secId,isOk);
+              setAnswers(a=>[...a,{q:q.q,chosen:q.opts[i],correct:q.opts[q.correct],ok:isOk}]);
+            }},
+            String.fromCharCode(65+i)+". "+opt);
+        }),
+        selected!==null&&React.createElement("button",{
+          style:{width:"100%",marginTop:6,padding:"14px",borderRadius:12,border:"none",background:"#4d96ff",color:"#fff",fontSize:16,fontWeight:800},
+          onClick:()=>{
+            if(qIdx<questions.length-1){setQIdx(q=>q+1);setSelected(null)}
+            else{setSpeedTime(Math.round((Date.now()-speedStart)/1000));refreshStats();setScreen("speedresult")}
+          }},
+          qIdx<questions.length-1?"Volgende ⚡":"Bekijk resultaat")));
+  }
+
+  // ===== SPEED RESULT =====
+  if(screen==="speedresult"){
+    const pct=Math.round(score/questions.length*100);
+    const mins=Math.floor(speedTime/60);
+    const secs=speedTime%60;
+    return React.createElement("div",{style:{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center"},className:"fade-in"},
+      React.createElement("div",{style:{maxWidth:400,padding:20,textAlign:"center"}},
+        React.createElement("div",{style:{fontSize:64,marginBottom:16}},pct>=80?"🏆":pct>=60?"🎉":"💪"),
+        React.createElement("div",{style:{fontSize:24,fontWeight:900,color:pct>=70?"#6bcb77":"#ffd93d",marginBottom:8}},pct>=80?"Fantastisch!":pct>=60?"Goed bezig!":"Blijf oefenen!"),
+        React.createElement("div",{style:{fontSize:48,fontWeight:900,color:"#ffd93d",marginBottom:4}},xp+" XP"),
+        React.createElement("div",{style:{display:"flex",justifyContent:"center",gap:20,marginBottom:16}},
+          React.createElement("div",null,React.createElement("div",{style:{fontSize:28,fontWeight:900,color:"#4d96ff"}},score+"/"+questions.length),React.createElement("div",{style:{fontSize:11,color:"#777"}},"correct")),
+          React.createElement("div",null,React.createElement("div",{style:{fontSize:28,fontWeight:900,color:"#888"}},mins+":"+((secs<10?"0":"")+secs)),React.createElement("div",{style:{fontSize:11,color:"#777"}},"tijd")),
+          React.createElement("div",null,React.createElement("div",{style:{fontSize:28,fontWeight:900,color:"#ff6b6b"}},pct+"%"),React.createElement("div",{style:{fontSize:11,color:"#777"}},"score"))),
+        // Wrong answers
+        answers.filter(a=>!a.ok).length>0&&React.createElement("div",{style:{textAlign:"left",marginBottom:16,maxHeight:200,overflowY:"auto"}},
+          React.createElement("div",{style:{fontSize:13,fontWeight:700,color:"#ff6b6b",marginBottom:6}},"❌ Foute antwoorden:"),
+          answers.filter(a=>!a.ok).map((a,i)=>React.createElement("div",{key:i,style:{background:"rgba(255,107,107,0.08)",border:"1px solid rgba(255,107,107,0.2)",borderRadius:8,padding:"8px 12px",marginBottom:4}},
+            React.createElement("div",{style:{fontSize:12,color:"#ccc"}},a.q),
+            React.createElement("div",{style:{fontSize:11,color:"#6bcb77"}},"✓ "+a.correct)))),
+        React.createElement("div",{style:{display:"flex",gap:8}},
+          React.createElement("button",{style:{flex:1,padding:14,borderRadius:12,border:"none",background:"rgba(255,255,255,0.06)",color:"#ccc",fontSize:14,fontWeight:700},onClick:()=>setScreen("home")},"← Terug"),
+          React.createElement("button",{style:{flex:1,padding:14,borderRadius:12,border:"none",background:"#4d96ff",color:"#fff",fontSize:14,fontWeight:800},
+            onClick:()=>{const qs=genSpeedQs(20);setQuestions(qs);setQIdx(0);setSelected(null);setScore(0);setAnswers([]);setStreak(0);setXp(0);setSpeedStart(Date.now());setScreen("speed")}},
+            "⚡ Opnieuw"))));
   }
 
   return null;
