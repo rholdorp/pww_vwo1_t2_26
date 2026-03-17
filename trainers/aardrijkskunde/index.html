@@ -207,6 +207,77 @@ const QUESTIONS={
   ],
 };
 
+const IMG="img/";
+const DIAG_TESTS=[
+  {id:"diag1",title:"Toets 1: Platen & Vulkanen",desc:"Par 4.1 + 4.3 — Tektoniek, Ring van Vuur, Aso",icon:"\u{1F30B}",time:20,questions:[
+    {q:"Bekijk de kaart van de Ring van Vuur. Waarom liggen bijna alle vulkanen in een ring rondom de Stille Oceaan?",img:IMG+"ring_van_vuur.jpg",a:"Daar liggen de randen van tektonische platen",opts:["De Stille Oceaan is het allerwarmste water ter wereld","Het is puur toeval waar vulkanen op aarde ontstaan","Daar liggen de randen van tektonische platen","Vulkanen ontstaan altijd alleen bij diepe oceanen"],explain:"Vulkanen ontstaan bij plaatranden door subductie. De Ring van Vuur volgt de rand van de Pacifische plaat."},
+    {q:"Op de afbeelding zie je dat de Pacifische plaat ONDER Japan duikt. Hoe heet dit proces?",img:IMG+"platen_japan.jpg",a:"Subductie",opts:["Subductie","Convectie","Erosie","Sedimentatie"],explain:"Subductie = het wegduiken van de ene plaat onder de andere."},
+    {q:"Bij subductie smelt gesteente diep in de aarde. Waarom stijgt het gesmolten gesteente (magma) weer omhoog?",a:"Magma is lichter dan het vaste gesteente eromheen",opts:["De platen duwen het magma met veel kracht naar boven","De aardrotatie trekt het magma heel langzaam omhoog","Gasdruk in de aardkern perst het magma steeds omhoog","Magma is lichter dan het vaste gesteente eromheen"],explain:"Magma heeft een lagere dichtheid (is lichter) dan vast gesteente \u2192 het stijgt op."},
+    {q:"Japan heeft bijna dagelijks aardbevingen. Waarom heeft Nederland dat niet?",a:"Nederland ligt midden op een plaat, ver van de randen",opts:["Nederland ligt midden op een plaat, ver van de randen","Het klimaat in Nederland is veel te koud voor bevingen","Nederland is een te klein land voor echte aardbevingen","Nederland heeft geen enkele vulkaan in de verre buurt"],explain:"Aardbevingen ontstaan bij plaatranden. Nederland ligt midden op de Euraziatische plaat."},
+    {q:"Bekijk de doorsnede van de caldera. Hoe is de enorme krater van de Aso ontstaan?",img:IMG+"caldera_doorsnede.jpg",a:"De magmakamer raakte leeg en het dak stortte in",opts:["Een enorme meteoriet sloeg een krater in de vulkaan","De magmakamer raakte leeg en het dak stortte in","Rivieren hebben de vulkaan heel langzaam uitgesleten","Een zware aardbeving spleet de vulkaan doormidden"],explain:"Caldera = instorting. Na grote uitbarsting raakt de magmakamer leeg \u2192 het dak zakt in."},
+    {q:"De caldera van de Aso is 128 km in doorsnede. Wat zegt dit over de uitbarsting die hem vormde?",a:"De uitbarsting was enorm krachtig met veel magma",opts:["De uitbarsting was enorm krachtig met veel magma","De vulkaan barst heel langzaam maar continu uit","Er waren precies 128 kleine uitbarstingen nodig","De caldera is vergroot door erosie van regenwater"],explain:"Hoe groter de caldera, hoe meer magma er is vrijgekomen bij de oorspronkelijke uitbarsting(en)."},
+    {q:"Bekijk de foto van de Nakadake-krater. Welke stof kleurt het water in de krater groen-blauw?",img:IMG+"krater_nakadake.jpg",a:"Vulkanische gassen en opgeloste mineralen",opts:["Algen die in het heel warme kratermeer groeien","Verf van toeristische borden in de omgeving","Vulkanische gassen en opgeloste mineralen","De reflectie van de blauwe lucht er direct boven"],explain:"Vulkanische gassen (zwavel) en mineralen lossen op in het kratermeer en geven het die kleur."},
+    {q:"Krachten van binnenuit de aarde heten endogene krachten. Welke is GEEN endogene kracht?",a:"Een orkaan",opts:["Een orkaan","Een aardbeving","Een vulkaanuitbarsting","Een tsunami"],explain:"Een orkaan is een exogene kracht (van buitenaf, door weer). De rest komt van binnenuit de aarde."},
+    {q:"Beppu op Kyushu heeft warmwaterbronnen (onsen) en hete zandbaden. Waardoor is de grond daar zo warm?",img:IMG+"zandbaden.jpg",a:"Vulkanische activiteit verwarmt de ondergrond",opts:["De zon schijnt daar het sterkst van heel Japan","Vulkanische activiteit verwarmt de ondergrond","Een kerncentrale in de buurt verwarmt de bodem","Warme oceaanstromingen verwarmen de hele kust"],explain:"Magma onder de grond verwarmt het grondwater en de bodem \u2014 voordeel van vulkanisme!"},
+    {q:"Vulkanen zijn gevaarlijk, maar toch wonen miljoenen mensen bij de Aso. Noem een voordeel van vulkanisme.",a:"Vruchtbare grond door vulkanische as en mineralen",opts:["De lava is heel nuttig als bouwmateriaal voor huizen","Vruchtbare grond door vulkanische as en mineralen","Vulkanen beschermen tegen alle orkanen en tsunami's","De rook van de vulkanen houdt alle muggen op afstand"],explain:"Vulkanische as maakt de bodem heel vruchtbaar. Ook: toerisme, geothermische energie, warmwaterbronnen."},
+    {q:"Een seismograaf bij de Aso registreert steeds meer trillingen. Wat kan dit betekenen?",a:"Magma stijgt op, mogelijk een uitbarsting op komst",opts:["Er nadert een hele zware orkaan vanuit de oceaan","De rivieren in de buurt zijn aan het overstromen","Magma stijgt op, mogelijk een uitbarsting op komst","Een hele zware vrachtwagen rijdt vlak langs de berg"],explain:"Meer trillingen = magma beweegt omhoog. Dit is een voorteken van een mogelijke uitbarsting."},
+    {q:"Bekijk de afbeelding. Je ziet een vulkaanuitbarsting op Kyushu. Welk materiaal komt er NIET uit een vulkaan?",img:IMG+"vulkaanuitbarsting_kyushu.jpg",a:"Zeewater",opts:["Lava","Zeewater","Vulkanische as","Gassen"],explain:"Uit vulkanen komt magma/lava, as en gassen. Zeewater is geen vulkanisch materiaal."},
+    {q:"De Filipijnse plaat en de Pacifische plaat duiken beide onder Japan. Wat is het gevolg?",a:"Extra veel aardbevingen en vulkanen door dubbele spanning",opts:["Extra veel aardbevingen en vulkanen door dubbele spanning","Japan drijft heel langzaam weg van het Aziatische continent","Japan wordt door de twee platen elk jaar een stuk groter","Het maakt helemaal geen verschil hoeveel platen wegduiken"],explain:"Twee subductiezones = dubbel zoveel spanning = extra veel seismische en vulkanische activiteit."},
+    {q:"Welke volgorde klopt bij het ontstaan van een vulkaan?",a:"Subductie \u2192 gesteente smelt \u2192 magma stijgt \u2192 uitbarsting",opts:["Subductie \u2192 gesteente smelt \u2192 magma stijgt \u2192 uitbarsting","Uitbarsting \u2192 magma daalt \u2192 gesteente smelt \u2192 subductie","Magma stijgt \u2192 subductie \u2192 uitbarsting \u2192 gesteente smelt","Gesteente smelt \u2192 uitbarsting \u2192 subductie \u2192 magma stijgt"],explain:"De volgorde begint met subductie (plaat duikt weg), dan smelt gesteente door de hoge temperatuur."},
+    {q:"Wat is het verschil tussen magma en lava?",a:"Magma is ondergronds, lava is hetzelfde aan het oppervlak",opts:["Magma is ondergronds, lava is hetzelfde aan het oppervlak","Lava is altijd veel heter dan het magma in de aarde","Magma is vloeibaar gesteente en lava is altijd vast","Er is eigenlijk helemaal geen verschil, het zijn synoniemen"],explain:"Magma = gesmolten gesteente ONDER de aardkorst. Zodra het aan het oppervlak komt heet het lava."},
+  ]},
+  {id:"diag2",title:"Toets 2: Tohoku-ramp 2011",desc:"Par 4.2 \u2014 Aardbeving, tsunami, Fukushima",icon:"\u{1F30A}",time:20,questions:[
+    {q:"Bekijk de kaart van de zeebeving. Het epicentrum lag 70 km voor de kust. Wat is een epicentrum?",img:IMG+"kaart_zeebeving.jpg",a:"Het punt op het oppervlak recht boven de beving",opts:["Het punt op het oppervlak recht boven de beving","Het allerdiepste punt van de beving in de grond","Het punt waar de schade het allergrootst is","Het exacte centrum van de hele tsunami-golf"],explain:"Epicentrum = het punt op het oppervlak recht boven het hypocentrum."},
+    {q:"De Tohoku-aardbeving had kracht 9.0. Groningen (2012) had kracht 3.6. Hoeveel sterker was Tohoku?",a:"Miljoenen keren \u2014 de Richterschaal is logaritmisch",opts:["Miljoenen keren \u2014 de Richterschaal is logaritmisch","Ongeveer 2,5 keer sterker dan de beving in Groningen","Precies 5,4 keer zo sterk als de beving in Groningen","Ongeveer 100 keer zo sterk als de beving in Groningen"],explain:"De schaal van Richter is logaritmisch: elk heel getal = ~30x meer energie."},
+    {q:"De tsunami reisde met 800 km/u over de oceaan. Waarom is dat gevaarlijk voor de kust?",a:"Er is heel weinig tijd om mensen te waarschuwen",opts:["Er is heel weinig tijd om mensen te waarschuwen","Die snelheid is te langzaam om de kust te bereiken","De snelheid maakt de golf juist lager bij de kust","Bij die snelheid verdampt het water vanzelf helemaal"],explain:"Bij 800 km/u hebben kustbewoners slechts minuten om te vluchten."},
+    {q:"Bekijk de foto. Een boot ligt op het dak van een gebouw. Hoe kan een tsunami dit veroorzaken?",img:IMG+"tsunami_boot.jpg",a:"De watermuur was zo hoog dat alles werd meegesleurd",opts:["De watermuur was zo hoog dat alles werd meegesleurd","De boot is daar neergelegd als monument na de ramp","De wind van een orkaan blies de boot naar het dak","De boot lag al op het dak voordat de ramp plaatsvond"],explain:"Een tsunami van 15 meter is een enorme watermuur die alles meesleurt."},
+    {q:"Het hypocentrum lag op 32 km diepte. Wat als het op 300 km diepte had gelegen?",a:"De beving zou aan het oppervlak minder sterk zijn",opts:["De beving zou aan het oppervlak minder sterk zijn","De beving zou dan juist veel sterker zijn geweest","De diepte maakt helemaal geen verschil voor kracht","Er zou dan helemaal geen tsunami zijn ontstaan"],explain:"Hoe dieper het hypocentrum, hoe meer energie wordt geabsorbeerd voor het oppervlak."},
+    {q:"De beschermingsmuren bij Fukushima waren 6 meter hoog. De tsunami was hoger. Wat is de les?",a:"Rampen kunnen erger zijn dan waar je op voorbereid bent",opts:["Rampen kunnen erger zijn dan waar je op voorbereid bent","Muren bouwen heeft helemaal geen zin bij een tsunami","Kerncentrales moeten altijd vlak aan de kust gebouwd","De muren hadden maar zes centimeter hoger gemoeten"],explain:"Hazard management moet rekening houden met worst-case scenario's."},
+    {q:"Na de tsunami brak er een kernramp uit bij Fukushima. Wat was de directe oorzaak?",a:"De koelsystemen vielen uit door de overstroming",opts:["De koelsystemen vielen uit door de overstroming","De aardbeving brak de kernreactor helemaal open","De kerncentrale was al heel oud en erg versleten","Een tyfoon kort erna verwoestte de hele centrale"],explain:"De tsunami overspoelde de noodgeneratoren. Zonder koeling \u2192 oververhitting \u2192 kernramp."},
+    {q:"15.500+ doden ondanks goede waarschuwingssystemen. Waarom toch zoveel slachtoffers?",a:"De tsunami kwam te snel en was hoger dan verwacht",opts:["De tsunami kwam te snel en was hoger dan verwacht","Japan had op dat moment geen waarschuwingssysteem","Alle mensen negeerden de waarschuwingen volledig","De seismografen hadden de beving niet geregistreerd"],explain:"Ondanks waarschuwingen hadden kustbewoners maar 8-10 minuten. De golf was hoger dan verwacht."},
+    {q:"Bekijk de verspreidingskaart. Welke oceaan werd het hardst getroffen door de tsunami?",img:IMG+"tsunami_verspreiding.jpg",a:"De Stille Oceaan \u2014 de golf ging alle kanten op",opts:["De Stille Oceaan \u2014 de golf ging alle kanten op","Alleen de Japanse kust werd door de golf getroffen","De Atlantische Oceaan werd het allerhardst geraakt","De Indische Oceaan werd het allermeest getroffen"],explain:"De tsunami verspreidde zich als een cirkel over de Stille Oceaan."},
+    {q:"Twee platen schoven 40-50 meter langs elkaar. Waarom veroorzaakte dit een tsunami?",a:"De zeebodem verschoof en duwde een watermassa op",opts:["De zeebodem verschoof en duwde een watermassa op","De platen maakten een groot gat in de zeebodem","De wrijving maakte het water in de oceaan warm","De trilling liet het water resoneren als in een bad"],explain:"Bij een zeebeving verschuift de zeebodem, wat een enorm volume water verplaatst."},
+    {q:"In 2024 werd radioactief afvalwater van Fukushima geloosd in zee. Waarom is dit omstreden?",a:"Radioactiviteit kan schade toebrengen aan zeeleven",opts:["Radioactiviteit kan schade toebrengen aan zeeleven","Het water was niet meer radioactief na behandeling","Iedereen was het erover eens dat het veilig genoeg was","Alleen Japan heeft er last van, geen andere landen"],explain:"Ondanks filtering blijven er zorgen over de effecten op het zeemilieu."},
+    {q:"Wat is het verschil tussen epicentrum en hypocentrum bij de Tohoku-beving?",a:"Hypocentrum is diep in de grond, epicentrum erboven",opts:["Het zijn eigenlijk twee namen voor hetzelfde punt","Hypocentrum is diep in de grond, epicentrum erboven","Het epicentrum ligt altijd dieper dan het hypocentrum","Het hypocentrum ligt altijd boven op het aardoppervlak"],explain:"Hypo = onder (in de grond). Epi = boven (op het oppervlak, er recht boven)."},
+    {q:"De Tohoku-aardbeving duurde bijna 6 minuten. Waarom is een lange beving gevaarlijker?",a:"Gebouwen krijgen meer schade door langdurig trillen",opts:["Gebouwen krijgen meer schade door langdurig trillen","Lange bevingen zijn eigenlijk altijd zwakker dan korte","De duur heeft helemaal geen invloed op de schade","Korte bevingen veroorzaken juist veel meer tsunami's"],explain:"Hoe langer de beving, hoe meer vermoeiing in constructies \u2192 meer kans op instorting."},
+    {q:"Waarom is de combinatie aardbeving + tsunami + kernramp zo catastrofaal?",a:"Elke ramp verzwakt de hulpverlening voor de volgende",opts:["Elke ramp verzwakt de hulpverlening voor de volgende","Drie rampen tegelijk is statistisch helemaal onmogelijk","De kernramp maakte de andere twee rampen weer ongedaan","Alleen de tsunami veroorzaakte de echte grote schade"],explain:"De aardbeving verwoestte wegen, de tsunami overspoelde de kust, de kernramp dwong evacuatie af."},
+    {q:"Bekijk de foto bij Fukushima. Waarom dragen de mensen beschermende pakken?",img:IMG+"fukushima_opruiming.jpg",a:"Om zich te beschermen tegen radioactieve straling",opts:["Om zich te beschermen tegen radioactieve straling","Omdat het daar heel erg koud was in het rampgebied","Om zichzelf te beschermen tegen giftige chemische gassen","Het zijn standaard werkkleren in de bouw in Japan"],explain:"Bij een kernramp komt radioactief materiaal vrij. Beschermende kleding voorkomt blootstelling."},
+  ]},
+  {id:"diag3",title:"Toets 3: Orkanen & Exogene krachten",desc:"Par 4.4 \u2014 Tyfoons, klimaatverandering, schade",icon:"\u{1F300}",time:20,questions:[
+    {q:"Bekijk de satellietfoto van tyfoon Shanshan. Waarom is het oog in het midden rustig?",img:IMG+"tyfoon_shanshan.jpg",a:"In het oog daalt lucht, waardoor er geen wind is",opts:["Het oog is het verste punt weg van de warme zee","In het oog daalt lucht, waardoor er geen wind is","Het oog bestaat uit bevroren lucht die stil staat","De wind draait zo snel dat je hem niet meer voelt"],explain:"In het centrum daalt lucht \u2192 droog, weinig wind. Maar direct eromheen: de hevigste wind!"},
+    {q:"Orkanen ontstaan boven warme zee\u00ebn (minimaal 26\u00b0C). Waarom niet boven land?",a:"Land levert niet genoeg warme, vochtige lucht",opts:["Land levert niet genoeg warme, vochtige lucht","Land is altijd kouder dan 26 graden Celsius","De aardrotatie werkt alleen maar boven de oceaan","Orkanen bestaan volledig uit zout zeewater"],explain:"Orkanen hebben constant veel verdamping (vocht + warmte) nodig. Alleen warme oceanen leveren dat."},
+    {q:"Japan krijgt 12 orkanen per jaar. Nederland nul. Verklaar dit verschil.",a:"Japan grenst aan warme oceaan, Nederland aan koude zee",opts:["Japan grenst aan warme oceaan, Nederland aan koude zee","Nederland is een veel te klein land voor echte orkanen","Japan is een eiland terwijl Nederland dat helemaal niet is","Nederland heeft hogere bergen die alle orkanen tegenhouden"],explain:"De Noordzee is te koud (<26\u00b0C). Japan grenst aan de warme Stille Oceaan."},
+    {q:"Bekijk de grafiek. In welke maanden komen de meeste tyfoons voor bij Japan?",img:IMG+"orkaan_frequentie.jpg",a:"Augustus en september",opts:["Januari en februari","Augustus en september","April en mei","November en december"],explain:"In de zomer is de oceaan het warmst \u2192 meeste verdamping \u2192 meeste orkanen."},
+    {q:"Shanshan had windsnelheden van meer dan 250 km/u. Waarom veroorzaakt wind zo veel schade?",a:"De kracht neemt kwadratisch toe met de snelheid",opts:["De kracht neemt kwadratisch toe met de snelheid","Wind boven 200 km/u bevat ook heel veel hagel","Alleen de richting van de wind bepaalt alle schade","Wind veroorzaakt geen schade, alleen regen doet dat"],explain:"Dubbele windsnelheid = vier keer zoveel kracht. Bij 250 km/u worden daken afgerukt."},
+    {q:"Bekijk de foto. Wat is het verband tussen een orkaan en aardverschuivingen?",img:IMG+"aardverschuiving.jpg",a:"Extreme regenval maakt de grond heel instabiel",opts:["Extreme regenval maakt de grond heel instabiel","De wind van de orkaan blaast de heuvel helemaal weg","Aardverschuivingen en orkanen hebben niets met elkaar","De aardbeving van de orkaan veroorzaakt de verschuiving"],explain:"Orkanen brengen enorme hoeveelheden regen. Verzadigde grond \u2192 modderstromen."},
+    {q:"Orkanen zijn exogene krachten. Wat maakt ze exogeen?",a:"Ze ontstaan door het weer, niet door de aarde",opts:["Ze ontstaan door het weer, niet door de aarde","Ze komen altijd van buiten de grenzen van Japan","Ze komen alleen maar voor boven het vasteland","Ze zijn veel minder sterk dan endogene krachten"],explain:"Exogeen = van buitenaf (weer, klimaat). Endogeen = van binnenuit de aarde."},
+    {q:"Door klimaatverandering worden orkanen sterker. Leg uit waarom.",a:"Warmere zee\u00ebn geven meer energie aan de orkaan",opts:["De aardrotatie wordt steeds sneller door opwarming","Er komen meer tektonische platen in beweging nu","Warmere zee\u00ebn geven meer energie aan de orkaan","De atmosfeer wordt dunner, wind waait veel harder"],explain:"Orkanen halen hun energie uit verdamping. Warmer water = meer energie = sterkere orkanen."},
+    {q:"In Japan vallen minder doden bij orkanen dan in Bangladesh. Waarom?",a:"Japan heeft betere waarschuwingen en sterkere gebouwen",opts:["Japan heeft betere waarschuwingen en sterkere gebouwen","Orkanen in Japan zijn altijd veel zwakker dan elders","Bangladesh is een veel groter land dan Japan als eiland","Japan heeft hogere bergen die als bescherming dienen"],explain:"Het ontwikkelingsniveau bepaalt de impact: rijkere landen hebben betere infrastructuur."},
+    {q:"Bekijk de infographic. Waarom is het belangrijk dat burgers zich voorbereiden op orkanen?",img:IMG+"voorbereiding_orkaan.jpg",a:"De overheid kan niet iedereen tegelijk helpen",opts:["De overheid kan niet iedereen tegelijk helpen","Voorbereiding is niet nodig bij moderne technologie","Alleen kustbewoners hoeven zich voor te bereiden","Orkanen geven altijd een volle week van tevoren signaal"],explain:"Eigen voorbereiding is cruciaal want hulpdiensten zijn overbelast bij een grote ramp."},
+    {q:"Welke schaal meet de kracht van wind?",a:"Beaufort",opts:["Richter","Mercalli","Beaufort","Celsius"],explain:"Beaufort = windkracht (0-12+). Richter = aardbevingskracht. Celsius = temperatuur."},
+    {q:"Stel je staat IN het oog van tyfoon Shanshan. Wat ervaar je?",a:"Stilte en blauwe lucht, daarna slaat de oogwand toe",opts:["Stilte en blauwe lucht, daarna slaat de oogwand toe","De allerhevigste wind en regen van de hele tyfoon","Een aardbeving door de heel lage luchtdruk in het oog","Helemaal niets, want het oog is kilometers hoog boven"],explain:"In het oog is het rustig. Zodra de oogwand passeert, slaat de hevigste wind weer toe."},
+    {q:"300.000 huizen zonder stroom door Shanshan. Waarom is stroomuitval zo'n groot probleem?",a:"Zonder stroom werken pompen en communicatie niet",opts:["Zonder stroom werken pompen en communicatie niet","Stroomuitval is alleen vervelend, niet echt gevaarlijk","Stroom is niet heel belangrijk tijdens een natuurramp","Alleen ziekenhuizen hebben stroom echt nodig bij rampen"],explain:"Zonder stroom: geen drinkwater (pompen), geen communicatie (telefoon/internet), geen koeling."},
+    {q:"Welke uitspraak over orkanen en klimaat is CORRECT?",a:"Door opwarming worden orkanen waarschijnlijk sterker",opts:["Klimaatverandering heeft helemaal geen effect op orkanen","Door opwarming verdwijnen alle orkanen geleidelijk","Door opwarming worden orkanen waarschijnlijk sterker","Orkanen worden veel zwakker maar komen vaker voor"],explain:"Warmere oceanen = meer energie = sterkere orkanen."},
+    {q:"Een orkaan heeft minimaal 119 km/u wind. Hoe noem je een storm met 100 km/u?",a:"Een tropische storm \u2014 nog geen orkaan",opts:["Een tropische storm \u2014 nog geen orkaan","Een zware winterstorm met veel sneeuw","Een mini-orkaan met beperkte kracht","Een moessonwind uit Zuid-Oost-Azi\u00eb"],explain:"Pas bij windsnelheid boven 119 km/u spreken we van een orkaan/tyfoon."},
+  ]},
+  {id:"diag4",title:"Toets 4: Rampenbestrijding & Mix",desc:"Par 4.5 + alle stof \u2014 Hazard management, mix",icon:"\u{1F6E1}\uFE0F",time:20,questions:[
+    {q:"Bekijk de risicokaart van Japan. Rood-oranje = hoog risico. Wat wordt hier afgebeeld?",img:IMG+"risicokaart_japan.jpg",a:"De kans op aardbevingen per regio",opts:["De kans op aardbevingen per regio","De gemiddelde temperatuur per regio","De hoeveelheid neerslag per jaar","De bevolkingsdichtheid per provincie"],explain:"Risicokaarten tonen de kans op natuurrampen per gebied \u2014 essentieel voor hazard management."},
+    {q:"Bekijk het tsunami-waarschuwingsbord. Er staat '4.1m'. Wat betekent dit?",img:IMG+"tsunami_bord.jpg",a:"Het water kan tot 4,1 meter stijgen bij een tsunami",opts:["Het water kan tot 4,1 meter stijgen bij een tsunami","Het gebouw achter het bord is precies 4,1 meter hoog","De afstand tot aan de kust is precies 4,1 kilometer","De verwachte kracht van de tsunami is precies 4,1"],explain:"Tsunami-hoogteborden waarschuwen tot hoe hoog het water kan komen."},
+    {q:"Bekijk de meetboei op zee. Hoe detecteert deze een tsunami ver voor de kust?",img:IMG+"tsunami_boei.jpg",a:"De boei meet drukveranderingen op de zeebodem",opts:["De boei meet drukveranderingen op de zeebodem","De boei fotografeert de golven vanuit de lucht","De boei meet de temperatuur van het zeewater","De boei luistert naar het geluid van de beving"],explain:"Een tsunami verandert de waterdruk op de bodem. De boei detecteert dit en stuurt een signaal."},
+    {q:"Japan stuurt alarmberichten seconden voor een aardbeving aankomt. Hoe kan dat?",a:"Radiogolven reizen sneller dan de trillingen in de grond",opts:["Radiogolven reizen sneller dan de trillingen in de grond","Japan kan alle aardbevingen dagen van tevoren voorspellen","De telefoons trillen van de aardbeving, niet door het alarm","Het alarm wordt altijd pas na de beving verstuurd achteraf"],explain:"Seismografen bij het epicentrum detecteren de beving. Het radiosignaal bereikt steden VOOR de schokgolf."},
+    {q:"Hazard management heeft meerdere fasen. Welke volgorde is logisch?",a:"Risico in kaart \u2192 voorbereiden \u2192 waarschuwen \u2192 herstellen",opts:["Risico in kaart \u2192 voorbereiden \u2192 waarschuwen \u2192 herstellen","Herstellen \u2192 waarschuwen \u2192 voorbereiden \u2192 risico in kaart","Waarschuwen \u2192 herstellen \u2192 risico in kaart \u2192 voorbereiden","Voorbereiden \u2192 risico in kaart \u2192 herstellen \u2192 waarschuwen"],explain:"Eerst weten waar het risico is, dan maatregelen treffen, dan waarschuwen, daarna herstellen."},
+    {q:"Bekijk de vulkaandoorsnede. Welke meetgegevens helpen bij het voorspellen van een uitbarsting?",img:IMG+"vulkaan_doorsnede.jpg",a:"Trillingen, grondtemperatuur en gassamenstelling",opts:["Windsnelheid en de luchtdruk boven de hele vulkaan","Trillingen, grondtemperatuur en gassamenstelling","De kleur van het water in de rivieren in de buurt","Het aantal toeristen dat de vulkaan elk jaar bezoekt"],explain:"Seismografen, temperatuursensoren en gasmeters geven samen een beeld van magmabeweging."},
+    {q:"Japan is een rijk land met veel technologie. Toch 15.500+ doden bij Tohoku. Wat zegt dit?",a:"Zelfs de beste voorbereiding kan extremen niet voorkomen",opts:["Japan had eigenlijk helemaal geen voorbereiding getroffen","De technologie in Japan was op dat moment niet goed genoeg","Zelfs de beste voorbereiding kan extremen niet voorkomen","Alleen arme landen hebben echt last van grote natuurrampen"],explain:"De Tohoku-ramp was uitzonderlijk zwaar (9.0). Geen systeem is ontworpen voor het absolute worst-case."},
+    {q:"Een aardbeving is endogeen, een orkaan exogeen. Is een tsunami endogeen of exogeen?",a:"Endogeen \u2014 de oorzaak is een zeebeving in de aarde",opts:["Endogeen \u2014 de oorzaak is een zeebeving in de aarde","Exogeen \u2014 want het is immers water van buitenaf","Beide \u2014 oorzaak is endogeen maar het water exogeen","Geen van beide \u2014 tsunami's zijn een eigen categorie"],explain:"De OORZAAK bepaalt of het endogeen of exogeen is. Tsunami begint met een zeebeving."},
+    {q:"Bekijk de foto. Wat maakt een gebouw aardbevingsbestendig?",img:IMG+"aardbevingsbestendig.jpg",a:"Flexibele constructie die meebeweegt met trillingen",opts:["Flexibele constructie die meebeweegt met trillingen","Heel zware muren zodat het gebouw niet kan bewegen","Het gebouw wordt helemaal los van de fundering gezet","Alleen houten gebouwen zijn aardbevingsbestendig gemaakt"],explain:"Aardbevingsbestendige gebouwen hebben flexibele verbindingen en dempers."},
+    {q:"Een seismograaf meet een zware beving onder de oceaan bij Japan. Welke stappen volgen?",a:"Tsunami-alarm \u2192 evacuatie kust \u2192 boeien checken",opts:["Afwachten tot de golf zichtbaar is vanuit de kust","Tsunami-alarm \u2192 evacuatie kust \u2192 boeien checken","Alleen de televisie informeren na twee uur wachten","Eerst alle vulkanen controleren op uitbarstingen"],explain:"Bij een zeebeving: direct alarm, kustgebieden evacueren, meetboeien monitoren."},
+    {q:"Waarom is het verschil endogeen/exogeen belangrijk voor rampenbestrijding?",a:"Elke soort kracht vereist een ander systeem",opts:["Het verschil is alleen maar belangrijk voor de wetenschap","Endogene krachten zijn altijd veel erger dan exogene","Elke soort kracht vereist een ander systeem","Je kunt je alleen maar voorbereiden op exogene krachten"],explain:"Seismografen voor endogene rampen, weerradars voor exogene. Andere oorzaak = ander systeem."},
+    {q:"Aso: caldera 128 km. Shanshan: 250 km/u wind. Tohoku: 9.0. Wat meet een seismograaf?",a:"De kracht van de Tohoku-beving (schaal van Richter)",opts:["De kracht van de Tohoku-beving (schaal van Richter)","De totale omtrek van de caldera van de Aso-vulkaan","De windsnelheid van tyfoon Shanshan in kilometers","De hoogte van de tsunami-golf bij de Japanse kust"],explain:"Een seismograaf meet trillingen = aardbevingen. Wind meet je met een anemometer."},
+    {q:"Mantelconvectie is de motor achter plaattektoniek. Wat is mantelconvectie?",a:"Stromingen in de aardmantel door temperatuurverschillen",opts:["Het smelten van het ijs op de Noordpool door opwarming","Sterke windbewegingen heel hoog in de hele atmosfeer","Stromingen in de aardmantel door temperatuurverschillen","De stroming van het magma in een actieve vulkaankrater"],explain:"Heet gesteente stijgt op, koelt af en zakt \u2192 circulatiebeweging \u2192 duwt platen voort."},
+    {q:"Japan heeft aardbevingen, tsunami's, vulkanen en orkanen. Welke twee hebben dezelfde oorzaak?",a:"Aardbevingen en vulkanen \u2014 beide door plaattektoniek",opts:["Orkanen en tsunami's \u2014 beide door warm oceaanwater","Aardbevingen en vulkanen \u2014 beide door plaattektoniek","Vulkanen en orkanen \u2014 beide door hoge temperaturen","Tsunami's veroorzaken alle aardbevingen in de aardkorst"],explain:"Aardbevingen en vulkanen zijn beide endogeen: veroorzaakt door tektonische platen."},
+    {q:"Wat maakt Japan zo bijzonder kwetsbaar voor natuurrampen?",a:"Het ligt op plaatranden \u00e9n aan een warme oceaan",opts:["Het ligt op plaatranden \u00e9n aan een warme oceaan","Het is het allergrootste eiland van de hele wereld","Het heeft de allerhoogste bergen van heel Oost-Azi\u00eb","Het ligt het dichtst bij de evenaar van alle eilanden"],explain:"Plaatranden = endogene rampen. Warme oceaan = exogene rampen. Dubbel risico."},
+  ]},
+];
 function shuffle(a){return[...a].sort(()=>Math.random()-0.5)}
 function genQs(secId){
   const pool=QUESTIONS[secId]||[];
@@ -231,6 +302,9 @@ function App(){
   const[,forceUpdate]=useState(0);
   const[dashTaskId,setDashTaskId]=useState(null);
   const[dashDate,setDashDate]=useState(null);
+  // Diagnostische toets state
+  const[diagTest,setDiagTest]=useState(null);
+  const[diagExplain,setDiagExplain]=useState(false);
 
   // Deep link support
   useEffect(()=>{
@@ -242,6 +316,15 @@ function App(){
       else if(dp.mode==="theory")startTheory(dp.section);
     }
   },[]);
+  function startDiag(test){
+    const qs=test.questions.map(q=>{
+      const opts=shuffle(q.opts);
+      return{q:q.q,opts,correct:opts.indexOf(q.a),explain:q.explain,img:q.img};
+    });
+    setDiagTest(test);
+    setQuestions(qs);setQIdx(0);setSelected(null);setScore({correct:0,total:0});setWrongAnswers([]);setDiagExplain(false);
+    setMode("diag");
+  }
   function startTheory(secId){
     setActiveSec(secId);setStep(0);setMode("theory");
   }
@@ -302,6 +385,22 @@ function App(){
               React.createElement("button",{style:{flex:1,padding:"8px",borderRadius:"10px",border:"none",background:"rgba(255,255,255,0.06)",color:"#aaa",fontSize:"12px",fontWeight:700},onClick:()=>startTheory(sec.id)},"📖 Theorie"),
               React.createElement("button",{style:{flex:1,padding:"8px",borderRadius:"10px",border:"none",background:COL,color:"#111",fontSize:"12px",fontWeight:800},onClick:()=>startPractice(sec.id)},"⚡ Oefenen")));
         }),
+        // Diagnostische Toetsen sectie
+        React.createElement("div",{style:{background:"linear-gradient(135deg,#E74C3C20,#ff6b6b20)",borderRadius:16,padding:"20px",border:"1px solid #E74C3C40",marginTop:16,marginBottom:16}},
+          React.createElement("div",{style:{display:"flex",alignItems:"center",gap:12,marginBottom:14}},
+            React.createElement("span",{style:{fontSize:28}},"📝"),
+            React.createElement("div",null,
+              React.createElement("div",{style:{fontSize:16,fontWeight:900,color:"#fff"}},"Diagnostische Toetsen"),
+              React.createElement("div",{style:{fontSize:12,color:"#aaa"}},"4 toetsen van 20 min — test je inzicht met illustraties"))),
+          DIAG_TESTS.map(t=>React.createElement("button",{key:t.id,
+            style:{width:"100%",padding:"12px 16px",borderRadius:12,border:"1px solid rgba(255,255,255,0.08)",background:"rgba(255,255,255,0.04)",color:"#ccc",fontSize:13,fontWeight:700,marginBottom:6,textAlign:"left",display:"flex",alignItems:"center",gap:10},
+            onClick:()=>startDiag(t)},
+            React.createElement("span",{style:{fontSize:20}},t.icon),
+            React.createElement("div",{style:{flex:1}},
+              React.createElement("div",{style:{color:"#eee"}},t.title),
+              React.createElement("div",{style:{fontSize:11,color:"#888",fontWeight:400}},t.desc)),
+            React.createElement("span",{style:{fontSize:11,color:"#666"}},t.time+" min")))),
+
         React.createElement("div",{style:{display:"flex",gap:"8px",marginTop:"16px"}},
           React.createElement("a",{href:"../../index.html",style:{flex:1,display:"block",padding:"10px",borderRadius:"10px",background:"rgba(255,255,255,0.03)",color:"#666",fontSize:"12px",fontWeight:600,textDecoration:"none",textAlign:"center"}},"← Terug"),
           React.createElement("button",{style:{padding:"10px 16px",borderRadius:"10px",border:"none",background:"rgba(255,255,255,0.03)",color:"#555",fontSize:"12px",fontWeight:600},onClick:()=>{if(confirm("Reset alle voortgang?")){progress.reset();forceUpdate(n=>n+1)}}},"🔄 Reset voortgang")
@@ -389,6 +488,71 @@ function App(){
         React.createElement("div",{style:{display:"flex",gap:"8px"}},
           React.createElement("button",{style:{flex:1,padding:"12px",borderRadius:"12px",border:"none",background:"rgba(255,255,255,0.06)",color:"#999",fontSize:"14px",fontWeight:700},onClick:()=>setMode("home")},"\u2190 Terug"),
           React.createElement("button",{style:{flex:1,padding:"12px",borderRadius:"12px",border:"none",background:COL,color:"#111",fontSize:"14px",fontWeight:800},onClick:()=>startPractice(activeSec)},"Opnieuw"))));
+  }
+
+  // ===== DIAG =====
+  if(mode==="diag"){
+    const q=questions[qIdx];
+    return React.createElement("div",{style:{minHeight:"100vh"}},
+      React.createElement("div",{style:{background:"rgba(0,0,0,0.3)",backdropFilter:"blur(12px)",borderBottom:"1px solid "+bdr,padding:"14px 20px",display:"flex",justifyContent:"space-between",alignItems:"center",position:"sticky",top:0,zIndex:50}},
+        React.createElement("button",{style:{background:"none",border:"none",color:"#666",fontSize:"16px"},onClick:()=>setMode("home")},"✕"),
+        React.createElement("div",{style:{fontSize:"14px",fontWeight:700,color:"#E74C3C"}},diagTest.icon+" "+diagTest.title),
+        React.createElement("div",{style:{fontSize:"12px",color:"#666"}},(qIdx+1)+"/"+questions.length)),
+      React.createElement("div",{style:{maxWidth:"640px",margin:"0 auto",padding:"20px 14px 60px"}},
+        pBar(((qIdx+1)/questions.length)*100,"#E74C3C","4px"),
+        React.createElement("div",{style:{display:"flex",justifyContent:"center",gap:"16px",marginTop:"12px",marginBottom:"16px"}},
+          React.createElement("span",{style:{fontSize:"13px",color:"#6bcb77"}},"✓ "+score.correct),
+          React.createElement("span",{style:{fontSize:"13px",color:"#ff6b6b"}},"✕ "+(score.total-score.correct))),
+        React.createElement("div",{key:qIdx,className:"fade-in"},
+          q.img&&React.createElement("div",{style:{marginBottom:12,borderRadius:12,overflow:"hidden",border:"1px solid "+bdr}},
+            React.createElement("img",{src:q.img,style:{width:"100%",display:"block"},alt:"illustratie"})),
+          React.createElement("div",{style:{background:cBg,borderRadius:"16px",padding:"20px",border:"1px solid "+bdr,marginBottom:"16px"}},
+            React.createElement("div",{style:{fontSize:"16px",fontWeight:700,lineHeight:1.5,color:"#fff"}},q.q)),
+          q.opts.map((opt,i)=>{
+            let bg="rgba(255,255,255,0.04)",col2="#ddd",bd=bdr;
+            if(selected!==null){
+              if(i===q.correct){bg="rgba(107,203,119,0.15)";col2="#6bcb77";bd="rgba(107,203,119,0.4)";}
+              else if(i===selected){bg="rgba(255,107,107,0.12)";col2="#ff6b6b";bd="rgba(255,107,107,0.3)";}
+            }
+            return React.createElement("button",{key:i,style:{width:"100%",textAlign:"left",padding:"14px 16px",borderRadius:"12px",border:"1px solid "+bd,background:bg,color:col2,fontSize:"14px",fontWeight:600,marginBottom:"8px",display:"block"},onClick:()=>{
+              if(selected!==null)return;
+              setSelected(i);
+              const ok=i===q.correct;
+              if(!ok)setWrongAnswers(w=>[...w,{q:q.q,chosen:q.opts[i],correct:q.opts[q.correct],explain:q.explain,img:q.img}]);
+              setScore(s=>({correct:s.correct+(ok?1:0),total:s.total+1}));
+            }},opt);
+          }),
+          selected!==null&&React.createElement("div",{style:{background:"rgba(255,255,255,0.04)",borderRadius:12,padding:"14px",border:"1px solid "+bdr,marginTop:4,marginBottom:8}},
+            React.createElement("div",{style:{fontSize:12,fontWeight:700,color:selected===q.correct?"#6bcb77":"#ff6b6b",marginBottom:4}},selected===q.correct?"✓ Goed!":"✕ Fout"),
+            React.createElement("div",{style:{fontSize:13,color:"#bbb",lineHeight:1.5}},q.explain)),
+          selected!==null&&React.createElement("button",{style:{width:"100%",padding:"14px",borderRadius:"14px",border:"none",background:"#E74C3C",color:"#fff",fontSize:"15px",fontWeight:800,marginTop:"8px"},onClick:()=>{
+            if(qIdx+1>=questions.length){setMode("diagresult");return;}
+            setQIdx(qi=>qi+1);setSelected(null);setDiagExplain(false);
+          }},qIdx+1>=questions.length?"Bekijk resultaat":"Volgende vraag →"))));
+  }
+
+  // ===== DIAG RESULT =====
+  if(mode==="diagresult"){
+    const pct=score.total>0?Math.round(score.correct/score.total*100):0;const passed=pct>=70;
+    return React.createElement("div",{style:{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center"}},
+      React.createElement("div",{style:{maxWidth:"500px",padding:"20px",width:"100%"}},
+        React.createElement("div",{style:{textAlign:"center",marginBottom:20}},
+          React.createElement("div",{style:{fontSize:"64px",marginBottom:"16px"}},passed?"🎉":"💪"),
+          React.createElement("div",{style:{fontSize:"24px",fontWeight:900,color:passed?"#6bcb77":"#ffd93d",marginBottom:"8px"}},passed?"Goed gedaan!":"Nog even oefenen!"),
+          React.createElement("div",{style:{fontSize:"48px",fontWeight:900,color:passed?"#6bcb77":"#ffd93d",marginBottom:"8px"}},pct+"%"),
+          React.createElement("div",{style:{fontSize:"15px",color:"#999",marginBottom:"8px"}},score.correct+" van "+score.total+" correct"),
+          React.createElement("div",{style:{fontSize:"13px",color:"#666"}},diagTest.title)),
+        wrongAnswers.length>0&&React.createElement("div",{style:{marginBottom:"16px"}},
+          React.createElement("div",{style:{fontSize:"14px",fontWeight:700,color:"#ff6b6b",marginBottom:"8px"}},"❌ Foute antwoorden:"),
+          wrongAnswers.map((w,i)=>React.createElement("div",{key:i,style:{background:"rgba(255,107,107,0.08)",border:"1px solid rgba(255,107,107,0.2)",borderRadius:"10px",padding:"10px 14px",marginBottom:"6px"}},
+            w.img&&React.createElement("img",{src:w.img,style:{width:"100%",borderRadius:8,marginBottom:6},alt:""}),
+            React.createElement("div",{style:{fontSize:"13px",color:"#ccc"}},w.q),
+            React.createElement("div",{style:{fontSize:"12px",color:"#ff6b6b",marginTop:"2px"}},"Jouw antwoord: "+w.chosen),
+            React.createElement("div",{style:{fontSize:"12px",color:"#6bcb77",marginTop:"2px"}},"Goed: "+w.correct),
+            React.createElement("div",{style:{fontSize:"12px",color:"#999",marginTop:"4px",fontStyle:"italic"}},w.explain)))),
+        React.createElement("div",{style:{display:"flex",gap:"8px"}},
+          React.createElement("button",{style:{flex:1,padding:"12px",borderRadius:"12px",border:"none",background:"rgba(255,255,255,0.06)",color:"#999",fontSize:"14px",fontWeight:700},onClick:()=>setMode("home")},"← Terug"),
+          React.createElement("button",{style:{flex:1,padding:"12px",borderRadius:"12px",border:"none",background:"#E74C3C",color:"#fff",fontSize:"14px",fontWeight:800},onClick:()=>startDiag(diagTest)},"Opnieuw"))));
   }
 
   return null;
