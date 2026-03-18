@@ -88,6 +88,12 @@ class TrainerProgress {
       s.currentStreak = 0;
     }
     this.data.sections[sectionId] = s;
+    // Track daily activity
+    const today = new Date().toISOString().slice(0, 10);
+    if (!this.data.activity) this.data.activity = {};
+    if (!this.data.activity[today]) this.data.activity[today] = { answers: 0, correct: 0 };
+    this.data.activity[today].answers++;
+    if (isCorrect) this.data.activity[today].correct++;
     this._save();
   }
 
@@ -98,6 +104,11 @@ class TrainerProgress {
     s.lastQuizTotal = total;
     s.lastQuizPct = total > 0 ? Math.round(correct / total * 100) : 0;
     this.data.sections[sectionId] = s;
+    // Track quiz activity
+    const today = new Date().toISOString().slice(0, 10);
+    if (!this.data.activity) this.data.activity = {};
+    if (!this.data.activity[today]) this.data.activity[today] = { answers: 0, correct: 0 };
+    this.data.activity[today].quizzes = (this.data.activity[today].quizzes || 0) + 1;
     this._save();
   }
 

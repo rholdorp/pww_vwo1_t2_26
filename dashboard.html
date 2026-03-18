@@ -318,6 +318,40 @@ function switchUser(name){
   if(!allUsers.includes(safe))setAllUsers(u=>[...u,safe].sort());
 }
 
+const[actData,setActData]=useState({});
+useEffect(()=>{
+  if(view!=="usage")return;
+  const act={};
+  const readLocal=()=>{
+    Object.entries(TRAINER_META).forEach(([subj,meta])=>{
+      try{
+        const raw=localStorage.getItem(meta.key);if(!raw)return;
+        const data=JSON.parse(raw);if(!data||!data.activity)return;
+        Object.entries(data.activity).forEach(([date,a])=>{
+          if(!act[date])act[date]={};
+          act[date][subj]={answers:a.answers||0,correct:a.correct||0,quizzes:a.quizzes||0};
+        });
+      }catch{}
+    });
+  };
+  if(window.FB){
+    window.FB.db.ref("users/"+curUser+"/trainers").once("value").then(snap=>{
+      if(snap.exists()){
+        const fb=snap.val()||{};
+        Object.entries(TRAINER_META).forEach(([subj,meta])=>{
+          const fbKey=meta.key.replace(/\./g,",");
+          const data=fb[fbKey];if(!data||!data.activity)return;
+          Object.entries(data.activity).forEach(([date,a])=>{
+            if(!act[date])act[date]={};
+            act[date][subj]={answers:a.answers||0,correct:a.correct||0,quizzes:a.quizzes||0};
+          });
+        });
+      }
+      readLocal();
+      setActData({...act});
+    }).catch(()=>{readLocal();setActData({...act});});
+  }else{readLocal();setActData({...act});}
+},[view,curUser]);
 const[toast,setToast]=useState(null);
 const showToast=msg=>{setToast(msg);setTimeout(()=>setToast(null),3000)};
 // Check if all mapped sections for a task are mastered
@@ -398,7 +432,7 @@ React.createElement("div",{style:{background:cBg,borderRadius:"16px",padding:"18
 toast&&React.createElement("div",{style:{position:"fixed",bottom:"20px",left:"50%",transform:"translateX(-50%)",background:"rgba(30,30,50,0.95)",color:"#fff",padding:"12px 20px",borderRadius:"12px",fontSize:"13px",fontWeight:700,zIndex:200,border:"1px solid rgba(255,255,255,0.1)",boxShadow:"0 4px 20px rgba(0,0,0,0.5)",maxWidth:"340px",textAlign:"center"}},toast),
 // Tabs
 React.createElement("div",{style:{display:"flex",gap:"4px",background:"rgba(255,255,255,0.04)",borderRadius:"12px",padding:"4px",marginBottom:"20px"}},
-  ["plan","subjects","exams","info"].map((v,i)=>React.createElement("button",{key:v,style:{flex:1,padding:"8px 4px",borderRadius:"10px",border:"none",background:view===v?"rgba(255,255,255,0.1)":"transparent",color:view===v?"#fff":"#666",fontSize:"12px",fontWeight:700,cursor:"pointer",textAlign:"center"},onClick:()=>setView(v)},["📋 Plan","📊 Vakken","📝 PW","📅 Info"][i]))),
+  ["plan","subjects","exams","usage","info"].map((v,i)=>React.createElement("button",{key:v,style:{flex:1,padding:"8px 4px",borderRadius:"10px",border:"none",background:view===v?"rgba(255,255,255,0.1)":"transparent",color:view===v?"#fff":"#666",fontSize:"11px",fontWeight:700,cursor:"pointer",textAlign:"center"},onClick:()=>setView(v)},["📋 Plan","📊 Vakken","📝 PW","📈 Gebruik","📅 Info"][i]))),
 
 // ====== PLAN VIEW ======
 view==="plan"&&PHASES.map(phase=>{const ps=phaseSt(phase.id),pDays=DAYS.filter(d=>d.phase===phase.id),isOpen=selPhase===phase.id||selPhase===null;
@@ -470,6 +504,126 @@ view==="exams"&&React.createElement("div",null,
       React.createElement("div",{style:{fontSize:"12px",color:"#777"}},d.toLocaleDateString("nl-NL",{weekday:"long",day:"numeric",month:"long"})),
       React.createElement("div",{style:{fontSize:"11px",color:"#666",marginTop:"2px"}},"Voorbereiding: "+st.done+"/"+st.total+" ("+st.pct+"%)")),
     past?React.createElement("span",{style:{fontSize:"20px"}},"✅"):isT?React.createElement("span",{style:{fontSize:"14px",fontWeight:800,color:"#ff6b6b"}},"NU!"):React.createElement("div",{style:{textAlign:"right"}},React.createElement("div",{style:{fontSize:"20px",fontWeight:900,color:dt<=3?"#ff6b6b":"#4d96ff"}},dt),React.createElement("div",{style:{fontSize:"10px",color:"#777"}},"dagen")))})),
+
+// ====== USAGE VIEW ======
+view==="usage"&&(()=>{
+  const taskLookup={};DAYS.forEach(dy=>dy.tasks.forEach(t=>{taskLookup[t.id]=t}));
+  // Build daily data
+  const allDates={};
+  const start=new Date("2026-02-26"),end=new Date(today>"2026-03-18"?"2026-03-18":today);
+  for(let d=new Date(start);d<=end;d.setDate(d.getDate()+1)){
+    const k=d.toISOString().slice(0,10);
+    allDates[k]={tasks:0,answers:0,correct:0,quizzes:0,subjects:{}};
+  }
+  // Checkbox data (task completions)
+  Object.entries(ck).forEach(([id,ts])=>{
+    if(typeof ts!=="number")return;
+    const d=new Date(ts).toISOString().slice(0,10);
+    if(!allDates[d])allDates[d]={tasks:0,answers:0,correct:0,quizzes:0,subjects:{}};
+    allDates[d].tasks++;
+    const task=taskLookup[id];
+    if(task){
+      if(!allDates[d].subjects[task.subject])allDates[d].subjects[task.subject]={tasks:0,answers:0};
+      allDates[d].subjects[task.subject].tasks++;
+    }
+  });
+  // Trainer activity data
+  Object.entries(actData).forEach(([date,subjs])=>{
+    if(!allDates[date])allDates[date]={tasks:0,answers:0,correct:0,quizzes:0,subjects:{}};
+    Object.entries(subjs).forEach(([subj,a])=>{
+      allDates[date].answers+=(a.answers||0);
+      allDates[date].correct+=(a.correct||0);
+      allDates[date].quizzes+=(a.quizzes||0);
+      if(!allDates[date].subjects[subj])allDates[date].subjects[subj]={tasks:0,answers:0};
+      allDates[date].subjects[subj].answers+=(a.answers||0);
+    });
+  });
+  const sorted=Object.entries(allDates).sort(([a],[b])=>a.localeCompare(b)).map(([date,d])=>({date,...d,total:d.tasks+d.answers}));
+  const maxTotal=Math.max(...sorted.map(d=>d.total),1);
+  const activeDays=sorted.filter(d=>d.total>0).length;
+  const totalTasks=sorted.reduce((s,d)=>s+d.tasks,0);
+  const totalAnswers=sorted.reduce((s,d)=>s+d.answers,0);
+  const totalCorrect=sorted.reduce((s,d)=>s+d.correct,0);
+  const totalQuizzes=sorted.reduce((s,d)=>s+d.quizzes,0);
+  const dayNames=["zo","ma","di","wo","do","vr","za"];
+
+  return React.createElement("div",null,
+    // Summary
+    React.createElement("div",{style:{background:cBg,borderRadius:"16px",padding:"18px",border:"1px solid "+bdr,marginBottom:"12px"}},
+      React.createElement("div",{style:{fontSize:"16px",fontWeight:800,marginBottom:"14px"}},"📈 Gebruik overzicht"),
+      React.createElement("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"10px"}},
+        [{n:"Actieve dagen",v:activeDays+"/"+sorted.length,c:"#4d96ff"},{n:"Taken afgevinkt",v:totalTasks,c:"#6bcb77"},{n:"Vragen beantwoord",v:totalAnswers,c:"#ffd93d"},{n:"Nauwkeurigheid",v:totalAnswers>0?Math.round(totalCorrect/totalAnswers*100)+"%":"–",c:"#ff6b6b"}].map((s,i)=>
+          React.createElement("div",{key:i,style:{background:"rgba(255,255,255,0.03)",borderRadius:"10px",padding:"12px",textAlign:"center"}},
+            React.createElement("div",{style:{fontSize:"22px",fontWeight:900,color:s.c}},s.v),
+            React.createElement("div",{style:{fontSize:"11px",color:"#777",marginTop:"2px"}},s.n))))),
+    // Bar chart
+    React.createElement("div",{style:{background:cBg,borderRadius:"16px",padding:"18px",border:"1px solid "+bdr,marginBottom:"12px"}},
+      React.createElement("div",{style:{fontSize:"14px",fontWeight:800,marginBottom:"4px"}},"Activiteit per dag"),
+      React.createElement("div",{style:{fontSize:"11px",color:"#666",marginBottom:"14px"}},"Taken afgevinkt + vragen beantwoord"),
+      React.createElement("div",{style:{display:"flex",alignItems:"flex-end",gap:"2px",height:"140px",padding:"0 2px"}},
+        sorted.map((d,i)=>{
+          const h=d.total>0?Math.max(8,Math.round(d.total/maxTotal*120)):2;
+          const isT=d.date===today;
+          const dt=new Date(d.date);
+          const dayN=dayNames[dt.getDay()];
+          const barCol=d.total===0?"rgba(255,255,255,0.06)":isT?"#4d96ff":d.tasks>0&&d.answers>0?"linear-gradient(to top,#6bcb77 "+(Math.round(d.tasks/d.total*100))+"%, #ffd93d 0%)":d.tasks>0?"#6bcb77":"#ffd93d";
+          return React.createElement("div",{key:d.date,style:{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:"3px"}},
+            d.total>0&&React.createElement("div",{style:{fontSize:"8px",color:"#666",fontWeight:700}},d.total),
+            React.createElement("div",{style:{width:"100%",height:h+"px",borderRadius:"3px",background:barCol,minWidth:"6px",transition:"height 0.3s"}}),
+            React.createElement("div",{style:{fontSize:"7px",color:isT?"#4d96ff":"#555",fontWeight:isT?700:400,marginTop:"2px"}},dayN),
+            i%7===0&&React.createElement("div",{style:{fontSize:"7px",color:"#444"}},d.date.slice(5)))
+        })),
+      // Legend
+      React.createElement("div",{style:{display:"flex",gap:"14px",justifyContent:"center",marginTop:"10px"}},
+        [{c:"#6bcb77",l:"Taken"},{c:"#ffd93d",l:"Vragen"}].map((lg,i)=>
+          React.createElement("div",{key:i,style:{display:"flex",alignItems:"center",gap:"4px"}},
+            React.createElement("div",{style:{width:"8px",height:"8px",borderRadius:"2px",background:lg.c}}),
+            React.createElement("span",{style:{fontSize:"10px",color:"#777"}},lg.l))))),
+    // Activity list (most recent first)
+    React.createElement("div",{style:{background:cBg,borderRadius:"16px",padding:"18px",border:"1px solid "+bdr,marginBottom:"12px"}},
+      React.createElement("div",{style:{fontSize:"14px",fontWeight:800,marginBottom:"12px"}},"Gebruiksmomenten"),
+      sorted.filter(d=>d.total>0).reverse().map((d,i)=>{
+        const dt=new Date(d.date);
+        const label=dt.toLocaleDateString("nl-NL",{weekday:"short",day:"numeric",month:"short"});
+        const isT=d.date===today;
+        const subjList=Object.entries(d.subjects).filter(([,v])=>(v.tasks||0)+(v.answers||0)>0);
+        return React.createElement("div",{key:d.date,style:{padding:"10px 0",borderTop:i?"1px solid rgba(255,255,255,0.04)":"none"}},
+          React.createElement("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"6px"}},
+            React.createElement("div",{style:{display:"flex",alignItems:"center",gap:"8px"}},
+              React.createElement("span",{style:{fontSize:"13px",fontWeight:700,color:isT?"#4d96ff":"#ccc"}},label),
+              isT&&React.createElement("span",{style:{fontSize:"9px",background:"#4d96ff20",color:"#4d96ff",padding:"1px 6px",borderRadius:"4px",fontWeight:700}},"VANDAAG")),
+            React.createElement("div",{style:{display:"flex",gap:"8px",fontSize:"11px"}},
+              d.tasks>0&&React.createElement("span",{style:{color:"#6bcb77",fontWeight:700}},d.tasks+" taken"),
+              d.answers>0&&React.createElement("span",{style:{color:"#ffd93d",fontWeight:700}},d.answers+" vragen"),
+              d.quizzes>0&&React.createElement("span",{style:{color:"#ff6b6b",fontWeight:700}},d.quizzes+" toetsen"))),
+          React.createElement("div",{style:{display:"flex",gap:"4px",flexWrap:"wrap"}},
+            subjList.map(([subj,v])=>{
+              const c=subCol[subj]||"#888";
+              const info=[];
+              if(v.tasks)info.push(v.tasks+" taak"+(v.tasks>1?"en":""));
+              if(v.answers)info.push(v.answers+" vr.");
+              return React.createElement("span",{key:subj,style:{fontSize:"10px",padding:"2px 7px",borderRadius:"5px",background:c+"15",color:c,fontWeight:600}},
+                (SUBJ_INFO[subj]?SUBJ_INFO[subj].emoji+" ":"")+(info.length?info.join(", "):subj));
+            })))
+      }),
+      sorted.filter(d=>d.total>0).length===0&&React.createElement("div",{style:{textAlign:"center",padding:"20px",color:"#555",fontSize:"13px"}},"Nog geen activiteit geregistreerd")),
+    // Per-trainer stats
+    React.createElement("div",{style:{background:cBg,borderRadius:"16px",padding:"18px",border:"1px solid "+bdr,marginBottom:"12px"}},
+      React.createElement("div",{style:{fontSize:"14px",fontWeight:800,marginBottom:"12px"}},"Voortgang per trainer"),
+      subjects.filter(s=>!!TRAINER_META[s]).map((subj,i)=>{
+        const tr=getTr(subj);const c=subCol[subj];const si=SUBJ_INFO[subj]||{};
+        const totalA=tr?Object.values(tr.secData||{}).reduce((s,v)=>s+(v.total||0),0):0;
+        const totalC=tr?Object.values(tr.secData||{}).reduce((s,v)=>s+(v.correct||0),0):0;
+        return React.createElement("div",{key:subj,style:{padding:"10px 0",borderTop:i?"1px solid rgba(255,255,255,0.04)":"none",display:"flex",alignItems:"center",gap:"12px"}},
+          React.createElement("div",{style:{fontSize:"24px",lineHeight:1}},si.emoji||"📚"),
+          React.createElement("div",{style:{flex:1}},
+            React.createElement("div",{style:{fontSize:"13px",fontWeight:700,color:"#ccc"}},subj),
+            React.createElement("div",{style:{fontSize:"11px",color:"#777"}},
+              tr?(tr.mastered+"/"+tr.n+" secties mastered, "+totalA+" vragen ("+tr.acc+"%)"):"Niet gestart")),
+          React.createElement("div",{style:{width:"40px",height:"40px",borderRadius:"10px",background:c+"15",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"13px",fontWeight:800,color:tr&&tr.pct>=80?"#6bcb77":c}},tr?tr.pct+"%":"–"))
+      }))
+  );
+})(),
 
 // ====== INFO VIEW ======
 view==="info"&&React.createElement("div",null,
