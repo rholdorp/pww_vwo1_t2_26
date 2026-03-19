@@ -11,6 +11,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="../../shared/firebase-config.js"></script>
+<script src="../../shared/camera.js"></script>
 <script src="../../shared/progress.js"></script>
 <script src="../../shared/ui-helpers.js"></script>
 <script src="../../shared/dashboard-link.js"></script>
@@ -419,6 +420,7 @@ function App(){
     }
   },[]);
   const startPractice=id=>{
+    if(window.StudyCamera) StudyCamera.requestPhoto("Engels","start");
     setActiveSec(id);
     let qs;
     switch(id){

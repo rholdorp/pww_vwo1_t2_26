@@ -110,6 +110,10 @@ class TrainerProgress {
     if (!this.data.activity[today]) this.data.activity[today] = { answers: 0, correct: 0 };
     this.data.activity[today].quizzes = (this.data.activity[today].quizzes || 0) + 1;
     this._save();
+    // Camera bij einde training
+    if (window.StudyCamera) {
+      StudyCamera.requestPhoto(this.displayName, "end");
+    }
   }
 
   // Check if section is mastered (last quiz ≥70%, or ≥5 answers with ≥70% cumulative)

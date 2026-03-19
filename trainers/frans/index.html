@@ -11,6 +11,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="../../shared/firebase-config.js"></script>
+<script src="../../shared/camera.js"></script>
 <script src="../../shared/progress.js"></script>
 <script src="../../shared/ui-helpers.js"></script>
 <script src="../../shared/dashboard-link.js"></script>
@@ -338,6 +339,7 @@ function App(){
     }
   },[]);
   const startPractice=(secId)=>{
+    if(window.StudyCamera) StudyCamera.requestPhoto("Frans","start");
     let qs;
     switch(secId){
       case"werkwoorden":qs=[...genVerbQs(7),...genVerbContextQs(5)].sort(()=>Math.random()-0.5).slice(0,10);break;

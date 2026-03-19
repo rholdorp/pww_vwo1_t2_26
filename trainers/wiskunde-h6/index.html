@@ -11,6 +11,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="../../shared/firebase-config.js"></script>
+<script src="../../shared/camera.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
@@ -310,7 +311,7 @@ function App(){
   const totalMastered=SECTIONS.filter(s=>isMastered(s.id)).length;
 
   const startTheory=sid=>{setSection(sid);setTheoryStep(0);setTheoryAnswer("");setTheoryChecked(false);setScreen("theory")};
-  const startQuiz=(sid)=>{setSection(sid);usedQsRef.current=new Set();setQNum(0);setSession({c:0,t:0});setWrongAnswers([]);setStreak(0);setAlmostCorrect(null);setScreen("quiz");loadQ(sid,0)};
+  const startQuiz=(sid)=>{if(window.StudyCamera) StudyCamera.requestPhoto("Wiskunde","start");setSection(sid);usedQsRef.current=new Set();setQNum(0);setSession({c:0,t:0});setWrongAnswers([]);setStreak(0);setAlmostCorrect(null);setScreen("quiz");loadQ(sid,0)};
   const loadQ=(sec,qNumOverride)=>{const num=qNumOverride!==undefined?qNumOverride:qNum;const diff=num<3?1:num<7?2:3;const q=genUniqueQ(sec||section,usedQsRef.current,30,diff);setQuestion(q);setAnswer(q.steps?q.steps.map(()=>""):"");setChecked(false);setAlmostCorrect(null);setStepResults(null);setQNum(n=>n+1);setAnimKey(k=>k+1)};
 
   // Proeftoets
@@ -382,7 +383,7 @@ function App(){
       setCorrect(ok);setChecked(true);if(!ok)setWrongAnswers(w=>[...w,{q:question.q,chosen:answer,correct:String(question.a)}]);setStreak(s=>ok?s+1:0);setSession(s=>({c:s.c+(ok?1:0),t:s.t+1}));updateProg(section,ok);
     }
   };
-  const nextQuiz=()=>{if(session.t>=10){setProgress(p=>({...p,[section]:{...p[section],lastQuizPct:Math.round(session.c/session.t*100)}}));setScreen("results")}else loadQ(section,session.t)};
+  const nextQuiz=()=>{if(session.t>=10){if(window.StudyCamera) StudyCamera.requestPhoto("Wiskunde","end");setProgress(p=>({...p,[section]:{...p[section],lastQuizPct:Math.round(session.c/session.t*100)}}));setScreen("results")}else loadQ(section,session.t)};
 
   const fmtBold=text=>{const parts=text.split(/(\*\*[^*]+\*\*)/g);return parts.map((p,i)=>p.startsWith("**")&&p.endsWith("**")?React.createElement("strong",{key:i,style:{color:"#fff",fontWeight:800}},p.slice(2,-2)):React.createElement("span",{key:i},p))};
 

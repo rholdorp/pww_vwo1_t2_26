@@ -10,6 +10,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="../../shared/firebase-config.js"></script>
+<script src="../../shared/camera.js"></script>
 <script src="../../shared/progress.js"></script>
 <script src="../../shared/ui-helpers.js"></script>
 <script src="../../shared/dashboard-link.js"></script>
@@ -332,6 +333,7 @@ function App() {
     }
   }, []);
   const startPractice = (secId) => {
+    if(window.StudyCamera) StudyCamera.requestPhoto("Nederlands","start");
     setActiveSec(secId);
     const qs = [...PRACTICE[secId]].sort(() => Math.random() - 0.5).slice(0, 10);
     setQuestions(qs); setQIdx(0); setScore({ correct: 0, total: 0 }); setAnswered(null); setWrongAnswers([]);
