@@ -1,68 +1,71 @@
-# 📚 Studieplan Stijn – Proefwerkweek maart 2026
+# Studieplan Stijn – Proefwerkweek maart 2026
 
-Interactief studieplan en trainer-apps voor de proefwerkweek.
+Interactief studieplan en trainer-apps voor **Stijn** (VWO 1, Trevianum) ter voorbereiding op de proefwerkweek van 12-18 maart 2026.
 
-## 🚀 Live site
-Na deployment op GitHub Pages:
-`https://USERNAME.github.io/studieplan-stijn/`
+> **Status: Afgerond** — De proefwerkweek is geweest. De database en het trainingsmateriaal zijn offline gehaald. De site toont een offline-melding.
 
-## 📁 Projectstructuur
+## Overzicht
+
+Het project bevatte een 21-daags studieplan met interactieve trainers voor 8 vakken, gebouwd als statische site op GitHub Pages — geen build-stap, geen framework, geen server.
+
+### Trainers (alle afgerond)
+
+| Vak | Stof | Type |
+|-----|------|------|
+| Wiskunde | H5 Lijnen en hoeken + H6 | Multiple choice |
+| Nederlands | Par 1.3, 2.3, 3.3, 4.3, 5.3 | Multiple choice |
+| Frans | Chapitre 1/2/3, werkwoorden, grammatica | Multiple choice |
+| Engels | Unit 2+3 vocab + grammar | Type-modus |
+| Geschiedenis | H4 Het Romeinse Rijk (par 4.1-4.3) | Multiple choice |
+| Biologie | Thema 3 Ordening (basisstof 1-6, extra 7-8) | Multiple choice |
+| Aardrijkskunde | H4 Natuurrampen Japan (par 1-5) | Multiple choice + diagnostische toetsen |
+| Tekenen/HV | — | Niet gebouwd |
+
+### Proefwerkweek
+
+| Datum | Dag | Proefwerk |
+|-------|-----|-----------|
+| 12 mrt | Donderdag | Wiskunde + Nederlands |
+| 13 mrt | Vrijdag | Frans + Geschiedenis |
+| 16 mrt | Maandag | Engels |
+| 17 mrt | Dinsdag | Biologie |
+| 18 mrt | Woensdag | Aardrijkskunde + Tekenen/HV |
+
+## Technisch
+
+- **HTML + CSS + JavaScript** (plain, geen build)
+- **React 18 + Babel Standalone** via CDN voor in-browser JSX
+- **Firebase Realtime Database** voor sync tussen devices (nu offline)
+- **localStorage** als fallback voor voortgang
+- **GitHub Pages** hosting (push = deploy)
+- **Nunito** font, dark theme design
+
+### Projectstructuur
 
 ```
-studieplan-stijn/
-├── index.html                      # Startpagina met links
-├── dashboard.html                  # Studieplan dashboard (21 dagen)
+/
+├── index.html                 ← Offline-melding (was: landing page)
+├── dashboard.html             ← 21-daags studieplan met checkboxen
 ├── shared/
-│   └── progress.js                 # Shared progress API (localStorage)
-├── trainers/
-│   ├── wiskunde-h6/
-│   │   └── index.html              # Wiskunde H6 trainer
-│   ├── nederlands-1.3/
-│   │   └── index.html              # Nederlands par 1.3 trainer
-│   ├── frans/                      # (binnenkort)
-│   ├── geschiedenis/               # (binnenkort)
-│   ├── biologie/                   # (binnenkort)
-│   ├── aardrijkskunde/             # (binnenkort)
-│   └── tekenen-hv/                 # (binnenkort)
-└── README.md
+│   ├── progress.js            ← Gedeelde progress tracking API
+│   ├── firebase-config.js     ← Firebase configuratie
+│   └── camera.js              ← Camera-functie voor foto's bij training
+└── trainers/
+    ├── wiskunde-h5/            ← Wiskunde H5
+    ├── wiskunde-h6/            ← Wiskunde H6
+    ├── nederlands-1.3/          ← Nederlands
+    ├── frans/                  ← Frans
+    ├── engels/                 ← Engels (type-modus)
+    ├── geschiedenis/           ← Geschiedenis
+    ├── biologie/               ← Biologie
+    └── aardrijkskunde/         ← Aardrijkskunde
 ```
 
-## 🔧 Technisch
+## Features
 
-- **Geen build stap nodig** – alles is vanilla HTML + React via CDN
-- **localStorage** voor voortgang – werkt offline, per device
-- **Shared Progress API** (`shared/progress.js`) – standaard format voor alle trainers
-- **GitHub Pages** voor hosting – gratis, simpel
-
-## 📊 Progress API
-
-Elke trainer gebruikt `TrainerProgress` class:
-```javascript
-const progress = new TrainerProgress("vak_sectie", "Display Name", {
-  subject: "Vaknaam", color: "#hex", icon: "emoji"
-});
-progress.recordAnswer("sectie_id", true/false);
-progress.markTheoryDone("sectie_id");
-progress.isMastered("sectie_id"); // ≥5 antwoorden, ≥70% correct
-```
-
-Dashboard leest alle `trainer_*` keys uit localStorage automatisch.
-
-## 📅 Proefwerken
-| # | Vak | Datum | Stof |
-|---|-----|-------|------|
-| 1 | Wiskunde | Do 12 mrt | H5 en H6 |
-| 2 | Nederlands | Do 12 mrt | Par 1.3, 2.3, 3.3, 4.3, 5.3 |
-| 3 | Frans | Vr 13 mrt | Voc pg 131, gramm, pg 126-128 |
-| 4 | Geschiedenis | Vr 13 mrt | Par 4.1-4.3, 8 vaardigheden |
-| 5 | Biologie | Di 17 mrt | Thema 3 Ordening |
-| 6 | Aardrijkskunde | Wo 18 mrt | H4 par 1-5 |
-| 7 | Tekenen/HV | Wo 18 mrt | Tek H3+H6, HV H7 |
-
-## ➕ Nieuwe trainer toevoegen
-
-1. Maak folder `trainers/vaknaam/`
-2. Maak `index.html` met React + `../../shared/progress.js`
-3. Gebruik `new TrainerProgress("vaknaam_sectie", "Naam", {...})`
-4. Voeg link toe aan `index.html`
-5. Push naar GitHub → automatisch live
+- **Studieplan dashboard** — 21 dagen planning met 74 studietaken, sportschema, voortgangsoverzicht
+- **Per-vak trainers** — Theorie + oefenvragen met mastery tracking (minimaal 5 vragen, minimaal 70% correct)
+- **Firebase sync** — Voortgang gesynchroniseerd tussen devices
+- **Camera-functie** — Foto bij start/einde training
+- **Gebruiksoverzicht** — Frequentiegrafiek en activiteitenlijst op dashboard
+- **Diagnostische toetsen** — Bij aardrijkskunde met illustraties uit lesmateriaal
